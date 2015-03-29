@@ -1,0 +1,94 @@
+(* Raccoon *)
+
+digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+
+letter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' 
+       | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X'
+       | 'Y' | 'Z' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j'
+       | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v'
+       | 'w' | 'x' | 'y' | 'z';
+
+identifier = letter, { letter | digit | '_'  }, ['[', '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9', {digit}, ']'];
+
+number = [ '-' ] , digit , { digit } , [ '.' , digit , {digit} ];
+
+(*A program is defined as a sequence of statements*)
+program = {statement};
+statement = simple_stmt | compound_stmt;
+
+(*Definition of a simple statement*)
+simple_stmt = small_stmt, '\n';
+small_stmt = assignment | const_decl | fct_call;
+
+
+(*Definition of an assignment*)
+assignment = identifier, 
+			 ' becomes ', 
+			 number | identifier | operation | logic | comparison | fct_call ;
+
+(*Definition of a constant declaration*)
+const_decl = identifier, ' is ', number;
+
+			 
+(*Definition of a function call*)
+fct_call = identifier, '(', [argument, {',', argument}], ')';
+argument = identifier | operation | logic;
+
+
+(*Definition of a logic symbol*)
+log-symbol = ' or ' | ' and ' ;
+
+(*Definition of a logic expression*)
+logic = log-member, {log-symbol, log-member};
+log-member = boolean | identifier | comparison | ('(', logic,')');
+boolean = 'True' | 'False';
+ 
+(*Definition of a comparison symbol*)
+comp-symbol = '=?' | '!=' | '<' | '>' | '>=' | '<=';
+
+(*Definition of a comparison expression*)
+comparison = comp-member, comp-symbol, comp-member;
+comp-member = number | identifier | operation;
+
+
+(*Definition of a mathematical operation*)
+operation = term, {'+' | '-', term};
+term = factor, {'*' | '/' | ' mod ', factor};
+factor = number | identifier | ( '(', operation, ')' ) | fct_call;
+
+
+(*Definition of a compound statement*)
+compound_stmt = fct_def | if | while | for;
+
+(*N.B. : in the following, an occurence of "INDENT" means that 
+every new lines that follows has to be shifted by a fixed number
+of white spaces. "DEDENT" cancel the effect of the previous
+"INDENT" while a new occurence of "INDENT" add a shift compared
+to the previous one*)
+
+(*Definition of a function definition*)
+fct_def = 'function ', identifier, '(', [identifier, ',', {identifier}],'):', '\n', 
+		  INDENT, {statement}, 
+		  ['return ', identifier | number | operation | ], '\n', 
+		  DEDENT;
+
+(*Definition of conditionals*)
+if = 'if ', logic, ':', '\n', 
+	 INDENT, {statement}, '\n', DEDENT,
+	 [{'else if ', logic, ':', '\n', 
+	 INDENT, {statement}, '\n', DEDENT}],
+	 ['else ', logic, ':', '\n', 
+	 INDENT, {statement}, '\n', DEDENT}];
+	 
+(*Definition of while loops*)
+while = 'while ', logic, ':', '\n', 
+		INDENT, {statement | loop_instruct}, '\n', DEDENT; 
+loop_instruct = 'break' | 'continue', '\n';
+
+(*Definition of for loops*)
+for = 'for ', identifier, ' in ', 
+	  ('range', '(', number, ',', number, ')') | identifier, 
+	  ':', '\n', 
+	  INDENT, {statement | loop_instruct}, '\n', DEDENT;
+
+    
