@@ -1,12 +1,15 @@
 %{
-
+#define YYSTYPE double /* Define the main semantic type */
 #include <string.h> /* for strdup */
+#include "raccoonParser.tab.h" /* for token definitions and yylval */
 #include "stack.h"
 
 STACK indent;
 int init_indent = 1;
 
 %}
+
+%option yylineno /* Ask flex to put line number in yylineno */
 
 /* regular definitions */
 
@@ -68,6 +71,7 @@ double      {digit}+\.{digit}*
              }
 			 freeStack(&indent);
              yyterminate();}
+
 [ ]*		
 becomes 	return(T_ASSIGN);
 is 			return(T_CONST);
@@ -103,8 +107,8 @@ range		return(T_RANGE);
 mod			return(T_MOD);
 {id}  		{yylval.id = (char *) strdup(yytext); 
 			 return(T_IDENTIFIER);}
-{double}    yylval.num = atof(yytext); return(T_DOUBLE);
-{integer}   yylval.num = atoi(yytext); return(T_INTEGER);
+{double}    yylval.dval = atof(yytext); return(T_DOUBLE);
+{integer}   yylval.ival = atoi(yytext); return(T_INTEGER);
 .           printf("Unknown token!\n"); yyterminate();
 
 %%			 
