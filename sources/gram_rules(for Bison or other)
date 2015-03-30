@@ -1,0 +1,67 @@
+
+program : stmts 
+        ;
+        
+stmts : stmt 
+      | stmts stmt 
+      ;
+
+stmt : simple_stmt
+     | compound_stmt
+	 ;
+	 
+simple_stmt : small_stmt END_STATEMENT
+			;
+	  
+small_stmt : assignment 
+		   | const_decl 
+		   | func_call
+		   ;
+
+assignment : id T_ASSIGN expr 
+           ;
+        
+const_decl : id T_CONST expr
+           ;
+		
+func_call : id T_LPAREN call_args T_RPAREN
+          ;
+    
+call_args : /*blank*/  
+          | expr 
+          | call_args T_COMMA expr  
+          ;
+
+id : T_IDENTIFIER 
+      ;
+
+number : T_INTEGER 
+       | T_DOUBLE 
+       ;
+    
+expr : id 
+     | number
+     | func_call
+     | operation
+     | logic
+     | comparison	 
+     | T_LPAREN expr T_RPAREN 
+     ;
+	 
+log_op : T_OR | T_AND
+       ;
+	   
+comp_op : T_CEQ | T_CNE | T_CLT | T_CLE | T_CGT | T_CGE 
+        ;
+
+		
+		
+		
+		
+func_def : id id T_LPAREN func_def_args T_RPAREN INDENT 
+          ;
+    
+func_def_args : /*blank*/  
+          | id 
+          | func_def_args T_COMMA id 
+          ;
