@@ -11,7 +11,7 @@ Notamment, l'utilisation de pydot pour représenter un arbre syntaxique cousu
 est une utilisation un peu "limite" de graphviz. Ça marche, mais le layout n'est
 pas toujours optimal...
 
-2008-2009, Matthieu Amiguet, HE-Arc
+2008-2009, Matthieu Amiguet, HE-Arc      !!!!!!MODIFIED VERSION!!!!!
 '''
 
 import pydot
@@ -97,6 +97,75 @@ class Node:
         
 class ProgramNode(Node):
     type = 'Program'
+
+
+############ ajout	
+	
+class AssignNode(Node):
+	type = 'Assignment'
+	
+class ConstNode(Node):
+	type = 'Constant'
+
+class FuncCallNode(Node):
+	type = 'Function call'
+	
+class ReturnNode(Node):
+	type = 'Return'
+	# def __init__(self, tok, retValue, nline = 0):
+		# Node.__init__(self, None, nline)
+		# self.tok = tok
+		# self.retValue = retValue
+		
+		# Node.__init__(self, [cond, block], nline)
+	
+class FuncDefNode(Node):
+	type = 'Function Definition'
+	
+class BodyNode(Node):
+	type = 'Body'
+	
+class HeadNode(Node):
+	type = 'Head'
+	
+class WhileNode(Node):
+	type = 'While'
+	# def __init__(self, cond, body, nline = 0):
+		# self.cond = cond
+		# self.body = body
+		
+		# Node.__init__(self, [cond, body], nline)
+
+		
+class forNode(Node):
+	type = 'For'
+
+class inNode(Node):
+	type = 'In'
+	
+class inRangeNode(Node):
+	type = 'In range'
+
+
+	
+class ifNode(Node):
+	type = 'If'
+	
+class elseNode(Node):
+	type = 'Else'
+	
+
+	
+# class breakNode(Node):
+	# type = 'Break'
+	
+# class contiNode(Node):
+	# type = 'Continue'
+	
+
+############### fin de l'ajout
+	
+	
         
 class TokenNode(Node):
     type = 'token'
@@ -119,19 +188,19 @@ class OpNode(Node):
     def __repr__(self):
         return "%s (%s)" % (self.op, self.nbargs)
     
-class AssignNode(Node):
-    type = '='
+# class AssignNode(Node):
+    # type = '='
     
-class PrintNode(Node):
-    type = 'print'
+# class PrintNode(Node):
+    # type = 'print'
     
-class WhileNode(Node):
-    type = 'while'
+# class WhileNode(Node):
+    # type = 'while'
     
-class EntryNode(Node):
-    type = 'ENTRY'
-    def __init__(self):
-        Node.__init__(self, None)
+# class EntryNode(Node):
+    # type = 'ENTRY'
+    # def __init__(self):
+        # Node.__init__(self, None)
     
 def addToClass(cls):
     ''' Décorateur permettant d'ajouter la fonction décorée en tant que méthode
