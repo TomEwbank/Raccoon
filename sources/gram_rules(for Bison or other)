@@ -1,67 +1,95 @@
 
-program : stmts 
-        ;
-        
-stmts : stmt 
-      | stmts stmt 
-      ;
+precedence = (
+	('left', 'ADD_OP', 'SUB_OP') ,
+	('left', 'MUL_OP', 'DIV_OP', 'MOD_OP') ,
+)
 
-stmt : simple_stmt
-     | compound_stmt
-	 ;
+
+'''program : stmt
+           | stmt program''' 
+        
+'''stmt : simple_stmt
+        | compound_stmt'''
 	 
-simple_stmt : small_stmt END_STATEMENT
-			;
+'''simple_stmt : small_stmt END_STATEMENT'''
 	  
-small_stmt : assignment 
-		   | const_decl 
-		   | func_call
-		   ;
+'''small_stmt : assignment 
+		      | const_decl 
+		      | func_call
+			  | return_stmt
+			  | BREAK
+			  | CONTINUE''' /* return, break, and continue are not context free, leave to  semantic analysis? */
 
-assignment : id T_ASSIGN expr 
-           ;
+'''assignment : IDENTIFIER ASSIGN expr
+              | IDENTIFIER ASSIGN boolean
+			  | ARRAY_CELL ASSIGN expr
+			  | ARRAY_CELL ASSIGN boolean'''
         
-const_decl : id T_CONST expr
-           ;
+'''const_decl : IDENTIFIER CONST expr'''
 		
-func_call : id T_LPAREN call_args T_RPAREN
-          ;
+'''func_call : IDENTIFIER LPAREN call_args RPAREN
+             | IDENTIFIER LPAREN RPAREN'''
     
-call_args : /*blank*/  
-          | expr 
-          | call_args T_COMMA expr  
-          ;
+'''call_args : arg 
+             | arg COMMA call_args'''
 
-id : T_IDENTIFIER 
-      ;
+'''arg : expr
+       | boolean'''
 
-number : T_INTEGER 
-       | T_DOUBLE 
-       ;
+'''return_stmt : RETURN
+               | RETURN expr
+               | RETURN boolean'''			   
     
-expr : id 
-     | number
-     | func_call
-     | operation
-     | logic
-     | comparison	 
-     | T_LPAREN expr T_RPAREN 
-     ;
-	 
-log_op : T_OR | T_AND
-       ;
+'''expr : IDENTIFIER
+		| ARRAY_CELL
+        | number
+        | func_call
+        | arithmetic
+        | LPAREN expr RPAREN'''
+
+'''number : INTEGER 
+          | DOUBLE'''
+
+'''boolean : TRUE | FALSE'''
+		
+'''arithmetic : expr ADD_OP expr
+              | expr SUB_OP expr
+			  | expr MUL_OP expr
+			  | expr DIV_OP expr
+			  | expr MOD_OP expr'''
+	
+
+		 
+'''comb_op : OR | AND'''
 	   
-comp_op : T_CEQ | T_CNE | T_CLT | T_CLE | T_CGT | T_CGE 
-        ;
+'''comp_op : CEQ | CNE | CLT | CLE | CGT | CGE''' 
 
+'''compound_stmt : func_def | if_stmt | while_stmt | for_stmt'''		
 		
-		
-		
-		
-func_def : id id T_LPAREN func_def_args T_RPAREN INDENT 
-          ;
+'''func_def : head INDENT body DEDENT'''
+
+'''head : IDENTIFIER LPAREN func_def_args RPAREN COLON
+        | IDENTIFIER LPAREN RPAREN COLON'''
     
-func_def_args : /*blank*/  
-          | id 
-          | func_def_args T_COMMA id 
-          ;
+'''func_def_args : IDENTIFIER 
+                 | IDENTIFIER COMMA func_def_args'''
+				 
+'''body : stmt
+        | stmt body'''
+			
+'''while_stmt : WHILE cond_list COLON INDENT body DEDENT''' /* What if no body? same issue with func_def, if,...*/ 
+			 
+'''cond_list : condition
+             | condition comb_op cond_list
+			 | LPAREN cond_list RPAREN'''
+
+'''condition : expr comp_op expr
+			 | boolean'''
+			 
+'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON INDENT body DEDENT
+            | FOR IDENTIFIER IN IDENTIFIER COLON INDENT body DEDENT'''
+			
+'''if_stmt : IF cond_list COLON INDENT body DEDENT
+           | IF cond_list COLON INDENT body DEDENT ELSE INDENT body DEDENT''' 
+
+
