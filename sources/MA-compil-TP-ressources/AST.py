@@ -137,21 +137,25 @@ class WhileNode(Node):
 		# Node.__init__(self, [cond, body], nline)
 
 		
-class forNode(Node):
+class ForNode(Node):
 	type = 'For'
 
-class inNode(Node):
+class InNode(Node):
 	type = 'In'
 	
-class inRangeNode(Node):
+class InRangeNode(Node):
 	type = 'In range'
 
-
+class ConditionnalNode(Node):
+	type = 'Conditionnal'
 	
-class ifNode(Node):
+class IfNode(Node):
 	type = 'If'
 	
-class elseNode(Node):
+class ElseifNode(Node):
+	type = 'Elseif'
+	
+class ElseNode(Node):
 	type = 'Else'
 	
 
