@@ -203,10 +203,13 @@ def p_for(p):
 
 def p_if(p):
 	'''if_stmt : IF cond_list COLON END_STATEMENT body END
-			   | IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
+			   | IF cond_list COLON END_STATEMENT body END elseif_list
+			   | IF cond_list COLON END_STATEMENT body END elseif_list ELSE COLON END_STATEMENT body END
                | IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END'''
 	if len(p) == 7:
 		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])])
+	if len(p) == 8:
+		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])] + p[7].children)
 	if len(p) == 12:
 		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])] + p[7].children + [AST.ElseNode([p[10]])])
 	if len(p) == 11:
@@ -221,24 +224,28 @@ def p_elseif(p):
 		p[0] = AST.Node([AST.ElseifNode([p[2], p[5]])] + p[7].children)
 
 def p_error(p):
+	
 	if p:
-		print("Syntax error in line coucou")
+		print("Syntax error in line")	
 		yacc.errok()
 	else:
-		print("Syntax error at EOF")
+		print("Syntax error: NEWLINE missing at last statement")
 
 		
 
 yacc.yacc(outputdir='generated')
 
 if __name__ == "__main__":
+
 	import sys
-	prog = file(sys.argv[1]).read()
-	result = yacc.parse(prog)
-	print(result)
-	print("coucou")
-	import os
-	graph = result.makegraphicaltree()
-	name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"
-	graph.write_pdf(name)
-	print("wrote ast to" , name)
+	try:
+		prog = file(sys.argv[1]).read()
+		result = yacc.parse(prog)
+		print(result)
+		import os
+		graph = result.makegraphicaltree()
+		name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"
+		graph.write_pdf(name)
+		print("wrote ast to" , name)
+	except (AttributeError, TypeError) as e:
+		print("Unable to build an AST because of the syntax errors")
