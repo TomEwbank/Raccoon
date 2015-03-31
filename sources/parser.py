@@ -130,12 +130,12 @@ def p_func_def(p)
 	p[0] = AST.FuncDefNode([p[1], p[3]])
 
 def p_head(p)
-	'''head : IDENTIFIER LPAREN func_def_args RPAREN COLON
-            | IDENTIFIER LPAREN RPAREN COLON'''
+	'''head : FUNCTION IDENTIFIER LPAREN func_def_args RPAREN COLON
+            | FUNCTION IDENTIFIER LPAREN RPAREN COLON'''
 	if len(p) == 6:
-		p[0] = AST.HeadNode([AST.TokenNode(p[1])] + p[3].children)
+		p[0] = AST.HeadNode([AST.TokenNode(p[2])] + p[4].children)
 	if  len(p) == 5: 
-		p[0] = AST.HeadNode([AST.TokenNode(p[1])])
+		p[0] = AST.HeadNode([AST.TokenNode(p[2])])
 
 def func_def_args(p)    
 	'''func_def_args : IDENTIFIER 
