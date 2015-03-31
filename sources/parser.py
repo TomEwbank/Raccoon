@@ -1,7 +1,9 @@
 import ply.yacc as yacc
-import Lexer
-import AST
+#import Lexer
+#import AST
 import os
+
+from lexical import tokens
 
 
 precedence = (
@@ -10,7 +12,7 @@ precedence = (
 )
 
 
-def p_program(p)
+def p_program(p):
 	'''program : stmt
                | stmt program'''
 	if len(p) == 2:
@@ -18,16 +20,16 @@ def p_program(p)
 	if len(p) == 3:
 		p[0] = AST.ProgramNode([p[1]] + p[2].children)
 		
-def p_stmt_type(p)        
+def p_stmt_type(p):
 	'''stmt : simple_stmt
 			| compound_stmt'''
 	p[0] = p[1]
 
-def p_simple_stmt(p)		
+def p_simple_stmt(p):
 	'''simple_stmt : small_stmt END_STATEMENT'''
 	p[0] = p[1]
 
-def p_small_stmt(p)	  
+def p_small_stmt(p):
 	'''small_stmt : assignment 
 				  | const_decl 
 		   	      | func_call
@@ -35,31 +37,32 @@ def p_small_stmt(p)
 			  	  | loop_stmt''' # return, break, and continue are not context free, leave to  semantic analysis? 
 	p[0] = p[1]
 				  
-def p_(p)
+def p_(p):
 	'''return_stmt : RETURN
                    | RETURN expr
                    | RETURN boolean'''			   
-	if len(p) == 2
+	if len(p) == 2:
 		p[0] = AST.ReturnNode([])
-	if len(p) == 3
+	if len(p) == 3:
 		p[0] = AST.ReturnNode([p[2]])
 
-def p_loop_stmt(p)
-	'''loop_stmt : BREAK | CONTINUE'''
+def p_loop_stmt(p):
+	'''loop_stmt : BREAK 
+	| CONTINUE'''
 	p[0] = AST.TokenNode(p[1])
 				  
-def p_assign(p)
+def p_assign(p):
 	'''assignment : IDENTIFIER ASSIGN expr
 				  | IDENTIFIER ASSIGN boolean
 			      | ARRAY_CELL ASSIGN expr
 			      | ARRAY_CELL ASSIGN boolean'''
 	p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
 
-def p_const(p)			  
+def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr'''
 	p[0] = AST.ConstNode([AST.TokenNode(p[1]), p[3]])
 
-def p_func_call(p)	
+def p_func_call(p):
 	'''func_call : IDENTIFIER LPAREN call_args RPAREN
                  | IDENTIFIER LPAREN RPAREN'''
 	if len(p) == 5:
@@ -67,7 +70,7 @@ def p_func_call(p)
 	if len(p) == 4:
 		p[0] = AST.FuncCallNode([AST.TokenNode(p[1])])
 		
-def p_call_args(p)			 
+def p_call_args(p):
 	'''call_args : arg 
                  | arg COMMA call_args'''				 
 	if len(p) == 2:
@@ -75,17 +78,17 @@ def p_call_args(p)
 	if len(p) == 4:
 		p[0] = AST.Node([p[1]] + p[3].children)
 
-def p_arg(p)
+def p_arg(p):
 	'''arg : expr
            | boolean'''
 	p[0] = p[1]
 
-def p_expr_id(p)    
+def p_expr_id(p):
 	'''expr : IDENTIFIER
 			| ARRAY_CELL'''
 	p[0] = AST.TokenNode(p[1])
 	
-def p_expr(p)
+def p_expr(p):
 	'''expr : func_call
 			| arithmetic
 			| LPAREN expr RPAREN'''
@@ -94,16 +97,17 @@ def p_expr(p)
 	if len(p) == 4:
 		p[0] = p[2]
 
-def p_expr_num(p)
+def p_expr_num(p):
 	'''expr : INTEGER 
 			| DOUBLE'''
 	p[0] = AST.TokenNode(p[1])
 
-def p_bool(p)
-	'''boolean : TRUE | FALSE'''
+def p_bool(p):
+	'''boolean : TRUE 
+	| FALSE'''
 	p[0] = AST.TokenNode(p[1])
 
-def p_arithmetic(p)		
+def p_arithmetic(p):
 	'''arithmetic : expr ADD_OP expr
                   | expr SUB_OP expr
 	           	  | expr MUL_OP expr
@@ -113,39 +117,42 @@ def p_arithmetic(p)
 	
 
 
-def p_comb_op(p)		 
+def p_comb_op(p):
 	'''comb_op : OR | AND'''
 	p[0] = p[1]
 
-def p_comp_op(p)	   
+def p_comp_op(p):
 	'''comp_op : CEQ | CNE | CLT | CLE | CGT | CGE'''
-    p[0] = p[1]	
+	p[0] = p[1]	
 
-def p_compound_stmt(p)
-	'''compound_stmt : func_def | if_stmt | while_stmt | for_stmt'''
-    p[0] = p[1]	
+def p_compound_stmt(p):
+	'''compound_stmt : func_def 
+	                 | if_stmt 
+	                 | while_stmt 
+	                 | for_stmt'''
+	p[0] = p[1]	
 
-def p_func_def(p)		
+def p_func_def(p):
 	'''func_def : head END_STATEMENT body END'''
 	p[0] = AST.FuncDefNode([p[1], p[3]])
 
-def p_head(p)
-	'''head : FUNCTION IDENTIFIER LPAREN func_def_args RPAREN COLON
-            | FUNCTION IDENTIFIER LPAREN RPAREN COLON'''
+def p_head(p):
+	'''head : FUNCTION IDENTIFIER LPAREN p_func_def_args RPAREN COLON
+			| FUNCTION IDENTIFIER LPAREN RPAREN COLON'''
 	if len(p) == 6:
 		p[0] = AST.HeadNode([AST.TokenNode(p[2])] + p[4].children)
 	if  len(p) == 5: 
 		p[0] = AST.HeadNode([AST.TokenNode(p[2])])
 
-def func_def_args(p)    
-	'''func_def_args : IDENTIFIER 
-                     | IDENTIFIER COMMA func_def_args'''
+def p_func_def_args(p):
+	'''p_func_def_args : IDENTIFIER 
+                       | IDENTIFIER COMMA p_func_def_args'''
 	if len(p) == 2:
 		p[0] = AST.TokenNode(p[1])
 	if len(p) == 4:
 		p[0] = AST.Node([AST.TokenNode(p[1])] + p[3].children)
 
-def p_body(p)				 
+def p_body(p):
 	'''body : stmt
             | stmt body'''
 	if len(p) == 2:
@@ -153,11 +160,11 @@ def p_body(p)
 	if len(p) == 3:
 		p[0] = AST.BodyNode([p[1]] + p[2].children)
 
-def p_while(p)			
+def p_while(p):
 	'''while_stmt : WHILE cond_list COLON END_STATEMENT body END''' # What if no body? same issue with func_def, if,... 
 	p[0] = AST.WhileNode([p[2], p[5]])
 	
-def p_cond_list(p)			 
+def p_cond_list(p):
 	'''cond_list : condition
                  | condition comb_op cond_list'''
 	if len(p) == 2:
@@ -165,11 +172,11 @@ def p_cond_list(p)
 	if len(p) ==  4:
 		p[0] = AST.OpNode(p[2], [p[1], p[3]])
 
-def p_cond_list_paren(p)
-	'''cond_list : | LPAREN cond_list RPAREN'''
+def p_cond_list_paren(p):
+	'''cond_list : LPAREN cond_list RPAREN'''
 	p[0] = p[2]
 	
-def p_cond(p)
+def p_cond(p):
 	'''condition : expr comp_op expr
 			     | boolean'''
 	if len(p) == 4:
@@ -177,7 +184,7 @@ def p_cond(p)
 	if len(p) == 2:
 		p[0] = p[1]
 
-def p_for(p)			 
+def p_for(p):
 	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
                 | FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END'''
 	if len(p) == 14:
@@ -189,7 +196,7 @@ def p_for(p)
 		p[0] = AST.ForNode([AST.InNode([AST.TokenNode(p[2]), AST.TokenNode(p[4])]), p[7]])
 		
 
-def p_if(p)			
+def p_if(p):
 	'''if_stmt : IF cond_list COLON END_STATEMENT body END
 			   | IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
                | IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END'''
@@ -198,9 +205,9 @@ def p_if(p)
 	if len(p) == 12:
 		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])] + p[7].children + [AST.ElseNode([p[10]])])
 	if len(p) == 11:
-		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])], AST.ElseNode([p[10]])])
+		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]]), AST.ElseNode([p[10]])])
 
-def p_elseif(p)
+def p_elseif(p):
 	'''elseif_list : ELSEIF cond_list COLON END_STATEMENT body END
                    | ELSEIF cond_list COLON END_STATEMENT body END elseif_list'''
 	if len(p) == 7:
@@ -209,5 +216,13 @@ def p_elseif(p)
 		p[0] = AST.Node([AST.ElseifNode([p[2], p[5]])] + p[7].children)
 
 def p_error(p):
-	print "Syntax error in line %d" % p.lineno
+	print ("Syntax error in line %d" % p.lineno)
 	yacc.errok()
+
+
+yacc.yacc()
+if __name__ == " __main__ " :
+	import sys
+	prog = file(sys.argv[1]).read()
+	result = yacc.parse(prog)
+	print(result)
