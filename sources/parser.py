@@ -226,7 +226,7 @@ def p_elseif(p):
 def p_error(p):
 	
 	if p:
-		print("Syntax error in line")	
+		print("Syntax error in line %d" % p.lineno)	
 		yacc.errok()
 	else:
 		print("Syntax error: NEWLINE missing at last statement")
