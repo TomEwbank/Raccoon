@@ -19,6 +19,7 @@ def p_program(p):
 		p[0] = AST.ProgramNode([p[1]])
 	if len(p) == 3:
 		p[0] = AST.ProgramNode([p[1]] + p[2].children)
+		print("coucou")
 		
 def p_stmt_type(p):
 	'''stmt : simple_stmt
@@ -118,11 +119,17 @@ def p_arithmetic(p):
 
 
 def p_comb_op(p):
-	'''comb_op : OR | AND'''
+	'''comb_op : OR 
+	           | AND'''
 	p[0] = p[1]
 
 def p_comp_op(p):
-	'''comp_op : CEQ | CNE | CLT | CLE | CGT | CGE'''
+	'''comp_op : CEQ 
+			   | CNE 
+			   | CLT 
+			   | CLE 
+			   | CGT 
+			   | CGE'''
 	p[0] = p[1]	
 
 def p_compound_stmt(p):
@@ -226,3 +233,9 @@ if __name__ == " __main__ " :
 	prog = file(sys.argv[1]).read()
 	result = yacc.parse(prog)
 	print(result)
+	
+	import os
+	graph = result.makegraphicaltree()
+	name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"
+	graph.write_pdf(name)
+	print("wrote ast to" , name)
