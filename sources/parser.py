@@ -1,10 +1,9 @@
 import ply.yacc as yacc
 #import Lexer
-#import AST
+import AST
 import os
 
 from lexical import tokens
-
 
 precedence = (
 	('left', 'ADD_OP', 'SUB_OP') ,
@@ -19,7 +18,6 @@ def p_program(p):
 		p[0] = AST.ProgramNode([p[1]])
 	if len(p) == 3:
 		p[0] = AST.ProgramNode([p[1]] + p[2].children)
-		print("coucou")
 		
 def p_stmt_type(p):
 	'''stmt : simple_stmt
@@ -206,7 +204,7 @@ def p_for(p):
 def p_if(p):
 	'''if_stmt : IF cond_list COLON END_STATEMENT body END
 			   | IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-               | IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END'''
+               | IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END'''
 	if len(p) == 7:
 		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])])
 	if len(p) == 12:
@@ -223,17 +221,21 @@ def p_elseif(p):
 		p[0] = AST.Node([AST.ElseifNode([p[2], p[5]])] + p[7].children)
 
 def p_error(p):
-	print ("Syntax error in line %d" % p.lineno)
-	yacc.errok()
+	if p:
+		print("Syntax error in line coucou")
+		yacc.errok()
+	else:
+		print("Syntax error at EOF")
 
 
-yacc.yacc()
-if __name__ == " __main__ " :
+yacc.yacc(outputdir='generated')
+
+if __name__ == "__main__":
 	import sys
 	prog = file(sys.argv[1]).read()
 	result = yacc.parse(prog)
 	print(result)
-	
+	print("coucou")
 	import os
 	graph = result.makegraphicaltree()
 	name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"

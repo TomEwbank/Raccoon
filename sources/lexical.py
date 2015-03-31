@@ -110,7 +110,7 @@ def t_BLOCK_COMMENTS(t):
 
 
 def t_END_STATEMENT(t) :
-	r'\n+'
+	r'\n'
 	t.lexer.lineno += len(t.value)
 	return t
 
@@ -122,7 +122,7 @@ def t_error(t) :
 t_ignore = ' \t'
 
 
-lex.lex( )
+lex.lex()
 
 
 if __name__ == "__main__":

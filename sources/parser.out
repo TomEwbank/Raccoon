@@ -72,7 +72,7 @@ Rule 66    for_stmt -> FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAR
 Rule 67    for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
 Rule 68    if_stmt -> IF cond_list COLON END_STATEMENT body END
 Rule 69    if_stmt -> IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-Rule 70    if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+Rule 70    if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
 Rule 71    elseif_list -> ELSEIF cond_list COLON END_STATEMENT body END
 Rule 72    elseif_list -> ELSEIF cond_list COLON END_STATEMENT body END elseif_list
 
@@ -89,7 +89,7 @@ CGT                  : 47
 CLE                  : 46
 CLT                  : 45
 CNE                  : 44
-COLON                : 54 55 60 66 67 68 69 70 71 72
+COLON                : 54 55 60 66 67 68 69 70 70 71 72
 COMMA                : 24 57 66
 CONST                : 20
 CONTINUE             : 15
@@ -170,7 +170,7 @@ state 0
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -433,7 +433,7 @@ state 15
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -515,7 +515,7 @@ state 19
 
     (68) if_stmt -> IF . cond_list COLON END_STATEMENT body END
     (69) if_stmt -> IF . cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> IF . cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> IF . cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (61) cond_list -> . condition
     (62) cond_list -> . condition comb_op cond_list
     (63) cond_list -> . LPAREN cond_list RPAREN
@@ -1108,7 +1108,7 @@ state 47
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -1172,7 +1172,7 @@ state 50
 
     (68) if_stmt -> IF cond_list . COLON END_STATEMENT body END
     (69) if_stmt -> IF cond_list . COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> IF cond_list . COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> IF cond_list . COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
 
     COLON           shift and go to state 84
 
@@ -1706,7 +1706,7 @@ state 82
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -1768,7 +1768,7 @@ state 84
 
     (68) if_stmt -> IF cond_list COLON . END_STATEMENT body END
     (69) if_stmt -> IF cond_list COLON . END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> IF cond_list COLON . END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> IF cond_list COLON . END_STATEMENT body END ELSE COLON END_STATEMENT body END
 
     END_STATEMENT   shift and go to state 104
 
@@ -2022,7 +2022,7 @@ state 94
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -2194,7 +2194,7 @@ state 104
 
     (68) if_stmt -> IF cond_list COLON END_STATEMENT . body END
     (69) if_stmt -> IF cond_list COLON END_STATEMENT . body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> IF cond_list COLON END_STATEMENT . body END ELSE END_STATEMENT body END
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT . body END ELSE COLON END_STATEMENT body END
     (58) body -> . stmt
     (59) body -> . stmt body
     (3) stmt -> . simple_stmt
@@ -2212,7 +2212,7 @@ state 104
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -2313,7 +2313,7 @@ state 112
 
     (68) if_stmt -> IF cond_list COLON END_STATEMENT body . END
     (69) if_stmt -> IF cond_list COLON END_STATEMENT body . END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> IF cond_list COLON END_STATEMENT body . END ELSE END_STATEMENT body END
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT body . END ELSE COLON END_STATEMENT body END
 
     END             shift and go to state 118
 
@@ -2362,7 +2362,7 @@ state 115
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -2425,7 +2425,7 @@ state 118
 
     (68) if_stmt -> IF cond_list COLON END_STATEMENT body END .
     (69) if_stmt -> IF cond_list COLON END_STATEMENT body END . elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END . ELSE END_STATEMENT body END
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END . ELSE COLON END_STATEMENT body END
     (71) elseif_list -> . ELSEIF cond_list COLON END_STATEMENT body END
     (72) elseif_list -> . ELSEIF cond_list COLON END_STATEMENT body END elseif_list
 
@@ -2468,9 +2468,9 @@ state 121
 
 state 122
 
-    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE . END_STATEMENT body END
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE . COLON END_STATEMENT body END
 
-    END_STATEMENT   shift and go to state 127
+    COLON           shift and go to state 127
 
 
 state 123
@@ -2547,68 +2547,10 @@ state 126
 
 state 127
 
-    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT . body END
-    (58) body -> . stmt
-    (59) body -> . stmt body
-    (3) stmt -> . simple_stmt
-    (4) stmt -> . compound_stmt
-    (5) simple_stmt -> . small_stmt END_STATEMENT
-    (49) compound_stmt -> . func_def
-    (50) compound_stmt -> . if_stmt
-    (51) compound_stmt -> . while_stmt
-    (52) compound_stmt -> . for_stmt
-    (6) small_stmt -> . assignment
-    (7) small_stmt -> . const_decl
-    (8) small_stmt -> . func_call
-    (9) small_stmt -> . return_stmt
-    (10) small_stmt -> . loop_stmt
-    (53) func_def -> . head END_STATEMENT body END
-    (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
-    (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
-    (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
-    (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
-    (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
-    (16) assignment -> . IDENTIFIER ASSIGN expr
-    (17) assignment -> . IDENTIFIER ASSIGN boolean
-    (18) assignment -> . ARRAY_CELL ASSIGN expr
-    (19) assignment -> . ARRAY_CELL ASSIGN boolean
-    (20) const_decl -> . IDENTIFIER CONST expr
-    (21) func_call -> . IDENTIFIER LPAREN call_args RPAREN
-    (22) func_call -> . IDENTIFIER LPAREN RPAREN
-    (11) return_stmt -> . RETURN
-    (12) return_stmt -> . RETURN expr
-    (13) return_stmt -> . RETURN boolean
-    (14) loop_stmt -> . BREAK
-    (15) loop_stmt -> . CONTINUE
-    (54) head -> . FUNCTION IDENTIFIER LPAREN p_func_def_args RPAREN COLON
-    (55) head -> . FUNCTION IDENTIFIER LPAREN RPAREN COLON
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON . END_STATEMENT body END
 
-    IF              shift and go to state 19
-    WHILE           shift and go to state 3
-    FOR             shift and go to state 6
-    IDENTIFIER      shift and go to state 9
-    ARRAY_CELL      shift and go to state 2
-    RETURN          shift and go to state 5
-    BREAK           shift and go to state 22
-    CONTINUE        shift and go to state 24
-    FUNCTION        shift and go to state 18
+    END_STATEMENT   shift and go to state 131
 
-    body                           shift and go to state 131
-    func_call                      shift and go to state 20
-    head                           shift and go to state 11
-    if_stmt                        shift and go to state 21
-    func_def                       shift and go to state 12
-    simple_stmt                    shift and go to state 13
-    assignment                     shift and go to state 14
-    for_stmt                       shift and go to state 16
-    stmt                           shift and go to state 82
-    small_stmt                     shift and go to state 1
-    while_stmt                     shift and go to state 23
-    return_stmt                    shift and go to state 4
-    loop_stmt                      shift and go to state 17
-    const_decl                     shift and go to state 7
-    compound_stmt                  shift and go to state 10
 
 state 128
 
@@ -2645,7 +2587,7 @@ state 130
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -2692,54 +2634,7 @@ state 130
 
 state 131
 
-    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body . END
-
-    END             shift and go to state 135
-
-
-state 132
-
-    (71) elseif_list -> ELSEIF cond_list COLON . END_STATEMENT body END
-    (72) elseif_list -> ELSEIF cond_list COLON . END_STATEMENT body END elseif_list
-
-    END_STATEMENT   shift and go to state 136
-
-
-state 133
-
-    (66) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON . END_STATEMENT body END
-
-    END_STATEMENT   shift and go to state 137
-
-
-state 134
-
-    (69) if_stmt -> IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body . END
-
-    END             shift and go to state 138
-
-
-state 135
-
-    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .
-
-    IF              reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    WHILE           reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    FOR             reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    IDENTIFIER      reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    ARRAY_CELL      reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    RETURN          reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    BREAK           reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    CONTINUE        reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    FUNCTION        reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    END             reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-    $end            reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END .)
-
-
-state 136
-
-    (71) elseif_list -> ELSEIF cond_list COLON END_STATEMENT . body END
-    (72) elseif_list -> ELSEIF cond_list COLON END_STATEMENT . body END elseif_list
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT . body END
     (58) body -> . stmt
     (59) body -> . stmt body
     (3) stmt -> . simple_stmt
@@ -2757,7 +2652,7 @@ state 136
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -2786,7 +2681,102 @@ state 136
     CONTINUE        shift and go to state 24
     FUNCTION        shift and go to state 18
 
-    body                           shift and go to state 139
+    body                           shift and go to state 135
+    func_call                      shift and go to state 20
+    head                           shift and go to state 11
+    if_stmt                        shift and go to state 21
+    func_def                       shift and go to state 12
+    simple_stmt                    shift and go to state 13
+    assignment                     shift and go to state 14
+    for_stmt                       shift and go to state 16
+    stmt                           shift and go to state 82
+    small_stmt                     shift and go to state 1
+    while_stmt                     shift and go to state 23
+    return_stmt                    shift and go to state 4
+    loop_stmt                      shift and go to state 17
+    const_decl                     shift and go to state 7
+    compound_stmt                  shift and go to state 10
+
+state 132
+
+    (71) elseif_list -> ELSEIF cond_list COLON . END_STATEMENT body END
+    (72) elseif_list -> ELSEIF cond_list COLON . END_STATEMENT body END elseif_list
+
+    END_STATEMENT   shift and go to state 136
+
+
+state 133
+
+    (66) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON . END_STATEMENT body END
+
+    END_STATEMENT   shift and go to state 137
+
+
+state 134
+
+    (69) if_stmt -> IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body . END
+
+    END             shift and go to state 138
+
+
+state 135
+
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body . END
+
+    END             shift and go to state 139
+
+
+state 136
+
+    (71) elseif_list -> ELSEIF cond_list COLON END_STATEMENT . body END
+    (72) elseif_list -> ELSEIF cond_list COLON END_STATEMENT . body END elseif_list
+    (58) body -> . stmt
+    (59) body -> . stmt body
+    (3) stmt -> . simple_stmt
+    (4) stmt -> . compound_stmt
+    (5) simple_stmt -> . small_stmt END_STATEMENT
+    (49) compound_stmt -> . func_def
+    (50) compound_stmt -> . if_stmt
+    (51) compound_stmt -> . while_stmt
+    (52) compound_stmt -> . for_stmt
+    (6) small_stmt -> . assignment
+    (7) small_stmt -> . const_decl
+    (8) small_stmt -> . func_call
+    (9) small_stmt -> . return_stmt
+    (10) small_stmt -> . loop_stmt
+    (53) func_def -> . head END_STATEMENT body END
+    (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
+    (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
+    (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
+    (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
+    (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN boolean
+    (18) assignment -> . ARRAY_CELL ASSIGN expr
+    (19) assignment -> . ARRAY_CELL ASSIGN boolean
+    (20) const_decl -> . IDENTIFIER CONST expr
+    (21) func_call -> . IDENTIFIER LPAREN call_args RPAREN
+    (22) func_call -> . IDENTIFIER LPAREN RPAREN
+    (11) return_stmt -> . RETURN
+    (12) return_stmt -> . RETURN expr
+    (13) return_stmt -> . RETURN boolean
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (54) head -> . FUNCTION IDENTIFIER LPAREN p_func_def_args RPAREN COLON
+    (55) head -> . FUNCTION IDENTIFIER LPAREN RPAREN COLON
+
+    IF              shift and go to state 19
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 6
+    IDENTIFIER      shift and go to state 9
+    ARRAY_CELL      shift and go to state 2
+    RETURN          shift and go to state 5
+    BREAK           shift and go to state 22
+    CONTINUE        shift and go to state 24
+    FUNCTION        shift and go to state 18
+
+    body                           shift and go to state 140
     func_call                      shift and go to state 20
     head                           shift and go to state 11
     func_def                       shift and go to state 12
@@ -2822,7 +2812,7 @@ state 137
     (53) func_def -> . head END_STATEMENT body END
     (68) if_stmt -> . IF cond_list COLON END_STATEMENT body END
     (69) if_stmt -> . IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
-    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END
+    (70) if_stmt -> . IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END
     (60) while_stmt -> . WHILE cond_list COLON END_STATEMENT body END
     (66) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
     (67) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END
@@ -2851,7 +2841,7 @@ state 137
     CONTINUE        shift and go to state 24
     FUNCTION        shift and go to state 18
 
-    body                           shift and go to state 140
+    body                           shift and go to state 141
     func_call                      shift and go to state 20
     head                           shift and go to state 11
     if_stmt                        shift and go to state 21
@@ -2886,20 +2876,37 @@ state 138
 
 state 139
 
-    (71) elseif_list -> ELSEIF cond_list COLON END_STATEMENT body . END
-    (72) elseif_list -> ELSEIF cond_list COLON END_STATEMENT body . END elseif_list
+    (70) if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .
 
-    END             shift and go to state 141
+    IF              reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    WHILE           reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    FOR             reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    IDENTIFIER      reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    ARRAY_CELL      reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    RETURN          reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    BREAK           reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    CONTINUE        reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    FUNCTION        reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    END             reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
+    $end            reduce using rule 70 (if_stmt -> IF cond_list COLON END_STATEMENT body END ELSE COLON END_STATEMENT body END .)
 
 
 state 140
 
-    (66) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body . END
+    (71) elseif_list -> ELSEIF cond_list COLON END_STATEMENT body . END
+    (72) elseif_list -> ELSEIF cond_list COLON END_STATEMENT body . END elseif_list
 
     END             shift and go to state 142
 
 
 state 141
+
+    (66) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body . END
+
+    END             shift and go to state 143
+
+
+state 142
 
     (71) elseif_list -> ELSEIF cond_list COLON END_STATEMENT body END .
     (72) elseif_list -> ELSEIF cond_list COLON END_STATEMENT body END . elseif_list
@@ -2909,9 +2916,9 @@ state 141
     ELSE            reduce using rule 71 (elseif_list -> ELSEIF cond_list COLON END_STATEMENT body END .)
     ELSEIF          shift and go to state 123
 
-    elseif_list                    shift and go to state 143
+    elseif_list                    shift and go to state 144
 
-state 142
+state 143
 
     (66) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END .
 
@@ -2928,7 +2935,7 @@ state 142
     $end            reduce using rule 66 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END .)
 
 
-state 143
+state 144
 
     (72) elseif_list -> ELSEIF cond_list COLON END_STATEMENT body END elseif_list .
 
