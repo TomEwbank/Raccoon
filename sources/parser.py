@@ -227,6 +227,7 @@ def p_error(p):
 	else:
 		print("Syntax error at EOF")
 
+		
 
 yacc.yacc(outputdir='generated')
 
