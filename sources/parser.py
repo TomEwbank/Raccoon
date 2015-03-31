@@ -126,7 +126,7 @@ def p_compound_stmt(p)
     p[0] = p[1]	
 
 def p_func_def(p)		
-	'''func_def : head INDENT body DEDENT'''
+	'''func_def : head END_STATEMENT body END'''
 	p[0] = AST.FuncDefNode([p[1], p[3]])
 
 def p_head(p)
@@ -154,7 +154,7 @@ def p_body(p)
 		p[0] = AST.BodyNode([p[1]] + p[2].children)
 
 def p_while(p)			
-	'''while_stmt : WHILE cond_list COLON INDENT body DEDENT''' # What if no body? same issue with func_def, if,... 
+	'''while_stmt : WHILE cond_list COLON END_STATEMENT body END''' # What if no body? same issue with func_def, if,... 
 	p[0] = AST.WhileNode([p[2], p[5]])
 	
 def p_cond_list(p)			 
@@ -178,8 +178,8 @@ def p_cond(p)
 		p[0] = p[1]
 
 def p_for(p)			 
-	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON INDENT body DEDENT
-                | FOR IDENTIFIER IN IDENTIFIER COLON INDENT body DEDENT'''
+	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN INTEGER COMMA INTEGER RPAREN COLON END_STATEMENT body END
+                | FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END'''
 	if len(p) == 14:
 		iter = AST.TokenNode(p[2])
 		lowLim = AST.TokenNode(p[6])
@@ -190,9 +190,9 @@ def p_for(p)
 		
 
 def p_if(p)			
-	'''if_stmt : IF cond_list COLON INDENT body DEDENT
-			   | IF cond_list COLON INDENT body DEDENT elseif_list ELSE INDENT body DEDENT
-               | IF cond_list COLON INDENT body DEDENT ELSE INDENT body DEDENT'''
+	'''if_stmt : IF cond_list COLON END_STATEMENT body END
+			   | IF cond_list COLON END_STATEMENT body END elseif_list ELSE END_STATEMENT body END
+               | IF cond_list COLON END_STATEMENT body END ELSE END_STATEMENT body END'''
 	if len(p) == 7:
 		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])])
 	if len(p) == 12:
@@ -201,8 +201,8 @@ def p_if(p)
 		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])], AST.ElseNode([p[10]])])
 
 def p_elseif(p)
-	'''elseif_list : ELSEIF cond_list COLON INDENT body DEDENT
-                   | ELSEIF cond_list COLON INDENT body DEDENT elseif_list'''
+	'''elseif_list : ELSEIF cond_list COLON END_STATEMENT body END
+                   | ELSEIF cond_list COLON END_STATEMENT body END elseif_list'''
 	if len(p) == 7:
 		p[0] = AST.Node([AST.ElseifNode([p[2], p[5]])])
 	if len(p) == 8:
