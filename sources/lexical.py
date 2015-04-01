@@ -49,7 +49,7 @@ reserved = {
 	'in' : 'IN',
 	'becomes':'ASSIGN',
 	'is':'CONST',
-	'else if' : 'ELSEIF',
+	'elseif' : 'ELSEIF',
 	'function' :  'FUNCTION',
 	'end' : 'END',
 
