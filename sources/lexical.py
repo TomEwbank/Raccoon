@@ -23,11 +23,15 @@ tokens = [
 	'COLON',
 	'LPAREN',
 	'RPAREN',
+	'DOT',
+	'QUOTE',
+	'APOSTROPHE',
+	'LSBRACKET',
+	'RSBRACKET',
 	
 	'ARRAY_CELL',
 	'END_STATEMENT',
 	
-
 ]
 
 reserved = {
@@ -55,10 +59,6 @@ reserved = {
 
 tokens += list(reserved.values())
 
-def t_IDENTIFIER(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value,'IDENTIFIER')    
-    return t
 
 t_ADD_OP= r'\+'
 t_SUB_OP= r'-'
@@ -66,7 +66,7 @@ t_MUL_OP= r'\*'
 t_DIV_OP= r'/'
 t_CEQ=r'=\?'
 t_CNE=r'!='
-t_CLT=r'<' 
+t_CLT=r'<'
 t_CLE=r'<='
 t_CGT=r'>'
 t_CGE=r'>='
@@ -76,10 +76,25 @@ t_RPAREN= r'\)'
 t_COMMA= r','
 t_COLON= r':'
 
+t_DOT= r'\.'
+t_QUOTE=r'\"'
+t_APOSTROPHE=r'\''
+t_LSBRACKET=r'\['
+t_RSBRACKET=r'\]'
+
+
+
+
+def t_IDENTIFIER(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value,'IDENTIFIER')    
+    return t
+
+
 def t_ARRAY_CELL(t) :
 	r'[a-zA-Z_][a-zA-Z_0-9]*\[-?\d+\]'
 	return t
- 
+
 
 def t_DOUBLE(t):
 	r'-?[0-9]+\.[0-9]*'
@@ -96,8 +111,11 @@ def t_INTEGER(t):
 		t.value = 0
 	return t
 
-def t_EMPY_LINE(t):
-	r'\n[ ]*\n'
+def t_END_STATEMENT(t):
+	r'(\n[ \t]*)+'
+	t.value=t.value.count('\n')*'\n'
+	t.lexer.lineno += len(t.value)
+	return t
  
 def t_SIMPLE_COMMENTS(t):
 	r'//.*'
@@ -108,30 +126,28 @@ def t_BLOCK_COMMENTS(t):
 	t_END_STATEMENT(t)
 
 
-def t_END_STATEMENT(t) :
-	r'\n'
-	t.lexer.lineno += len(t.value)
-	return t
+
 
 
 def t_error(t) :
 	print("Illegal character '%s'" %t.value[0])
 	t.lexer.skip(1)
 
+
 t_ignore = ' \t'
 
-
-lex.lex()
+lexer = lex.lex()
 
 
 if __name__ == "__main__":
-
 	prog = open(sys.argv[1]).read()
-
-	lex.input(prog)
+	lexer.input(prog)
 	while 1 :
-		tok = lex.token()
-		if not tok: break
-		print("line %d: %s(%s)" %(tok.lineno, tok.type, tok.value))
-
+		tok = lexer.token()
+		if not tok: 
+			break
+		if (tok.type=='END_STATEMENT'):
+			print("end statement line %d\n" %(tok.lineno))
+		else:
+			print("line %d: %s(%s)" %(tok.lineno, tok.type, tok.value))
 
