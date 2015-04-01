@@ -23,15 +23,11 @@ tokens = [
 	'COLON',
 	'LPAREN',
 	'RPAREN',
-	'DOT',
-	'QUOTE',
-	'APOSTROPHE',
-	'LSBRACKET',
-	'RSBRACKET',
 	
 	'ARRAY_CELL',
 	'END_STATEMENT',
-	'EMPY_LINE',
+	
+
 ]
 
 reserved = {
@@ -80,16 +76,10 @@ t_RPAREN= r'\)'
 t_COMMA= r','
 t_COLON= r':'
 
-t_DOT= r'\.'
-t_QUOTE=r'\"'
-t_APOSTROPHE=r'\''
-t_LSBRACKET=r'\['
-t_RSBRACKET=r'\]'
-
 def t_ARRAY_CELL(t) :
 	r'[a-zA-Z_][a-zA-Z_0-9]*\[-?\d+\]'
 	return t
-
+ 
 
 def t_DOUBLE(t):
 	r'-?[0-9]+\.[0-9]*'
@@ -108,17 +98,6 @@ def t_INTEGER(t):
 
 def t_EMPY_LINE(t):
 	r'\n[ ]*\n'
-	
-	t.value=t.value.count('\n')*'\n'
-	#t.lexer.lineno += len(t.value)
-	#print('yepOOO "line %d: %s(%s)'%(t.lineno, t.type, t.value))
-	t_END_STATEMENT(t)
-
-def t_END_STATEMENT(t) :
-	r'\n'
-	t.lexer.lineno += len(t.value)
-	return t
-
  
 def t_SIMPLE_COMMENTS(t):
 	r'//.*'
@@ -129,7 +108,10 @@ def t_BLOCK_COMMENTS(t):
 	t_END_STATEMENT(t)
 
 
-
+def t_END_STATEMENT(t) :
+	r'\n'
+	t.lexer.lineno += len(t.value)
+	return t
 
 
 def t_error(t) :
@@ -151,6 +133,5 @@ if __name__ == "__main__":
 		tok = lex.token()
 		if not tok: break
 		print("line %d: %s(%s)" %(tok.lineno, tok.type, tok.value))
-
 
 
