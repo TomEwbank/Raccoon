@@ -29,9 +29,7 @@ tokens = [
 	'LSBRACKET',
 	'RSBRACKET',
 	
-	'ARRAY_CELL',
 	'END_STATEMENT',
-	
 ]
 
 reserved = {
@@ -84,26 +82,20 @@ t_RSBRACKET=r'\]'
 
 
 
-
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value,'IDENTIFIER')    
     return t
 
 
-def t_ARRAY_CELL(t) :
-	r'[a-zA-Z_][a-zA-Z_0-9]*\[-?\d+\]'
-	return t
-
-
 def t_DOUBLE(t):
-	r'-?[0-9]+\.[0-9]*'
+	r'\d+\.\d*'
 	t.value = float(t.value)
 	return t
 
 
 def t_INTEGER(t):
-	r'-?\d+'
+	r'\d+'
 	try:
 		t.value = int(t.value)
 	except ValueError:
@@ -124,7 +116,6 @@ def t_BLOCK_COMMENTS(t):
 	r'/\*(\n|.)*?(\*/)'
 	t.value=t.value.count('\n')*'\n'
 	t_END_STATEMENT(t)
-
 
 
 
