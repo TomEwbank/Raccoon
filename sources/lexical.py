@@ -53,12 +53,11 @@ reserved = {
 
 }
 
-#tokens += reserved.values()
 tokens += list(reserved.values())
 
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value,'IDENTIFIER')    # Check for reserved words
+    t.type = reserved.get(t.value,'IDENTIFIER')    
     return t
 
 t_ADD_OP= r'\+'
@@ -97,8 +96,8 @@ def t_INTEGER(t):
 		t.value = 0
 	return t
 
-# def t_EMPY_LINE(t):
-	# r'\n[ ]*\n'
+def t_EMPY_LINE(t):
+	r'\n[ ]*\n'
  
 def t_SIMPLE_COMMENTS(t):
 	r'//.*'
@@ -110,8 +109,7 @@ def t_BLOCK_COMMENTS(t):
 
 
 def t_END_STATEMENT(t) :
-	# r'\n'
-	r'\n[ \n]*'
+	r'\n'
 	t.lexer.lineno += len(t.value)
 	return t
 
