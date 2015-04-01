@@ -158,13 +158,17 @@ class ElseifNode(Node):
 class ElseNode(Node):
 	type = 'Else'
 	
-
+class BreakNode(Node):
+	type = 'Break'
 	
-# class breakNode(Node):
-	# type = 'Break'
+class ContinueNode(Node):
+	type = 'Continue'
 	
-# class contiNode(Node):
-	# type = 'Continue'
+class TrueNode(Node):
+	type = 'True'
+	
+class FalseNode(Node):
+	type = 'False'
 	
 
 ############### fin de l'ajout
@@ -190,7 +194,7 @@ class OpNode(Node):
             self.nbargs = 1
         
     def __repr__(self):
-        return "%s (%s)" % (self.op, self.nbargs)
+        return "%s" % (self.op)
     
 # class AssignNode(Node):
     # type = '='
