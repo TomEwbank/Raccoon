@@ -31,7 +31,7 @@ def p_simple_stmt(p):
 def p_small_stmt(p):
 	'''small_stmt : assignment 
 				  | const_decl 
-		   	      | func_call
+		   	      | expr
 			  	  | return_stmt
 			  	  | loop_stmt''' # return, break, and continue are not context free, leave to  semantic analysis? 
 	p[0] = p[1]
@@ -55,7 +55,7 @@ def p_assign(p):
 				  | IDENTIFIER ASSIGN boolean
 			      | ARRAY_CELL ASSIGN expr
 			      | ARRAY_CELL ASSIGN boolean'''
-	p[0] = AST.AssignNode([AST.TokenNode(p[1]), p[3]])
+	p[0] = AST.AssignNode([AST.TokenNode(p[1])] + [p[3]])
 
 def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr'''
@@ -78,8 +78,7 @@ def p_call_args(p):
 		p[0] = AST.Node([p[1]] + p[3].children)
 
 def p_arg(p):
-	'''arg : expr
-           | boolean'''
+	'''arg : expr'''
 	p[0] = p[1]
 
 def p_expr_id(p):
@@ -90,6 +89,7 @@ def p_expr_id(p):
 def p_expr(p):
 	'''expr : func_call
 			| arithmetic
+			| cond_list
 			| LPAREN expr RPAREN'''
 	if len(p) == 2:
 		p[0] = p[1]
@@ -112,7 +112,7 @@ def p_arithmetic(p):
 	           	  | expr MUL_OP expr
 				  | expr DIV_OP expr
 			      | expr MOD_OP expr'''
-	p[0] = AST.OpNode(p[2], [p[1], p[2]])
+	p[0] = AST.OpNode(p[2], [p[1], p[3]])
 	
 
 
