@@ -97,8 +97,8 @@ def t_INTEGER(t):
 		t.value = 0
 	return t
 
-def t_EMPY_LINE(t):
-	r'\n[ ]*\n'
+# def t_EMPY_LINE(t):
+	# r'\n[ ]*\n'
  
 def t_SIMPLE_COMMENTS(t):
 	r'//.*'
@@ -110,7 +110,8 @@ def t_BLOCK_COMMENTS(t):
 
 
 def t_END_STATEMENT(t) :
-	r'\n'
+	# r'\n'
+	r'\n[ \n]*'
 	t.lexer.lineno += len(t.value)
 	return t
 
