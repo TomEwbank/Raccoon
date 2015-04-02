@@ -1,11 +1,16 @@
 Created by PLY version 3.4 (http://www.dabeaz.com/ply)
 
+Unused terminals:
+
+    QUOTE
+    APOSTROPHE
+
 Grammar
 
 Rule 0     S' -> program
 Rule 1     program -> stmt
 Rule 2     program -> stmt program
-Rule 3     stmt -> END_STATEMENT
+Rule 3     program -> END_STATEMENT stmt program
 Rule 4     stmt -> simple_stmt
 Rule 5     stmt -> compound_stmt
 Rule 6     simple_stmt -> small_stmt END_STATEMENT
@@ -75,6 +80,7 @@ Terminals, with rules where they appear
 
 ADD_OP               : 33
 AND                  : 41
+APOSTROPHE           : 
 ASSIGN               : 16 17
 BREAK                : 14
 CEQ                  : 42
@@ -105,6 +111,7 @@ LSBRACKET            : 17 24
 MOD_OP               : 37
 MUL_OP               : 35
 OR                   : 40
+QUOTE                : 
 RANGE                : 60
 RETURN               : 12 13
 RPAREN               : 19 20 26 53 54 60
@@ -134,11 +141,11 @@ head                 : 52
 if_stmt              : 49
 list_args            : 17 19 22
 loop_stmt            : 11
-program              : 2 0
+program              : 2 3 0
 return_stmt          : 10
 simple_stmt          : 4
 small_stmt           : 6
-stmt                 : 1 2 57 58
+stmt                 : 1 2 3 57 58
 while_stmt           : 50
 
 Parsing method: LALR
@@ -148,7 +155,7 @@ state 0
     (0) S' -> . program
     (1) program -> . stmt
     (2) program -> . stmt program
-    (3) stmt -> . END_STATEMENT
+    (3) program -> . END_STATEMENT stmt program
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -299,10 +306,10 @@ state 4
     CGT             reduce using rule 30 (expr -> boolean .)
     CGE             reduce using rule 30 (expr -> boolean .)
     END_STATEMENT   reduce using rule 30 (expr -> boolean .)
-    COMMA           reduce using rule 30 (expr -> boolean .)
-    RPAREN          reduce using rule 30 (expr -> boolean .)
     COLON           reduce using rule 30 (expr -> boolean .)
+    RPAREN          reduce using rule 30 (expr -> boolean .)
     RSBRACKET       reduce using rule 30 (expr -> boolean .)
+    COMMA           reduce using rule 30 (expr -> boolean .)
 
 
 state 5
@@ -367,10 +374,10 @@ state 7
     CGT             reduce using rule 28 (expr -> INTEGER .)
     CGE             reduce using rule 28 (expr -> INTEGER .)
     END_STATEMENT   reduce using rule 28 (expr -> INTEGER .)
-    COMMA           reduce using rule 28 (expr -> INTEGER .)
-    RPAREN          reduce using rule 28 (expr -> INTEGER .)
     COLON           reduce using rule 28 (expr -> INTEGER .)
+    RPAREN          reduce using rule 28 (expr -> INTEGER .)
     RSBRACKET       reduce using rule 28 (expr -> INTEGER .)
+    COMMA           reduce using rule 28 (expr -> INTEGER .)
 
 
 state 8
@@ -391,8 +398,8 @@ state 8
     CGT             reduce using rule 31 (boolean -> TRUE .)
     CGE             reduce using rule 31 (boolean -> TRUE .)
     END_STATEMENT   reduce using rule 31 (boolean -> TRUE .)
-    RPAREN          reduce using rule 31 (boolean -> TRUE .)
     COLON           reduce using rule 31 (boolean -> TRUE .)
+    RPAREN          reduce using rule 31 (boolean -> TRUE .)
     RSBRACKET       reduce using rule 31 (boolean -> TRUE .)
     COMMA           reduce using rule 31 (boolean -> TRUE .)
 
@@ -452,7 +459,6 @@ state 13
 
     (5) stmt -> compound_stmt .
 
-    END_STATEMENT   reduce using rule 5 (stmt -> compound_stmt .)
     FUNCTION        reduce using rule 5 (stmt -> compound_stmt .)
     IF              reduce using rule 5 (stmt -> compound_stmt .)
     WHILE           reduce using rule 5 (stmt -> compound_stmt .)
@@ -468,31 +474,90 @@ state 13
     TRUE            reduce using rule 5 (stmt -> compound_stmt .)
     FALSE           reduce using rule 5 (stmt -> compound_stmt .)
     END             reduce using rule 5 (stmt -> compound_stmt .)
+    END_STATEMENT   reduce using rule 5 (stmt -> compound_stmt .)
     $end            reduce using rule 5 (stmt -> compound_stmt .)
 
 
 state 14
 
-    (3) stmt -> END_STATEMENT .
+    (3) program -> END_STATEMENT . stmt program
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
 
-    END_STATEMENT   reduce using rule 3 (stmt -> END_STATEMENT .)
-    FUNCTION        reduce using rule 3 (stmt -> END_STATEMENT .)
-    IF              reduce using rule 3 (stmt -> END_STATEMENT .)
-    WHILE           reduce using rule 3 (stmt -> END_STATEMENT .)
-    FOR             reduce using rule 3 (stmt -> END_STATEMENT .)
-    IDENTIFIER      reduce using rule 3 (stmt -> END_STATEMENT .)
-    STRING          reduce using rule 3 (stmt -> END_STATEMENT .)
-    LPAREN          reduce using rule 3 (stmt -> END_STATEMENT .)
-    INTEGER         reduce using rule 3 (stmt -> END_STATEMENT .)
-    DOUBLE          reduce using rule 3 (stmt -> END_STATEMENT .)
-    RETURN          reduce using rule 3 (stmt -> END_STATEMENT .)
-    BREAK           reduce using rule 3 (stmt -> END_STATEMENT .)
-    CONTINUE        reduce using rule 3 (stmt -> END_STATEMENT .)
-    TRUE            reduce using rule 3 (stmt -> END_STATEMENT .)
-    FALSE           reduce using rule 3 (stmt -> END_STATEMENT .)
-    END             reduce using rule 3 (stmt -> END_STATEMENT .)
-    $end            reduce using rule 3 (stmt -> END_STATEMENT .)
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 23
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
 
+    small_stmt                     shift and go to state 2
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    const_decl                     shift and go to state 10
+    compound_stmt                  shift and go to state 13
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    assignment                     shift and go to state 18
+    stmt                           shift and go to state 43
+    for_stmt                       shift and go to state 20
+    loop_stmt                      shift and go to state 21
+    func_call                      shift and go to state 24
+    if_stmt                        shift and go to state 26
+    expr                           shift and go to state 27
+    while_stmt                     shift and go to state 29
 
 state 15
 
@@ -512,10 +577,10 @@ state 15
     CGT             reduce using rule 25 (expr -> STRING .)
     CGE             reduce using rule 25 (expr -> STRING .)
     END_STATEMENT   reduce using rule 25 (expr -> STRING .)
-    COMMA           reduce using rule 25 (expr -> STRING .)
-    RPAREN          reduce using rule 25 (expr -> STRING .)
     COLON           reduce using rule 25 (expr -> STRING .)
+    RPAREN          reduce using rule 25 (expr -> STRING .)
     RSBRACKET       reduce using rule 25 (expr -> STRING .)
+    COMMA           reduce using rule 25 (expr -> STRING .)
 
 
 state 16
@@ -537,15 +602,14 @@ state 16
     CONTINUE        reduce using rule 48 (compound_stmt -> func_def .)
     TRUE            reduce using rule 48 (compound_stmt -> func_def .)
     FALSE           reduce using rule 48 (compound_stmt -> func_def .)
-    END             reduce using rule 48 (compound_stmt -> func_def .)
     $end            reduce using rule 48 (compound_stmt -> func_def .)
+    END             reduce using rule 48 (compound_stmt -> func_def .)
 
 
 state 17
 
     (4) stmt -> simple_stmt .
 
-    END_STATEMENT   reduce using rule 4 (stmt -> simple_stmt .)
     FUNCTION        reduce using rule 4 (stmt -> simple_stmt .)
     IF              reduce using rule 4 (stmt -> simple_stmt .)
     WHILE           reduce using rule 4 (stmt -> simple_stmt .)
@@ -561,6 +625,7 @@ state 17
     TRUE            reduce using rule 4 (stmt -> simple_stmt .)
     FALSE           reduce using rule 4 (stmt -> simple_stmt .)
     END             reduce using rule 4 (stmt -> simple_stmt .)
+    END_STATEMENT   reduce using rule 4 (stmt -> simple_stmt .)
     $end            reduce using rule 4 (stmt -> simple_stmt .)
 
 
@@ -577,7 +642,7 @@ state 19
     (2) program -> stmt . program
     (1) program -> . stmt
     (2) program -> . stmt program
-    (3) stmt -> . END_STATEMENT
+    (3) program -> . END_STATEMENT stmt program
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -646,7 +711,7 @@ state 19
     boolean                        shift and go to state 4
     return_stmt                    shift and go to state 5
     const_decl                     shift and go to state 10
-    program                        shift and go to state 43
+    program                        shift and go to state 44
     compound_stmt                  shift and go to state 13
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
@@ -678,8 +743,8 @@ state 20
     CONTINUE        reduce using rule 51 (compound_stmt -> for_stmt .)
     TRUE            reduce using rule 51 (compound_stmt -> for_stmt .)
     FALSE           reduce using rule 51 (compound_stmt -> for_stmt .)
-    END             reduce using rule 51 (compound_stmt -> for_stmt .)
     $end            reduce using rule 51 (compound_stmt -> for_stmt .)
+    END             reduce using rule 51 (compound_stmt -> for_stmt .)
 
 
 state 21
@@ -721,7 +786,7 @@ state 22
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 44
+    expr                           shift and go to state 45
     boolean                        shift and go to state 4
 
 state 23
@@ -759,7 +824,7 @@ state 23
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 45
+    expr                           shift and go to state 46
     boolean                        shift and go to state 4
 
 state 24
@@ -780,10 +845,10 @@ state 24
     CGT             reduce using rule 27 (expr -> func_call .)
     CGE             reduce using rule 27 (expr -> func_call .)
     END_STATEMENT   reduce using rule 27 (expr -> func_call .)
-    COMMA           reduce using rule 27 (expr -> func_call .)
-    RPAREN          reduce using rule 27 (expr -> func_call .)
     COLON           reduce using rule 27 (expr -> func_call .)
+    RPAREN          reduce using rule 27 (expr -> func_call .)
     RSBRACKET       reduce using rule 27 (expr -> func_call .)
+    COMMA           reduce using rule 27 (expr -> func_call .)
 
 
 state 25
@@ -804,8 +869,8 @@ state 25
     CGT             reduce using rule 32 (boolean -> FALSE .)
     CGE             reduce using rule 32 (boolean -> FALSE .)
     END_STATEMENT   reduce using rule 32 (boolean -> FALSE .)
-    RPAREN          reduce using rule 32 (boolean -> FALSE .)
     COLON           reduce using rule 32 (boolean -> FALSE .)
+    RPAREN          reduce using rule 32 (boolean -> FALSE .)
     RSBRACKET       reduce using rule 32 (boolean -> FALSE .)
     COMMA           reduce using rule 32 (boolean -> FALSE .)
 
@@ -829,8 +894,8 @@ state 26
     CONTINUE        reduce using rule 49 (compound_stmt -> if_stmt .)
     TRUE            reduce using rule 49 (compound_stmt -> if_stmt .)
     FALSE           reduce using rule 49 (compound_stmt -> if_stmt .)
-    END             reduce using rule 49 (compound_stmt -> if_stmt .)
     $end            reduce using rule 49 (compound_stmt -> if_stmt .)
+    END             reduce using rule 49 (compound_stmt -> if_stmt .)
 
 
 state 27
@@ -853,22 +918,22 @@ state 27
     (47) comp_op -> . CGE
 
     END_STATEMENT   reduce using rule 9 (small_stmt -> expr .)
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
 state 28
 
@@ -896,8 +961,8 @@ state 29
     CONTINUE        reduce using rule 50 (compound_stmt -> while_stmt .)
     TRUE            reduce using rule 50 (compound_stmt -> while_stmt .)
     FALSE           reduce using rule 50 (compound_stmt -> while_stmt .)
-    END             reduce using rule 50 (compound_stmt -> while_stmt .)
     $end            reduce using rule 50 (compound_stmt -> while_stmt .)
+    END             reduce using rule 50 (compound_stmt -> while_stmt .)
 
 
 state 30
@@ -925,17 +990,17 @@ state 31
     CGT             reduce using rule 29 (expr -> DOUBLE .)
     CGE             reduce using rule 29 (expr -> DOUBLE .)
     END_STATEMENT   reduce using rule 29 (expr -> DOUBLE .)
-    COMMA           reduce using rule 29 (expr -> DOUBLE .)
-    RPAREN          reduce using rule 29 (expr -> DOUBLE .)
     COLON           reduce using rule 29 (expr -> DOUBLE .)
+    RPAREN          reduce using rule 29 (expr -> DOUBLE .)
     RSBRACKET       reduce using rule 29 (expr -> DOUBLE .)
+    COMMA           reduce using rule 29 (expr -> DOUBLE .)
 
 
 state 32
 
     (52) func_def -> FUNCTION head . END_STATEMENT body END END_STATEMENT
 
-    END_STATEMENT   shift and go to state 61
+    END_STATEMENT   shift and go to state 62
 
 
 state 33
@@ -943,14 +1008,13 @@ state 33
     (53) head -> IDENTIFIER . LPAREN func_def_args RPAREN COLON
     (54) head -> IDENTIFIER . LPAREN RPAREN COLON
 
-    LPAREN          shift and go to state 62
+    LPAREN          shift and go to state 63
 
 
 state 34
 
     (6) simple_stmt -> small_stmt END_STATEMENT .
 
-    END_STATEMENT   reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     FUNCTION        reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     IF              reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     WHILE           reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
@@ -966,6 +1030,7 @@ state 34
     TRUE            reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     FALSE           reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     END             reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
+    END_STATEMENT   reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     $end            reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
 
 
@@ -990,10 +1055,10 @@ state 35
     CGT             reduce using rule 23 (expr -> IDENTIFIER .)
     CGE             reduce using rule 23 (expr -> IDENTIFIER .)
     END_STATEMENT   reduce using rule 23 (expr -> IDENTIFIER .)
-    COMMA           reduce using rule 23 (expr -> IDENTIFIER .)
-    RPAREN          reduce using rule 23 (expr -> IDENTIFIER .)
     COLON           reduce using rule 23 (expr -> IDENTIFIER .)
+    RPAREN          reduce using rule 23 (expr -> IDENTIFIER .)
     RSBRACKET       reduce using rule 23 (expr -> IDENTIFIER .)
+    COMMA           reduce using rule 23 (expr -> IDENTIFIER .)
     LSBRACKET       shift and go to state 40
     LPAREN          shift and go to state 41
 
@@ -1017,23 +1082,23 @@ state 36
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
-    COLON           shift and go to state 63
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    COLON           shift and go to state 64
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
 state 37
 
@@ -1055,29 +1120,29 @@ state 37
     (47) comp_op -> . CGE
 
     END_STATEMENT   reduce using rule 13 (return_stmt -> RETURN expr .)
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
 state 38
 
     (60) for_stmt -> FOR IDENTIFIER . IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
     (61) for_stmt -> FOR IDENTIFIER . IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
 
-    IN              shift and go to state 64
+    IN              shift and go to state 65
 
 
 state 39
@@ -1112,7 +1177,7 @@ state 39
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 65
+    expr                           shift and go to state 66
     boolean                        shift and go to state 4
 
 state 40
@@ -1147,7 +1212,7 @@ state 40
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 66
+    expr                           shift and go to state 67
     boolean                        shift and go to state 4
 
 state 41
@@ -1176,7 +1241,7 @@ state 41
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    RPAREN          shift and go to state 68
+    RPAREN          shift and go to state 69
     IDENTIFIER      shift and go to state 35
     STRING          shift and go to state 15
     LPAREN          shift and go to state 22
@@ -1186,9 +1251,9 @@ state 41
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 69
+    expr                           shift and go to state 70
     boolean                        shift and go to state 4
-    list_args                      shift and go to state 67
+    list_args                      shift and go to state 68
 
 state 42
 
@@ -1214,7 +1279,7 @@ state 42
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    LSBRACKET       shift and go to state 70
+    LSBRACKET       shift and go to state 71
     IDENTIFIER      shift and go to state 35
     STRING          shift and go to state 15
     LPAREN          shift and go to state 22
@@ -1224,448 +1289,15 @@ state 42
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 71
+    expr                           shift and go to state 72
     boolean                        shift and go to state 4
 
 state 43
 
-    (2) program -> stmt program .
-
-    $end            reduce using rule 2 (program -> stmt program .)
-
-
-state 44
-
-    (26) expr -> LPAREN expr . RPAREN
-    (33) expr -> expr . ADD_OP expr
-    (34) expr -> expr . SUB_OP expr
-    (35) expr -> expr . MUL_OP expr
-    (36) expr -> expr . DIV_OP expr
-    (37) expr -> expr . MOD_OP expr
-    (38) expr -> expr . comb_op expr
-    (39) expr -> expr . comp_op expr
-    (40) comb_op -> . OR
-    (41) comb_op -> . AND
-    (42) comp_op -> . CEQ
-    (43) comp_op -> . CNE
-    (44) comp_op -> . CLT
-    (45) comp_op -> . CLE
-    (46) comp_op -> . CGT
-    (47) comp_op -> . CGE
-
-    RPAREN          shift and go to state 72
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
-
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
-
-state 45
-
-    (62) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (33) expr -> expr . ADD_OP expr
-    (34) expr -> expr . SUB_OP expr
-    (35) expr -> expr . MUL_OP expr
-    (36) expr -> expr . DIV_OP expr
-    (37) expr -> expr . MOD_OP expr
-    (38) expr -> expr . comb_op expr
-    (39) expr -> expr . comp_op expr
-    (40) comb_op -> . OR
-    (41) comb_op -> . AND
-    (42) comp_op -> . CEQ
-    (43) comp_op -> . CNE
-    (44) comp_op -> . CLT
-    (45) comp_op -> . CLE
-    (46) comp_op -> . CGT
-    (47) comp_op -> . CGE
-
-    COLON           shift and go to state 73
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
-
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
-
-state 46
-
-    (41) comb_op -> AND .
-
-    IDENTIFIER      reduce using rule 41 (comb_op -> AND .)
-    STRING          reduce using rule 41 (comb_op -> AND .)
-    LPAREN          reduce using rule 41 (comb_op -> AND .)
-    INTEGER         reduce using rule 41 (comb_op -> AND .)
-    DOUBLE          reduce using rule 41 (comb_op -> AND .)
-    TRUE            reduce using rule 41 (comb_op -> AND .)
-    FALSE           reduce using rule 41 (comb_op -> AND .)
-
-
-state 47
-
-    (45) comp_op -> CLE .
-
-    IDENTIFIER      reduce using rule 45 (comp_op -> CLE .)
-    STRING          reduce using rule 45 (comp_op -> CLE .)
-    LPAREN          reduce using rule 45 (comp_op -> CLE .)
-    INTEGER         reduce using rule 45 (comp_op -> CLE .)
-    DOUBLE          reduce using rule 45 (comp_op -> CLE .)
-    TRUE            reduce using rule 45 (comp_op -> CLE .)
-    FALSE           reduce using rule 45 (comp_op -> CLE .)
-
-
-state 48
-
-    (35) expr -> expr MUL_OP . expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 74
-    boolean                        shift and go to state 4
-
-state 49
-
-    (46) comp_op -> CGT .
-
-    IDENTIFIER      reduce using rule 46 (comp_op -> CGT .)
-    STRING          reduce using rule 46 (comp_op -> CGT .)
-    LPAREN          reduce using rule 46 (comp_op -> CGT .)
-    INTEGER         reduce using rule 46 (comp_op -> CGT .)
-    DOUBLE          reduce using rule 46 (comp_op -> CGT .)
-    TRUE            reduce using rule 46 (comp_op -> CGT .)
-    FALSE           reduce using rule 46 (comp_op -> CGT .)
-
-
-state 50
-
-    (47) comp_op -> CGE .
-
-    IDENTIFIER      reduce using rule 47 (comp_op -> CGE .)
-    STRING          reduce using rule 47 (comp_op -> CGE .)
-    LPAREN          reduce using rule 47 (comp_op -> CGE .)
-    INTEGER         reduce using rule 47 (comp_op -> CGE .)
-    DOUBLE          reduce using rule 47 (comp_op -> CGE .)
-    TRUE            reduce using rule 47 (comp_op -> CGE .)
-    FALSE           reduce using rule 47 (comp_op -> CGE .)
-
-
-state 51
-
-    (38) expr -> expr comb_op . expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 75
-    boolean                        shift and go to state 4
-
-state 52
-
-    (39) expr -> expr comp_op . expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 76
-    boolean                        shift and go to state 4
-
-state 53
-
-    (34) expr -> expr SUB_OP . expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 77
-    boolean                        shift and go to state 4
-
-state 54
-
-    (36) expr -> expr DIV_OP . expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 78
-    boolean                        shift and go to state 4
-
-state 55
-
-    (43) comp_op -> CNE .
-
-    IDENTIFIER      reduce using rule 43 (comp_op -> CNE .)
-    STRING          reduce using rule 43 (comp_op -> CNE .)
-    LPAREN          reduce using rule 43 (comp_op -> CNE .)
-    INTEGER         reduce using rule 43 (comp_op -> CNE .)
-    DOUBLE          reduce using rule 43 (comp_op -> CNE .)
-    TRUE            reduce using rule 43 (comp_op -> CNE .)
-    FALSE           reduce using rule 43 (comp_op -> CNE .)
-
-
-state 56
-
-    (42) comp_op -> CEQ .
-
-    IDENTIFIER      reduce using rule 42 (comp_op -> CEQ .)
-    STRING          reduce using rule 42 (comp_op -> CEQ .)
-    LPAREN          reduce using rule 42 (comp_op -> CEQ .)
-    INTEGER         reduce using rule 42 (comp_op -> CEQ .)
-    DOUBLE          reduce using rule 42 (comp_op -> CEQ .)
-    TRUE            reduce using rule 42 (comp_op -> CEQ .)
-    FALSE           reduce using rule 42 (comp_op -> CEQ .)
-
-
-state 57
-
-    (33) expr -> expr ADD_OP . expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 79
-    boolean                        shift and go to state 4
-
-state 58
-
-    (44) comp_op -> CLT .
-
-    IDENTIFIER      reduce using rule 44 (comp_op -> CLT .)
-    STRING          reduce using rule 44 (comp_op -> CLT .)
-    LPAREN          reduce using rule 44 (comp_op -> CLT .)
-    INTEGER         reduce using rule 44 (comp_op -> CLT .)
-    DOUBLE          reduce using rule 44 (comp_op -> CLT .)
-    TRUE            reduce using rule 44 (comp_op -> CLT .)
-    FALSE           reduce using rule 44 (comp_op -> CLT .)
-
-
-state 59
-
-    (37) expr -> expr MOD_OP . expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 80
-    boolean                        shift and go to state 4
-
-state 60
-
-    (40) comb_op -> OR .
-
-    IDENTIFIER      reduce using rule 40 (comb_op -> OR .)
-    STRING          reduce using rule 40 (comb_op -> OR .)
-    LPAREN          reduce using rule 40 (comb_op -> OR .)
-    INTEGER         reduce using rule 40 (comb_op -> OR .)
-    DOUBLE          reduce using rule 40 (comb_op -> OR .)
-    TRUE            reduce using rule 40 (comb_op -> OR .)
-    FALSE           reduce using rule 40 (comb_op -> OR .)
-
-
-state 61
-
-    (52) func_def -> FUNCTION head END_STATEMENT . body END END_STATEMENT
-    (57) body -> . stmt
-    (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
+    (3) program -> END_STATEMENT stmt . program
+    (1) program -> . stmt
+    (2) program -> . stmt program
+    (3) program -> . END_STATEMENT stmt program
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -1729,14 +1361,531 @@ state 61
     TRUE            shift and go to state 8
     FALSE           shift and go to state 25
 
-    body                           shift and go to state 81
+    small_stmt                     shift and go to state 2
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    const_decl                     shift and go to state 10
+    program                        shift and go to state 73
+    compound_stmt                  shift and go to state 13
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    assignment                     shift and go to state 18
+    stmt                           shift and go to state 19
+    for_stmt                       shift and go to state 20
+    loop_stmt                      shift and go to state 21
+    func_call                      shift and go to state 24
+    if_stmt                        shift and go to state 26
+    expr                           shift and go to state 27
+    while_stmt                     shift and go to state 29
+
+state 44
+
+    (2) program -> stmt program .
+
+    $end            reduce using rule 2 (program -> stmt program .)
+
+
+state 45
+
+    (26) expr -> LPAREN expr . RPAREN
+    (33) expr -> expr . ADD_OP expr
+    (34) expr -> expr . SUB_OP expr
+    (35) expr -> expr . MUL_OP expr
+    (36) expr -> expr . DIV_OP expr
+    (37) expr -> expr . MOD_OP expr
+    (38) expr -> expr . comb_op expr
+    (39) expr -> expr . comp_op expr
+    (40) comb_op -> . OR
+    (41) comb_op -> . AND
+    (42) comp_op -> . CEQ
+    (43) comp_op -> . CNE
+    (44) comp_op -> . CLT
+    (45) comp_op -> . CLE
+    (46) comp_op -> . CGT
+    (47) comp_op -> . CGE
+
+    RPAREN          shift and go to state 74
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
+
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
+
+state 46
+
+    (62) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT
+    (63) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (64) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
+    (65) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (33) expr -> expr . ADD_OP expr
+    (34) expr -> expr . SUB_OP expr
+    (35) expr -> expr . MUL_OP expr
+    (36) expr -> expr . DIV_OP expr
+    (37) expr -> expr . MOD_OP expr
+    (38) expr -> expr . comb_op expr
+    (39) expr -> expr . comp_op expr
+    (40) comb_op -> . OR
+    (41) comb_op -> . AND
+    (42) comp_op -> . CEQ
+    (43) comp_op -> . CNE
+    (44) comp_op -> . CLT
+    (45) comp_op -> . CLE
+    (46) comp_op -> . CGT
+    (47) comp_op -> . CGE
+
+    COLON           shift and go to state 75
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
+
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
+
+state 47
+
+    (41) comb_op -> AND .
+
+    IDENTIFIER      reduce using rule 41 (comb_op -> AND .)
+    STRING          reduce using rule 41 (comb_op -> AND .)
+    LPAREN          reduce using rule 41 (comb_op -> AND .)
+    INTEGER         reduce using rule 41 (comb_op -> AND .)
+    DOUBLE          reduce using rule 41 (comb_op -> AND .)
+    TRUE            reduce using rule 41 (comb_op -> AND .)
+    FALSE           reduce using rule 41 (comb_op -> AND .)
+
+
+state 48
+
+    (45) comp_op -> CLE .
+
+    IDENTIFIER      reduce using rule 45 (comp_op -> CLE .)
+    STRING          reduce using rule 45 (comp_op -> CLE .)
+    LPAREN          reduce using rule 45 (comp_op -> CLE .)
+    INTEGER         reduce using rule 45 (comp_op -> CLE .)
+    DOUBLE          reduce using rule 45 (comp_op -> CLE .)
+    TRUE            reduce using rule 45 (comp_op -> CLE .)
+    FALSE           reduce using rule 45 (comp_op -> CLE .)
+
+
+state 49
+
+    (35) expr -> expr MUL_OP . expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    func_call                      shift and go to state 24
+    expr                           shift and go to state 76
+    boolean                        shift and go to state 4
+
+state 50
+
+    (46) comp_op -> CGT .
+
+    IDENTIFIER      reduce using rule 46 (comp_op -> CGT .)
+    STRING          reduce using rule 46 (comp_op -> CGT .)
+    LPAREN          reduce using rule 46 (comp_op -> CGT .)
+    INTEGER         reduce using rule 46 (comp_op -> CGT .)
+    DOUBLE          reduce using rule 46 (comp_op -> CGT .)
+    TRUE            reduce using rule 46 (comp_op -> CGT .)
+    FALSE           reduce using rule 46 (comp_op -> CGT .)
+
+
+state 51
+
+    (47) comp_op -> CGE .
+
+    IDENTIFIER      reduce using rule 47 (comp_op -> CGE .)
+    STRING          reduce using rule 47 (comp_op -> CGE .)
+    LPAREN          reduce using rule 47 (comp_op -> CGE .)
+    INTEGER         reduce using rule 47 (comp_op -> CGE .)
+    DOUBLE          reduce using rule 47 (comp_op -> CGE .)
+    TRUE            reduce using rule 47 (comp_op -> CGE .)
+    FALSE           reduce using rule 47 (comp_op -> CGE .)
+
+
+state 52
+
+    (38) expr -> expr comb_op . expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    func_call                      shift and go to state 24
+    expr                           shift and go to state 77
+    boolean                        shift and go to state 4
+
+state 53
+
+    (39) expr -> expr comp_op . expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    func_call                      shift and go to state 24
+    expr                           shift and go to state 78
+    boolean                        shift and go to state 4
+
+state 54
+
+    (34) expr -> expr SUB_OP . expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    func_call                      shift and go to state 24
+    expr                           shift and go to state 79
+    boolean                        shift and go to state 4
+
+state 55
+
+    (36) expr -> expr DIV_OP . expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    func_call                      shift and go to state 24
+    expr                           shift and go to state 80
+    boolean                        shift and go to state 4
+
+state 56
+
+    (43) comp_op -> CNE .
+
+    IDENTIFIER      reduce using rule 43 (comp_op -> CNE .)
+    STRING          reduce using rule 43 (comp_op -> CNE .)
+    LPAREN          reduce using rule 43 (comp_op -> CNE .)
+    INTEGER         reduce using rule 43 (comp_op -> CNE .)
+    DOUBLE          reduce using rule 43 (comp_op -> CNE .)
+    TRUE            reduce using rule 43 (comp_op -> CNE .)
+    FALSE           reduce using rule 43 (comp_op -> CNE .)
+
+
+state 57
+
+    (42) comp_op -> CEQ .
+
+    IDENTIFIER      reduce using rule 42 (comp_op -> CEQ .)
+    STRING          reduce using rule 42 (comp_op -> CEQ .)
+    LPAREN          reduce using rule 42 (comp_op -> CEQ .)
+    INTEGER         reduce using rule 42 (comp_op -> CEQ .)
+    DOUBLE          reduce using rule 42 (comp_op -> CEQ .)
+    TRUE            reduce using rule 42 (comp_op -> CEQ .)
+    FALSE           reduce using rule 42 (comp_op -> CEQ .)
+
+
+state 58
+
+    (33) expr -> expr ADD_OP . expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    func_call                      shift and go to state 24
+    expr                           shift and go to state 81
+    boolean                        shift and go to state 4
+
+state 59
+
+    (44) comp_op -> CLT .
+
+    IDENTIFIER      reduce using rule 44 (comp_op -> CLT .)
+    STRING          reduce using rule 44 (comp_op -> CLT .)
+    LPAREN          reduce using rule 44 (comp_op -> CLT .)
+    INTEGER         reduce using rule 44 (comp_op -> CLT .)
+    DOUBLE          reduce using rule 44 (comp_op -> CLT .)
+    TRUE            reduce using rule 44 (comp_op -> CLT .)
+    FALSE           reduce using rule 44 (comp_op -> CLT .)
+
+
+state 60
+
+    (37) expr -> expr MOD_OP . expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    func_call                      shift and go to state 24
+    expr                           shift and go to state 82
+    boolean                        shift and go to state 4
+
+state 61
+
+    (40) comb_op -> OR .
+
+    IDENTIFIER      reduce using rule 40 (comb_op -> OR .)
+    STRING          reduce using rule 40 (comb_op -> OR .)
+    LPAREN          reduce using rule 40 (comb_op -> OR .)
+    INTEGER         reduce using rule 40 (comb_op -> OR .)
+    DOUBLE          reduce using rule 40 (comb_op -> OR .)
+    TRUE            reduce using rule 40 (comb_op -> OR .)
+    FALSE           reduce using rule 40 (comb_op -> OR .)
+
+
+state 62
+
+    (52) func_def -> FUNCTION head END_STATEMENT . body END END_STATEMENT
+    (57) body -> . stmt
+    (58) body -> . stmt body
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 23
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
+
+    body                           shift and go to state 83
     func_call                      shift and go to state 24
     if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     assignment                     shift and go to state 18
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -1746,35 +1895,35 @@ state 61
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
 
-state 62
+state 63
 
     (53) head -> IDENTIFIER LPAREN . func_def_args RPAREN COLON
     (54) head -> IDENTIFIER LPAREN . RPAREN COLON
     (55) func_def_args -> . IDENTIFIER
     (56) func_def_args -> . IDENTIFIER COMMA func_def_args
 
-    RPAREN          shift and go to state 84
-    IDENTIFIER      shift and go to state 85
+    RPAREN          shift and go to state 86
+    IDENTIFIER      shift and go to state 87
 
-    func_def_args                  shift and go to state 83
+    func_def_args                  shift and go to state 85
 
-state 63
+state 64
 
     (59) while_stmt -> WHILE expr COLON . END_STATEMENT body END END_STATEMENT
 
-    END_STATEMENT   shift and go to state 86
+    END_STATEMENT   shift and go to state 88
 
 
-state 64
+state 65
 
     (60) for_stmt -> FOR IDENTIFIER IN . RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
     (61) for_stmt -> FOR IDENTIFIER IN . IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
 
-    RANGE           shift and go to state 87
-    IDENTIFIER      shift and go to state 88
+    RANGE           shift and go to state 89
+    IDENTIFIER      shift and go to state 90
 
 
-state 65
+state 66
 
     (18) const_decl -> IDENTIFIER CONST expr .
     (33) expr -> expr . ADD_OP expr
@@ -1794,24 +1943,24 @@ state 65
     (47) comp_op -> . CGE
 
     END_STATEMENT   reduce using rule 18 (const_decl -> IDENTIFIER CONST expr .)
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 66
+state 67
 
     (24) expr -> IDENTIFIER LSBRACKET expr . RSBRACKET
     (33) expr -> expr . ADD_OP expr
@@ -1830,32 +1979,32 @@ state 66
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
-    RSBRACKET       shift and go to state 89
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    RSBRACKET       shift and go to state 91
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 67
+state 68
 
     (19) func_call -> IDENTIFIER LPAREN list_args . RPAREN
 
-    RPAREN          shift and go to state 90
+    RPAREN          shift and go to state 92
 
 
-state 68
+state 69
 
     (20) func_call -> IDENTIFIER LPAREN RPAREN .
 
@@ -1879,7 +2028,7 @@ state 68
     COMMA           reduce using rule 20 (func_call -> IDENTIFIER LPAREN RPAREN .)
 
 
-state 69
+state 70
 
     (21) list_args -> expr .
     (22) list_args -> expr . COMMA list_args
@@ -1899,27 +2048,27 @@ state 69
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
-    RPAREN          reduce using rule 21 (list_args -> expr .)
     RSBRACKET       reduce using rule 21 (list_args -> expr .)
-    COMMA           shift and go to state 91
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    RPAREN          reduce using rule 21 (list_args -> expr .)
+    COMMA           shift and go to state 93
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 70
+state 71
 
     (17) assignment -> IDENTIFIER ASSIGN LSBRACKET . list_args RSBRACKET
     (21) list_args -> . expr
@@ -1953,11 +2102,11 @@ state 70
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 69
+    expr                           shift and go to state 70
     boolean                        shift and go to state 4
-    list_args                      shift and go to state 92
+    list_args                      shift and go to state 94
 
-state 71
+state 72
 
     (16) assignment -> IDENTIFIER ASSIGN expr .
     (33) expr -> expr . ADD_OP expr
@@ -1977,24 +2126,31 @@ state 71
     (47) comp_op -> . CGE
 
     END_STATEMENT   reduce using rule 16 (assignment -> IDENTIFIER ASSIGN expr .)
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 72
+state 73
+
+    (3) program -> END_STATEMENT stmt program .
+
+    $end            reduce using rule 3 (program -> END_STATEMENT stmt program .)
+
+
+state 74
 
     (26) expr -> LPAREN expr RPAREN .
 
@@ -2012,23 +2168,23 @@ state 72
     CGT             reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     CGE             reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     END_STATEMENT   reduce using rule 26 (expr -> LPAREN expr RPAREN .)
-    COMMA           reduce using rule 26 (expr -> LPAREN expr RPAREN .)
-    RPAREN          reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     COLON           reduce using rule 26 (expr -> LPAREN expr RPAREN .)
+    RPAREN          reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     RSBRACKET       reduce using rule 26 (expr -> LPAREN expr RPAREN .)
+    COMMA           reduce using rule 26 (expr -> LPAREN expr RPAREN .)
 
 
-state 73
+state 75
 
     (62) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT
     (63) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT elseif_list
     (64) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
     (65) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
 
-    END_STATEMENT   shift and go to state 93
+    END_STATEMENT   shift and go to state 95
 
 
-state 74
+state 76
 
     (35) expr -> expr MUL_OP expr .
     (33) expr -> expr . ADD_OP expr
@@ -2061,29 +2217,29 @@ state 74
     CGT             reduce using rule 35 (expr -> expr MUL_OP expr .)
     CGE             reduce using rule 35 (expr -> expr MUL_OP expr .)
     END_STATEMENT   reduce using rule 35 (expr -> expr MUL_OP expr .)
-    COMMA           reduce using rule 35 (expr -> expr MUL_OP expr .)
-    RPAREN          reduce using rule 35 (expr -> expr MUL_OP expr .)
     COLON           reduce using rule 35 (expr -> expr MUL_OP expr .)
+    RPAREN          reduce using rule 35 (expr -> expr MUL_OP expr .)
     RSBRACKET       reduce using rule 35 (expr -> expr MUL_OP expr .)
+    COMMA           reduce using rule 35 (expr -> expr MUL_OP expr .)
 
-  ! ADD_OP          [ shift and go to state 57 ]
-  ! SUB_OP          [ shift and go to state 53 ]
-  ! MUL_OP          [ shift and go to state 48 ]
-  ! DIV_OP          [ shift and go to state 54 ]
-  ! MOD_OP          [ shift and go to state 59 ]
-  ! OR              [ shift and go to state 60 ]
-  ! AND             [ shift and go to state 46 ]
-  ! CEQ             [ shift and go to state 56 ]
-  ! CNE             [ shift and go to state 55 ]
-  ! CLT             [ shift and go to state 58 ]
-  ! CLE             [ shift and go to state 47 ]
-  ! CGT             [ shift and go to state 49 ]
-  ! CGE             [ shift and go to state 50 ]
+  ! ADD_OP          [ shift and go to state 58 ]
+  ! SUB_OP          [ shift and go to state 54 ]
+  ! MUL_OP          [ shift and go to state 49 ]
+  ! DIV_OP          [ shift and go to state 55 ]
+  ! MOD_OP          [ shift and go to state 60 ]
+  ! OR              [ shift and go to state 61 ]
+  ! AND             [ shift and go to state 47 ]
+  ! CEQ             [ shift and go to state 57 ]
+  ! CNE             [ shift and go to state 56 ]
+  ! CLT             [ shift and go to state 59 ]
+  ! CLE             [ shift and go to state 48 ]
+  ! CGT             [ shift and go to state 50 ]
+  ! CGE             [ shift and go to state 51 ]
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 75
+state 77
 
     (38) expr -> expr comb_op expr .
     (33) expr -> expr . ADD_OP expr
@@ -2116,23 +2272,23 @@ state 75
   ! shift/reduce conflict for CGT resolved as shift
   ! shift/reduce conflict for CGE resolved as shift
     END_STATEMENT   reduce using rule 38 (expr -> expr comb_op expr .)
-    COMMA           reduce using rule 38 (expr -> expr comb_op expr .)
-    RPAREN          reduce using rule 38 (expr -> expr comb_op expr .)
     COLON           reduce using rule 38 (expr -> expr comb_op expr .)
+    RPAREN          reduce using rule 38 (expr -> expr comb_op expr .)
     RSBRACKET       reduce using rule 38 (expr -> expr comb_op expr .)
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    COMMA           reduce using rule 38 (expr -> expr comb_op expr .)
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
   ! ADD_OP          [ reduce using rule 38 (expr -> expr comb_op expr .) ]
   ! SUB_OP          [ reduce using rule 38 (expr -> expr comb_op expr .) ]
@@ -2148,10 +2304,10 @@ state 75
   ! CGT             [ reduce using rule 38 (expr -> expr comb_op expr .) ]
   ! CGE             [ reduce using rule 38 (expr -> expr comb_op expr .) ]
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 76
+state 78
 
     (39) expr -> expr comp_op expr .
     (33) expr -> expr . ADD_OP expr
@@ -2184,23 +2340,23 @@ state 76
   ! shift/reduce conflict for CGT resolved as shift
   ! shift/reduce conflict for CGE resolved as shift
     END_STATEMENT   reduce using rule 39 (expr -> expr comp_op expr .)
-    COMMA           reduce using rule 39 (expr -> expr comp_op expr .)
-    RPAREN          reduce using rule 39 (expr -> expr comp_op expr .)
     COLON           reduce using rule 39 (expr -> expr comp_op expr .)
+    RPAREN          reduce using rule 39 (expr -> expr comp_op expr .)
     RSBRACKET       reduce using rule 39 (expr -> expr comp_op expr .)
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    COMMA           reduce using rule 39 (expr -> expr comp_op expr .)
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
   ! ADD_OP          [ reduce using rule 39 (expr -> expr comp_op expr .) ]
   ! SUB_OP          [ reduce using rule 39 (expr -> expr comp_op expr .) ]
@@ -2216,10 +2372,10 @@ state 76
   ! CGT             [ reduce using rule 39 (expr -> expr comp_op expr .) ]
   ! CGE             [ reduce using rule 39 (expr -> expr comp_op expr .) ]
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 77
+state 79
 
     (34) expr -> expr SUB_OP expr .
     (33) expr -> expr . ADD_OP expr
@@ -2249,32 +2405,32 @@ state 77
     CGT             reduce using rule 34 (expr -> expr SUB_OP expr .)
     CGE             reduce using rule 34 (expr -> expr SUB_OP expr .)
     END_STATEMENT   reduce using rule 34 (expr -> expr SUB_OP expr .)
-    COMMA           reduce using rule 34 (expr -> expr SUB_OP expr .)
-    RPAREN          reduce using rule 34 (expr -> expr SUB_OP expr .)
     COLON           reduce using rule 34 (expr -> expr SUB_OP expr .)
+    RPAREN          reduce using rule 34 (expr -> expr SUB_OP expr .)
     RSBRACKET       reduce using rule 34 (expr -> expr SUB_OP expr .)
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
+    COMMA           reduce using rule 34 (expr -> expr SUB_OP expr .)
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
 
   ! MUL_OP          [ reduce using rule 34 (expr -> expr SUB_OP expr .) ]
   ! DIV_OP          [ reduce using rule 34 (expr -> expr SUB_OP expr .) ]
   ! MOD_OP          [ reduce using rule 34 (expr -> expr SUB_OP expr .) ]
-  ! ADD_OP          [ shift and go to state 57 ]
-  ! SUB_OP          [ shift and go to state 53 ]
-  ! OR              [ shift and go to state 60 ]
-  ! AND             [ shift and go to state 46 ]
-  ! CEQ             [ shift and go to state 56 ]
-  ! CNE             [ shift and go to state 55 ]
-  ! CLT             [ shift and go to state 58 ]
-  ! CLE             [ shift and go to state 47 ]
-  ! CGT             [ shift and go to state 49 ]
-  ! CGE             [ shift and go to state 50 ]
+  ! ADD_OP          [ shift and go to state 58 ]
+  ! SUB_OP          [ shift and go to state 54 ]
+  ! OR              [ shift and go to state 61 ]
+  ! AND             [ shift and go to state 47 ]
+  ! CEQ             [ shift and go to state 57 ]
+  ! CNE             [ shift and go to state 56 ]
+  ! CLT             [ shift and go to state 59 ]
+  ! CLE             [ shift and go to state 48 ]
+  ! CGT             [ shift and go to state 50 ]
+  ! CGE             [ shift and go to state 51 ]
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 78
+state 80
 
     (36) expr -> expr DIV_OP expr .
     (33) expr -> expr . ADD_OP expr
@@ -2307,29 +2463,29 @@ state 78
     CGT             reduce using rule 36 (expr -> expr DIV_OP expr .)
     CGE             reduce using rule 36 (expr -> expr DIV_OP expr .)
     END_STATEMENT   reduce using rule 36 (expr -> expr DIV_OP expr .)
-    COMMA           reduce using rule 36 (expr -> expr DIV_OP expr .)
-    RPAREN          reduce using rule 36 (expr -> expr DIV_OP expr .)
     COLON           reduce using rule 36 (expr -> expr DIV_OP expr .)
+    RPAREN          reduce using rule 36 (expr -> expr DIV_OP expr .)
     RSBRACKET       reduce using rule 36 (expr -> expr DIV_OP expr .)
+    COMMA           reduce using rule 36 (expr -> expr DIV_OP expr .)
 
-  ! ADD_OP          [ shift and go to state 57 ]
-  ! SUB_OP          [ shift and go to state 53 ]
-  ! MUL_OP          [ shift and go to state 48 ]
-  ! DIV_OP          [ shift and go to state 54 ]
-  ! MOD_OP          [ shift and go to state 59 ]
-  ! OR              [ shift and go to state 60 ]
-  ! AND             [ shift and go to state 46 ]
-  ! CEQ             [ shift and go to state 56 ]
-  ! CNE             [ shift and go to state 55 ]
-  ! CLT             [ shift and go to state 58 ]
-  ! CLE             [ shift and go to state 47 ]
-  ! CGT             [ shift and go to state 49 ]
-  ! CGE             [ shift and go to state 50 ]
+  ! ADD_OP          [ shift and go to state 58 ]
+  ! SUB_OP          [ shift and go to state 54 ]
+  ! MUL_OP          [ shift and go to state 49 ]
+  ! DIV_OP          [ shift and go to state 55 ]
+  ! MOD_OP          [ shift and go to state 60 ]
+  ! OR              [ shift and go to state 61 ]
+  ! AND             [ shift and go to state 47 ]
+  ! CEQ             [ shift and go to state 57 ]
+  ! CNE             [ shift and go to state 56 ]
+  ! CLT             [ shift and go to state 59 ]
+  ! CLE             [ shift and go to state 48 ]
+  ! CGT             [ shift and go to state 50 ]
+  ! CGE             [ shift and go to state 51 ]
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 79
+state 81
 
     (33) expr -> expr ADD_OP expr .
     (33) expr -> expr . ADD_OP expr
@@ -2359,32 +2515,32 @@ state 79
     CGT             reduce using rule 33 (expr -> expr ADD_OP expr .)
     CGE             reduce using rule 33 (expr -> expr ADD_OP expr .)
     END_STATEMENT   reduce using rule 33 (expr -> expr ADD_OP expr .)
-    COMMA           reduce using rule 33 (expr -> expr ADD_OP expr .)
-    RPAREN          reduce using rule 33 (expr -> expr ADD_OP expr .)
     COLON           reduce using rule 33 (expr -> expr ADD_OP expr .)
+    RPAREN          reduce using rule 33 (expr -> expr ADD_OP expr .)
     RSBRACKET       reduce using rule 33 (expr -> expr ADD_OP expr .)
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
+    COMMA           reduce using rule 33 (expr -> expr ADD_OP expr .)
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
 
   ! MUL_OP          [ reduce using rule 33 (expr -> expr ADD_OP expr .) ]
   ! DIV_OP          [ reduce using rule 33 (expr -> expr ADD_OP expr .) ]
   ! MOD_OP          [ reduce using rule 33 (expr -> expr ADD_OP expr .) ]
-  ! ADD_OP          [ shift and go to state 57 ]
-  ! SUB_OP          [ shift and go to state 53 ]
-  ! OR              [ shift and go to state 60 ]
-  ! AND             [ shift and go to state 46 ]
-  ! CEQ             [ shift and go to state 56 ]
-  ! CNE             [ shift and go to state 55 ]
-  ! CLT             [ shift and go to state 58 ]
-  ! CLE             [ shift and go to state 47 ]
-  ! CGT             [ shift and go to state 49 ]
-  ! CGE             [ shift and go to state 50 ]
+  ! ADD_OP          [ shift and go to state 58 ]
+  ! SUB_OP          [ shift and go to state 54 ]
+  ! OR              [ shift and go to state 61 ]
+  ! AND             [ shift and go to state 47 ]
+  ! CEQ             [ shift and go to state 57 ]
+  ! CNE             [ shift and go to state 56 ]
+  ! CLT             [ shift and go to state 59 ]
+  ! CLE             [ shift and go to state 48 ]
+  ! CGT             [ shift and go to state 50 ]
+  ! CGE             [ shift and go to state 51 ]
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 80
+state 82
 
     (37) expr -> expr MOD_OP expr .
     (33) expr -> expr . ADD_OP expr
@@ -2417,42 +2573,41 @@ state 80
     CGT             reduce using rule 37 (expr -> expr MOD_OP expr .)
     CGE             reduce using rule 37 (expr -> expr MOD_OP expr .)
     END_STATEMENT   reduce using rule 37 (expr -> expr MOD_OP expr .)
-    COMMA           reduce using rule 37 (expr -> expr MOD_OP expr .)
-    RPAREN          reduce using rule 37 (expr -> expr MOD_OP expr .)
     COLON           reduce using rule 37 (expr -> expr MOD_OP expr .)
+    RPAREN          reduce using rule 37 (expr -> expr MOD_OP expr .)
     RSBRACKET       reduce using rule 37 (expr -> expr MOD_OP expr .)
+    COMMA           reduce using rule 37 (expr -> expr MOD_OP expr .)
 
-  ! ADD_OP          [ shift and go to state 57 ]
-  ! SUB_OP          [ shift and go to state 53 ]
-  ! MUL_OP          [ shift and go to state 48 ]
-  ! DIV_OP          [ shift and go to state 54 ]
-  ! MOD_OP          [ shift and go to state 59 ]
-  ! OR              [ shift and go to state 60 ]
-  ! AND             [ shift and go to state 46 ]
-  ! CEQ             [ shift and go to state 56 ]
-  ! CNE             [ shift and go to state 55 ]
-  ! CLT             [ shift and go to state 58 ]
-  ! CLE             [ shift and go to state 47 ]
-  ! CGT             [ shift and go to state 49 ]
-  ! CGE             [ shift and go to state 50 ]
+  ! ADD_OP          [ shift and go to state 58 ]
+  ! SUB_OP          [ shift and go to state 54 ]
+  ! MUL_OP          [ shift and go to state 49 ]
+  ! DIV_OP          [ shift and go to state 55 ]
+  ! MOD_OP          [ shift and go to state 60 ]
+  ! OR              [ shift and go to state 61 ]
+  ! AND             [ shift and go to state 47 ]
+  ! CEQ             [ shift and go to state 57 ]
+  ! CNE             [ shift and go to state 56 ]
+  ! CLT             [ shift and go to state 59 ]
+  ! CLE             [ shift and go to state 48 ]
+  ! CGT             [ shift and go to state 50 ]
+  ! CGE             [ shift and go to state 51 ]
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 81
+state 83
 
     (52) func_def -> FUNCTION head END_STATEMENT body . END END_STATEMENT
 
-    END             shift and go to state 94
+    END             shift and go to state 96
 
 
-state 82
+state 84
 
     (57) body -> stmt .
     (58) body -> stmt . body
     (57) body -> . stmt
     (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -2501,7 +2656,6 @@ state 82
     (32) boolean -> . FALSE
 
     END             reduce using rule 57 (body -> stmt .)
-    END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
     IF              shift and go to state 23
     WHILE           shift and go to state 3
@@ -2517,14 +2671,14 @@ state 82
     TRUE            shift and go to state 8
     FALSE           shift and go to state 25
 
-    body                           shift and go to state 95
+    body                           shift and go to state 97
     func_call                      shift and go to state 24
     if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     assignment                     shift and go to state 18
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -2534,35 +2688,34 @@ state 82
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
 
-state 83
+state 85
 
     (53) head -> IDENTIFIER LPAREN func_def_args . RPAREN COLON
 
-    RPAREN          shift and go to state 96
+    RPAREN          shift and go to state 98
 
 
-state 84
+state 86
 
     (54) head -> IDENTIFIER LPAREN RPAREN . COLON
 
-    COLON           shift and go to state 97
+    COLON           shift and go to state 99
 
 
-state 85
+state 87
 
     (55) func_def_args -> IDENTIFIER .
     (56) func_def_args -> IDENTIFIER . COMMA func_def_args
 
     RPAREN          reduce using rule 55 (func_def_args -> IDENTIFIER .)
-    COMMA           shift and go to state 98
+    COMMA           shift and go to state 100
 
 
-state 86
+state 88
 
     (59) while_stmt -> WHILE expr COLON END_STATEMENT . body END END_STATEMENT
     (57) body -> . stmt
     (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -2610,7 +2763,6 @@ state 86
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
     IF              shift and go to state 23
     WHILE           shift and go to state 3
@@ -2626,14 +2778,14 @@ state 86
     TRUE            shift and go to state 8
     FALSE           shift and go to state 25
 
-    body                           shift and go to state 99
+    body                           shift and go to state 101
     func_call                      shift and go to state 24
     if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     expr                           shift and go to state 27
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -2643,21 +2795,21 @@ state 86
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
 
-state 87
+state 89
 
     (60) for_stmt -> FOR IDENTIFIER IN RANGE . LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
 
-    LPAREN          shift and go to state 100
+    LPAREN          shift and go to state 102
 
 
-state 88
+state 90
 
     (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER . COLON END_STATEMENT body END END_STATEMENT
 
-    COLON           shift and go to state 101
+    COLON           shift and go to state 103
 
 
-state 89
+state 91
 
     (24) expr -> IDENTIFIER LSBRACKET expr RSBRACKET .
 
@@ -2675,13 +2827,13 @@ state 89
     CGT             reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     CGE             reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     END_STATEMENT   reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
-    COMMA           reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
-    RPAREN          reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     COLON           reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
+    RPAREN          reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     RSBRACKET       reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
+    COMMA           reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
 
 
-state 90
+state 92
 
     (19) func_call -> IDENTIFIER LPAREN list_args RPAREN .
 
@@ -2705,7 +2857,7 @@ state 90
     COMMA           reduce using rule 19 (func_call -> IDENTIFIER LPAREN list_args RPAREN .)
 
 
-state 91
+state 93
 
     (22) list_args -> expr COMMA . list_args
     (21) list_args -> . expr
@@ -2739,18 +2891,18 @@ state 91
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 69
+    expr                           shift and go to state 70
     boolean                        shift and go to state 4
-    list_args                      shift and go to state 102
+    list_args                      shift and go to state 104
 
-state 92
+state 94
 
     (17) assignment -> IDENTIFIER ASSIGN LSBRACKET list_args . RSBRACKET
 
-    RSBRACKET       shift and go to state 103
+    RSBRACKET       shift and go to state 105
 
 
-state 93
+state 95
 
     (62) if_stmt -> IF expr COLON END_STATEMENT . body END END_STATEMENT
     (63) if_stmt -> IF expr COLON END_STATEMENT . body END END_STATEMENT elseif_list
@@ -2758,7 +2910,6 @@ state 93
     (65) if_stmt -> IF expr COLON END_STATEMENT . body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
     (57) body -> . stmt
     (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -2806,7 +2957,6 @@ state 93
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
     IF              shift and go to state 23
     WHILE           shift and go to state 3
@@ -2822,13 +2972,13 @@ state 93
     TRUE            shift and go to state 8
     FALSE           shift and go to state 25
 
-    body                           shift and go to state 104
+    body                           shift and go to state 106
     func_call                      shift and go to state 24
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     expr                           shift and go to state 27
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -2839,52 +2989,52 @@ state 93
     compound_stmt                  shift and go to state 13
     if_stmt                        shift and go to state 26
 
-state 94
+state 96
 
     (52) func_def -> FUNCTION head END_STATEMENT body END . END_STATEMENT
 
-    END_STATEMENT   shift and go to state 105
+    END_STATEMENT   shift and go to state 107
 
 
-state 95
+state 97
 
     (58) body -> stmt body .
 
     END             reduce using rule 58 (body -> stmt body .)
 
 
-state 96
+state 98
 
     (53) head -> IDENTIFIER LPAREN func_def_args RPAREN . COLON
 
-    COLON           shift and go to state 106
+    COLON           shift and go to state 108
 
 
-state 97
+state 99
 
     (54) head -> IDENTIFIER LPAREN RPAREN COLON .
 
     END_STATEMENT   reduce using rule 54 (head -> IDENTIFIER LPAREN RPAREN COLON .)
 
 
-state 98
+state 100
 
     (56) func_def_args -> IDENTIFIER COMMA . func_def_args
     (55) func_def_args -> . IDENTIFIER
     (56) func_def_args -> . IDENTIFIER COMMA func_def_args
 
-    IDENTIFIER      shift and go to state 85
+    IDENTIFIER      shift and go to state 87
 
-    func_def_args                  shift and go to state 107
+    func_def_args                  shift and go to state 109
 
-state 99
+state 101
 
     (59) while_stmt -> WHILE expr COLON END_STATEMENT body . END END_STATEMENT
 
-    END             shift and go to state 108
+    END             shift and go to state 110
 
 
-state 100
+state 102
 
     (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN . expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
     (23) expr -> . IDENTIFIER
@@ -2916,46 +3066,45 @@ state 100
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 109
+    expr                           shift and go to state 111
     boolean                        shift and go to state 4
 
-state 101
+state 103
 
     (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON . END_STATEMENT body END END_STATEMENT
 
-    END_STATEMENT   shift and go to state 110
+    END_STATEMENT   shift and go to state 112
 
 
-state 102
+state 104
 
     (22) list_args -> expr COMMA list_args .
 
-    RPAREN          reduce using rule 22 (list_args -> expr COMMA list_args .)
     RSBRACKET       reduce using rule 22 (list_args -> expr COMMA list_args .)
+    RPAREN          reduce using rule 22 (list_args -> expr COMMA list_args .)
 
 
-state 103
+state 105
 
     (17) assignment -> IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET .
 
     END_STATEMENT   reduce using rule 17 (assignment -> IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET .)
 
 
-state 104
+state 106
 
     (62) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT
     (63) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT elseif_list
     (64) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
     (65) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
 
-    END             shift and go to state 111
+    END             shift and go to state 113
 
 
-state 105
+state 107
 
     (52) func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .
 
-    END_STATEMENT   reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
     FUNCTION        reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
     IF              reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
     WHILE           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
@@ -2971,31 +3120,32 @@ state 105
     TRUE            reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
     FALSE           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
     END             reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
+    END_STATEMENT   reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
 
 
-state 106
+state 108
 
     (53) head -> IDENTIFIER LPAREN func_def_args RPAREN COLON .
 
     END_STATEMENT   reduce using rule 53 (head -> IDENTIFIER LPAREN func_def_args RPAREN COLON .)
 
 
-state 107
+state 109
 
     (56) func_def_args -> IDENTIFIER COMMA func_def_args .
 
     RPAREN          reduce using rule 56 (func_def_args -> IDENTIFIER COMMA func_def_args .)
 
 
-state 108
+state 110
 
     (59) while_stmt -> WHILE expr COLON END_STATEMENT body END . END_STATEMENT
 
-    END_STATEMENT   shift and go to state 112
+    END_STATEMENT   shift and go to state 114
 
 
-state 109
+state 111
 
     (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr . COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
     (33) expr -> expr . ADD_OP expr
@@ -3014,30 +3164,29 @@ state 109
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
-    COMMA           shift and go to state 113
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    COMMA           shift and go to state 115
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 110
+state 112
 
     (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT . body END END_STATEMENT
     (57) body -> . stmt
     (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -3085,7 +3234,6 @@ state 110
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
     IF              shift and go to state 23
     WHILE           shift and go to state 3
@@ -3101,14 +3249,14 @@ state 110
     TRUE            shift and go to state 8
     FALSE           shift and go to state 25
 
-    body                           shift and go to state 114
+    body                           shift and go to state 116
     func_call                      shift and go to state 24
     if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     assignment                     shift and go to state 18
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -3118,21 +3266,20 @@ state 110
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
 
-state 111
+state 113
 
     (62) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT
     (63) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT elseif_list
     (64) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
     (65) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
 
-    END_STATEMENT   shift and go to state 115
+    END_STATEMENT   shift and go to state 117
 
 
-state 112
+state 114
 
     (59) while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .
 
-    END_STATEMENT   reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
     FUNCTION        reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
     IF              reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
     WHILE           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
@@ -3148,10 +3295,11 @@ state 112
     TRUE            reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
     FALSE           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
     END             reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
+    END_STATEMENT   reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
 
 
-state 113
+state 115
 
     (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA . expr RPAREN COLON END_STATEMENT body END END_STATEMENT
     (23) expr -> . IDENTIFIER
@@ -3183,17 +3331,17 @@ state 113
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 116
+    expr                           shift and go to state 118
     boolean                        shift and go to state 4
 
-state 114
+state 116
 
     (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body . END END_STATEMENT
 
-    END             shift and go to state 117
+    END             shift and go to state 119
 
 
-state 115
+state 117
 
     (62) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .
     (63) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT . elseif_list
@@ -3202,7 +3350,6 @@ state 115
     (66) elseif_list -> . ELSEIF expr COLON END_STATEMENT body END END_STATEMENT
     (67) elseif_list -> . ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
 
-    END_STATEMENT   reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
     FUNCTION        reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
     IF              reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
     WHILE           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
@@ -3218,13 +3365,14 @@ state 115
     TRUE            reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
     FALSE           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
     END             reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
+    END_STATEMENT   reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    ELSE            shift and go to state 119
-    ELSEIF          shift and go to state 120
+    ELSE            shift and go to state 121
+    ELSEIF          shift and go to state 122
 
-    elseif_list                    shift and go to state 118
+    elseif_list                    shift and go to state 120
 
-state 116
+state 118
 
     (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr . RPAREN COLON END_STATEMENT body END END_STATEMENT
     (33) expr -> expr . ADD_OP expr
@@ -3243,37 +3391,36 @@ state 116
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
-    RPAREN          shift and go to state 121
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    RPAREN          shift and go to state 123
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
-state 117
+state 119
 
     (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END . END_STATEMENT
 
-    END_STATEMENT   shift and go to state 122
+    END_STATEMENT   shift and go to state 124
 
 
-state 118
+state 120
 
     (63) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .
     (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list . ELSE COLON END_STATEMENT body END END_STATEMENT
 
-    END_STATEMENT   reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
     FUNCTION        reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
     IF              reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
     WHILE           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
@@ -3289,18 +3436,19 @@ state 118
     TRUE            reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
     FALSE           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
     END             reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
+    END_STATEMENT   reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
     $end            reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    ELSE            shift and go to state 123
+    ELSE            shift and go to state 125
 
 
-state 119
+state 121
 
     (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE . COLON END_STATEMENT body END END_STATEMENT
 
-    COLON           shift and go to state 124
+    COLON           shift and go to state 126
 
 
-state 120
+state 122
 
     (66) elseif_list -> ELSEIF . expr COLON END_STATEMENT body END END_STATEMENT
     (67) elseif_list -> ELSEIF . expr COLON END_STATEMENT body END END_STATEMENT elseif_list
@@ -3333,17 +3481,17 @@ state 120
     FALSE           shift and go to state 25
 
     func_call                      shift and go to state 24
-    expr                           shift and go to state 125
+    expr                           shift and go to state 127
     boolean                        shift and go to state 4
 
-state 121
+state 123
 
     (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN . COLON END_STATEMENT body END END_STATEMENT
 
-    COLON           shift and go to state 126
+    COLON           shift and go to state 128
 
 
-state 122
+state 124
 
     (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .
 
@@ -3362,25 +3510,25 @@ state 122
     CONTINUE        reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
     TRUE            reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
     FALSE           reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-
-
-state 123
-
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE . COLON END_STATEMENT body END END_STATEMENT
-
-    COLON           shift and go to state 127
-
-
-state 124
-
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON . END_STATEMENT body END END_STATEMENT
-
-    END_STATEMENT   shift and go to state 128
+    END             reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
 
 
 state 125
+
+    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE . COLON END_STATEMENT body END END_STATEMENT
+
+    COLON           shift and go to state 129
+
+
+state 126
+
+    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON . END_STATEMENT body END END_STATEMENT
+
+    END_STATEMENT   shift and go to state 130
+
+
+state 127
 
     (66) elseif_list -> ELSEIF expr . COLON END_STATEMENT body END END_STATEMENT
     (67) elseif_list -> ELSEIF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list
@@ -3400,138 +3548,43 @@ state 125
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
-    COLON           shift and go to state 129
-    ADD_OP          shift and go to state 57
-    SUB_OP          shift and go to state 53
-    MUL_OP          shift and go to state 48
-    DIV_OP          shift and go to state 54
-    MOD_OP          shift and go to state 59
-    OR              shift and go to state 60
-    AND             shift and go to state 46
-    CEQ             shift and go to state 56
-    CNE             shift and go to state 55
-    CLT             shift and go to state 58
-    CLE             shift and go to state 47
-    CGT             shift and go to state 49
-    CGE             shift and go to state 50
+    COLON           shift and go to state 131
+    ADD_OP          shift and go to state 58
+    SUB_OP          shift and go to state 54
+    MUL_OP          shift and go to state 49
+    DIV_OP          shift and go to state 55
+    MOD_OP          shift and go to state 60
+    OR              shift and go to state 61
+    AND             shift and go to state 47
+    CEQ             shift and go to state 57
+    CNE             shift and go to state 56
+    CLT             shift and go to state 59
+    CLE             shift and go to state 48
+    CGT             shift and go to state 50
+    CGE             shift and go to state 51
 
-    comp_op                        shift and go to state 52
-    comb_op                        shift and go to state 51
-
-state 126
-
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON . END_STATEMENT body END END_STATEMENT
-
-    END_STATEMENT   shift and go to state 130
-
-
-state 127
-
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON . END_STATEMENT body END END_STATEMENT
-
-    END_STATEMENT   shift and go to state 131
-
+    comp_op                        shift and go to state 53
+    comb_op                        shift and go to state 52
 
 state 128
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT . body END END_STATEMENT
-    (57) body -> . stmt
-    (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
-    (4) stmt -> . simple_stmt
-    (5) stmt -> . compound_stmt
-    (6) simple_stmt -> . small_stmt END_STATEMENT
-    (48) compound_stmt -> . func_def
-    (49) compound_stmt -> . if_stmt
-    (50) compound_stmt -> . while_stmt
-    (51) compound_stmt -> . for_stmt
-    (7) small_stmt -> . assignment
-    (8) small_stmt -> . const_decl
-    (9) small_stmt -> . expr
-    (10) small_stmt -> . return_stmt
-    (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
-    (16) assignment -> . IDENTIFIER ASSIGN expr
-    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
-    (18) const_decl -> . IDENTIFIER CONST expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (12) return_stmt -> . RETURN
-    (13) return_stmt -> . RETURN expr
-    (14) loop_stmt -> . BREAK
-    (15) loop_stmt -> . CONTINUE
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON . END_STATEMENT body END END_STATEMENT
 
-    END_STATEMENT   shift and go to state 14
-    FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
-    WHILE           shift and go to state 3
-    FOR             shift and go to state 9
-    IDENTIFIER      shift and go to state 12
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    RETURN          shift and go to state 6
-    BREAK           shift and go to state 28
-    CONTINUE        shift and go to state 30
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    END_STATEMENT   shift and go to state 132
 
-    body                           shift and go to state 132
-    func_call                      shift and go to state 24
-    if_stmt                        shift and go to state 26
-    func_def                       shift and go to state 16
-    simple_stmt                    shift and go to state 17
-    expr                           shift and go to state 27
-    for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
-    small_stmt                     shift and go to state 2
-    while_stmt                     shift and go to state 29
-    boolean                        shift and go to state 4
-    return_stmt                    shift and go to state 5
-    loop_stmt                      shift and go to state 21
-    assignment                     shift and go to state 18
-    const_decl                     shift and go to state 10
-    compound_stmt                  shift and go to state 13
 
 state 129
 
-    (66) elseif_list -> ELSEIF expr COLON . END_STATEMENT body END END_STATEMENT
-    (67) elseif_list -> ELSEIF expr COLON . END_STATEMENT body END END_STATEMENT elseif_list
+    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON . END_STATEMENT body END END_STATEMENT
 
     END_STATEMENT   shift and go to state 133
 
 
 state 130
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT . body END END_STATEMENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT . body END END_STATEMENT
     (57) body -> . stmt
     (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -3579,7 +3632,6 @@ state 130
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
     IF              shift and go to state 23
     WHILE           shift and go to state 3
@@ -3602,7 +3654,7 @@ state 130
     simple_stmt                    shift and go to state 17
     expr                           shift and go to state 27
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -3614,10 +3666,17 @@ state 130
 
 state 131
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT . body END END_STATEMENT
+    (66) elseif_list -> ELSEIF expr COLON . END_STATEMENT body END END_STATEMENT
+    (67) elseif_list -> ELSEIF expr COLON . END_STATEMENT body END END_STATEMENT elseif_list
+
+    END_STATEMENT   shift and go to state 135
+
+
+state 132
+
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT . body END END_STATEMENT
     (57) body -> . stmt
     (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -3665,7 +3724,6 @@ state 131
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
     IF              shift and go to state 23
     WHILE           shift and go to state 3
@@ -3681,13 +3739,14 @@ state 131
     TRUE            shift and go to state 8
     FALSE           shift and go to state 25
 
-    body                           shift and go to state 135
+    body                           shift and go to state 136
     func_call                      shift and go to state 24
+    if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     expr                           shift and go to state 27
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -3696,22 +3755,12 @@ state 131
     assignment                     shift and go to state 18
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
-    if_stmt                        shift and go to state 26
-
-state 132
-
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body . END END_STATEMENT
-
-    END             shift and go to state 136
-
 
 state 133
 
-    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT . body END END_STATEMENT
-    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT . body END END_STATEMENT elseif_list
+    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT . body END END_STATEMENT
     (57) body -> . stmt
     (58) body -> . stmt body
-    (3) stmt -> . END_STATEMENT
     (4) stmt -> . simple_stmt
     (5) stmt -> . compound_stmt
     (6) simple_stmt -> . small_stmt END_STATEMENT
@@ -3759,7 +3808,6 @@ state 133
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
     IF              shift and go to state 23
     WHILE           shift and go to state 3
@@ -3781,7 +3829,7 @@ state 133
     simple_stmt                    shift and go to state 17
     expr                           shift and go to state 27
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 82
+    stmt                           shift and go to state 84
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -3794,52 +3842,143 @@ state 133
 
 state 134
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body . END END_STATEMENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body . END END_STATEMENT
 
     END             shift and go to state 138
 
 
 state 135
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body . END END_STATEMENT
+    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT . body END END_STATEMENT
+    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT . body END END_STATEMENT elseif_list
+    (57) body -> . stmt
+    (58) body -> . stmt body
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
 
-    END             shift and go to state 139
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 23
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 25
 
+    body                           shift and go to state 139
+    func_call                      shift and go to state 24
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    expr                           shift and go to state 27
+    for_stmt                       shift and go to state 20
+    stmt                           shift and go to state 84
+    small_stmt                     shift and go to state 2
+    while_stmt                     shift and go to state 29
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    loop_stmt                      shift and go to state 21
+    assignment                     shift and go to state 18
+    const_decl                     shift and go to state 10
+    compound_stmt                  shift and go to state 13
+    if_stmt                        shift and go to state 26
 
 state 136
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END . END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body . END END_STATEMENT
 
-    END_STATEMENT   shift and go to state 140
+    END             shift and go to state 140
 
 
 state 137
 
-    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT body . END END_STATEMENT
-    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body . END END_STATEMENT elseif_list
+    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body . END END_STATEMENT
 
     END             shift and go to state 141
 
 
 state 138
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END . END_STATEMENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END . END_STATEMENT
 
     END_STATEMENT   shift and go to state 142
 
 
 state 139
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END . END_STATEMENT
+    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT body . END END_STATEMENT
+    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body . END END_STATEMENT elseif_list
 
-    END_STATEMENT   shift and go to state 143
+    END             shift and go to state 143
 
 
 state 140
 
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END . END_STATEMENT
+
+    END_STATEMENT   shift and go to state 144
+
+
+state 141
+
+    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END . END_STATEMENT
+
+    END_STATEMENT   shift and go to state 145
+
+
+state 142
+
     (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .
 
-    END_STATEMENT   reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
     FUNCTION        reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
     IF              reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
     WHILE           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
@@ -3855,18 +3994,19 @@ state 140
     TRUE            reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
     FALSE           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
     END             reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
+    END_STATEMENT   reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
 
 
-state 141
+state 143
 
     (66) elseif_list -> ELSEIF expr COLON END_STATEMENT body END . END_STATEMENT
     (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body END . END_STATEMENT elseif_list
 
-    END_STATEMENT   shift and go to state 144
+    END_STATEMENT   shift and go to state 146
 
 
-state 142
+state 144
 
     (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .
 
@@ -3885,15 +4025,14 @@ state 142
     CONTINUE        reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
     TRUE            reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
     FALSE           reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
+    END             reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
 
 
-state 143
+state 145
 
     (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .
 
-    END_STATEMENT   reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
     FUNCTION        reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
     IF              reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
     WHILE           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
@@ -3909,10 +4048,11 @@ state 143
     TRUE            reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
     FALSE           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
     END             reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
+    END_STATEMENT   reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
 
 
-state 144
+state 146
 
     (66) elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .
     (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT . elseif_list
@@ -3937,11 +4077,11 @@ state 144
     FALSE           reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
     $end            reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
     END             reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    ELSEIF          shift and go to state 120
+    ELSEIF          shift and go to state 122
 
-    elseif_list                    shift and go to state 145
+    elseif_list                    shift and go to state 147
 
-state 145
+state 147
 
     (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .
 
@@ -3967,29 +4107,29 @@ state 145
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for ADD_OP in state 75 resolved as shift
-WARNING: shift/reduce conflict for SUB_OP in state 75 resolved as shift
-WARNING: shift/reduce conflict for MUL_OP in state 75 resolved as shift
-WARNING: shift/reduce conflict for DIV_OP in state 75 resolved as shift
-WARNING: shift/reduce conflict for MOD_OP in state 75 resolved as shift
-WARNING: shift/reduce conflict for OR in state 75 resolved as shift
-WARNING: shift/reduce conflict for AND in state 75 resolved as shift
-WARNING: shift/reduce conflict for CEQ in state 75 resolved as shift
-WARNING: shift/reduce conflict for CNE in state 75 resolved as shift
-WARNING: shift/reduce conflict for CLT in state 75 resolved as shift
-WARNING: shift/reduce conflict for CLE in state 75 resolved as shift
-WARNING: shift/reduce conflict for CGT in state 75 resolved as shift
-WARNING: shift/reduce conflict for CGE in state 75 resolved as shift
-WARNING: shift/reduce conflict for ADD_OP in state 76 resolved as shift
-WARNING: shift/reduce conflict for SUB_OP in state 76 resolved as shift
-WARNING: shift/reduce conflict for MUL_OP in state 76 resolved as shift
-WARNING: shift/reduce conflict for DIV_OP in state 76 resolved as shift
-WARNING: shift/reduce conflict for MOD_OP in state 76 resolved as shift
-WARNING: shift/reduce conflict for OR in state 76 resolved as shift
-WARNING: shift/reduce conflict for AND in state 76 resolved as shift
-WARNING: shift/reduce conflict for CEQ in state 76 resolved as shift
-WARNING: shift/reduce conflict for CNE in state 76 resolved as shift
-WARNING: shift/reduce conflict for CLT in state 76 resolved as shift
-WARNING: shift/reduce conflict for CLE in state 76 resolved as shift
-WARNING: shift/reduce conflict for CGT in state 76 resolved as shift
-WARNING: shift/reduce conflict for CGE in state 76 resolved as shift
+WARNING: shift/reduce conflict for ADD_OP in state 77 resolved as shift
+WARNING: shift/reduce conflict for SUB_OP in state 77 resolved as shift
+WARNING: shift/reduce conflict for MUL_OP in state 77 resolved as shift
+WARNING: shift/reduce conflict for DIV_OP in state 77 resolved as shift
+WARNING: shift/reduce conflict for MOD_OP in state 77 resolved as shift
+WARNING: shift/reduce conflict for OR in state 77 resolved as shift
+WARNING: shift/reduce conflict for AND in state 77 resolved as shift
+WARNING: shift/reduce conflict for CEQ in state 77 resolved as shift
+WARNING: shift/reduce conflict for CNE in state 77 resolved as shift
+WARNING: shift/reduce conflict for CLT in state 77 resolved as shift
+WARNING: shift/reduce conflict for CLE in state 77 resolved as shift
+WARNING: shift/reduce conflict for CGT in state 77 resolved as shift
+WARNING: shift/reduce conflict for CGE in state 77 resolved as shift
+WARNING: shift/reduce conflict for ADD_OP in state 78 resolved as shift
+WARNING: shift/reduce conflict for SUB_OP in state 78 resolved as shift
+WARNING: shift/reduce conflict for MUL_OP in state 78 resolved as shift
+WARNING: shift/reduce conflict for DIV_OP in state 78 resolved as shift
+WARNING: shift/reduce conflict for MOD_OP in state 78 resolved as shift
+WARNING: shift/reduce conflict for OR in state 78 resolved as shift
+WARNING: shift/reduce conflict for AND in state 78 resolved as shift
+WARNING: shift/reduce conflict for CEQ in state 78 resolved as shift
+WARNING: shift/reduce conflict for CNE in state 78 resolved as shift
+WARNING: shift/reduce conflict for CLT in state 78 resolved as shift
+WARNING: shift/reduce conflict for CLE in state 78 resolved as shift
+WARNING: shift/reduce conflict for CGT in state 78 resolved as shift
+WARNING: shift/reduce conflict for CGE in state 78 resolved as shift
