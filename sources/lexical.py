@@ -119,13 +119,13 @@ def t_END_STATEMENT(t):
 	return t
  
 def t_SIMPLE_COMMENTS(t):
-	r'//.*'
+	r'//.*\n'
+	t.lexer.lineno+=1
 
 def t_BLOCK_COMMENTS(t):
-	r'/\*(\n|.)*?(\*/)'
+	r'/\*(\n|.)*?(\*/)\n'
 	t.value=t.value.count('\n')*'\n'
-	t_END_STATEMENT(t)
-
+	t.lexer.lineno += len(t.value)
 
 
 
