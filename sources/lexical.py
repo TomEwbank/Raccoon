@@ -23,20 +23,24 @@ tokens = [
 	'COLON',
 	'LPAREN',
 	'RPAREN',
-	'DOT',
 	'QUOTE',
 	'APOSTROPHE',
 	'LSBRACKET',
 	'RSBRACKET',
 	
 	'END_STATEMENT',
+	'STRING',
+	
+	'ELSEIF',
+	'MOD_OP',
 ]
 
 reserved = {
-	'mod':'MOD_OP',
+
 	'or':'OR',
 	'and':'AND',
 	'return' : 'RETURN',
+	
 	'break' : 'BREAK',
 	'continue' : 'CONTINUE',
 	'False':'FALSE',
@@ -49,7 +53,6 @@ reserved = {
 	'in' : 'IN',
 	'becomes':'ASSIGN',
 	'is':'CONST',
-	'else if' : 'ELSEIF',
 	'function' :  'FUNCTION',
 	'end' : 'END',
 
@@ -74,14 +77,24 @@ t_RPAREN= r'\)'
 t_COMMA= r','
 t_COLON= r':'
 
-t_DOT= r'\.'
 t_QUOTE=r'\"'
 t_APOSTROPHE=r'\''
 t_LSBRACKET=r'\['
 t_RSBRACKET=r'\]'
 
 
+def t_STRING(t):
+	r'".*"'
+	return t
 
+def t_ELSEIF(t):
+	r'else\ if'
+	return t
+
+def t_MOD_OP(t):
+	r'[ ]*mod[ ]*'
+	return t
+	
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value,'IDENTIFIER')    
