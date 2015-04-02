@@ -15,11 +15,14 @@ precedence = (
 
 def p_program(p):
 	'''program : stmt
-               | stmt program'''
+			   | stmt program
+               | END_STATEMENT stmt program'''
 	if len(p) == 2:
 		p[0] = AST.ProgramNode([p[1]])
 	if len(p) == 3:
 		p[0] = AST.ProgramNode([p[1]] + p[2].children)
+	if len(p) == 4:
+		p[0] = AST.ProgramNode([p[2]] + p[3].children)
 		
 def p_stmt_type(p):
 	'''stmt : simple_stmt
@@ -91,7 +94,11 @@ def p_expr_id(p):
 		p[0] = AST.TokenNode(p[1])
 	if len(p) == 5:
 		p[0] = AST.ListElementNode([AST.TokenNode(p[1]), p[3]])
-	
+
+def p_expr_string(p):
+	'''expr : STRING'''
+	p[0] = AST.StringNode()
+		
 def p_expr(p):
 	'''expr : LPAREN expr RPAREN
 			| func_call'''
