@@ -170,7 +170,13 @@ class TrueNode(Node):
 class FalseNode(Node):
 	type = 'False'
 	
+class ListElementNode(Node):
+	type = 'List element'
+	# first child will be the ID, second the index (or expression to calculate it)
 
+class ListNode(Node):
+	type = 'List'
+	
 ############### fin de l'ajout
 	
 	

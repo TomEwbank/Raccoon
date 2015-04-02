@@ -55,9 +55,12 @@ def p_continue(p):
 	p[0] = AST.ContinueNode()
 				  
 def p_assign(p):
-	'''assignment : IDENTIFIER ASSIGN expr'''
-	p[0] = AST.AssignNode([AST.TokenNode(p[1])] + [p[3]])
-	
+	'''assignment : IDENTIFIER ASSIGN expr
+				  | IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET'''
+	if len(p) == 4:
+		p[0] = AST.AssignNode([AST.TokenNode(p[1])] + [p[3]])
+	if len(p) == 6:
+		p[0] = AST.AssignNode([AST.TokenNode(p[1]), AST.ListNode(p[4].children)])
 	
 def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr'''
@@ -65,16 +68,16 @@ def p_const(p):
 
 	
 def p_func_call(p):
-	'''func_call : IDENTIFIER LPAREN call_args RPAREN
+	'''func_call : IDENTIFIER LPAREN list_args RPAREN
                  | IDENTIFIER LPAREN RPAREN'''
 	if len(p) == 5:
 		p[0] = AST.FuncCallNode([AST.TokenNode(p[1])] + p[3].children)
 	if len(p) == 4:
 		p[0] = AST.FuncCallNode([AST.TokenNode(p[1])])
 		
-def p_call_args(p):
-	'''call_args : expr 
-                 | expr COMMA call_args'''				 
+def p_list_args(p):
+	'''list_args : expr 
+                 | expr COMMA list_args'''				 
 	if len(p) == 2:
 		p[0] = AST.Node([p[1]])
 	if len(p) == 4:
@@ -82,8 +85,12 @@ def p_call_args(p):
 
 		
 def p_expr_id(p):
-	'''expr : IDENTIFIER'''
-	p[0] = AST.TokenNode(p[1])
+	'''expr : IDENTIFIER
+	        | IDENTIFIER LSBRACKET expr RSBRACKET'''
+	if len(p) == 2:
+		p[0] = AST.TokenNode(p[1])
+	if len(p) == 5:
+		p[0] = AST.ListElementNode([AST.TokenNode(p[1]), p[3]])
 	
 def p_expr(p):
 	'''expr : LPAREN expr RPAREN

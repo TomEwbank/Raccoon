@@ -7,31 +7,34 @@ return
 return 5-3/8
 return a
 function paint(a,b,c):
-break
-clash()
-function wrong():
-for element in range (start,8*9 mod 3):
-element becomes 5
-end
-end
-continue
+	break
+	clash()
+    function wrong():
+		for element in range (start,8*9 mod 3):
+          element becomes [a[i],a[i+1],5<b,dada]
+        end
+
+    end
+    continue
 end
 if youyou():
-prout becomes stinky
+	prout becomes stinky
 end
 elseif a =? 8:
-prout becomes parfumed
+	prout becomes parfumed
 end
 elseif a or b:
-prout becomes unodored
+	prout becomes unodored
 end
 else:
-while tagueule:
-tagueule becomes tagueule + lamienne
+	while tagueule:
+       tagueule becomes tagueule + lamienne
+    end
+    yoyou()
 end
-yoyou()
-end
+
+
 paint(monalisa, a+5, leo and jack < bill)
 a + 2-3*4/5
 True
-a or e =? 8 <= (pomme and poire)
+a or e =? 8 <= (pomme[newton+58*9/racine] and poire)
