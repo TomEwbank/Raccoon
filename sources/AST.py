@@ -177,6 +177,9 @@ class ListElementNode(Node):
 class ListNode(Node):
 	type = 'List'
 	
+class StringNode(Node):
+	type = 'String'
+	
 ############### fin de l'ajout
 	
 	

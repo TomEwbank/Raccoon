@@ -1,3 +1,6 @@
+
+
+
 a becomes False
 a becomes (True or check and a =? b) and d <= e
 a becomes c + d+1 mod 9*(5-3/8)
@@ -8,7 +11,7 @@ return 5-3/8
 return a
 function paint(a,b,c):
 	break
-	clash()
+	clash("degage")
     function wrong():
 		for element in range (start,8*9 mod 3):
           element becomes [a[i],a[i+1],5<b,dada]
@@ -20,10 +23,10 @@ end
 if youyou():
 	prout becomes stinky
 end
-elseif a =? 8:
+else if a =? 8:
 	prout becomes parfumed
 end
-elseif a or b:
+else if a or b:
 	prout becomes unodored
 end
 else:
