@@ -158,15 +158,25 @@ class ElseifNode(Node):
 class ElseNode(Node):
 	type = 'Else'
 	
+class BreakNode(Node):
+	type = 'Break'
+	
+class ContinueNode(Node):
+	type = 'Continue'
+	
+class TrueNode(Node):
+	type = 'True'
+	
+class FalseNode(Node):
+	type = 'False'
+	
+class ListElementNode(Node):
+	type = 'List element'
+	# first child will be the ID, second the index (or expression to calculate it)
 
+class ListNode(Node):
+	type = 'List'
 	
-# class breakNode(Node):
-	# type = 'Break'
-	
-# class contiNode(Node):
-	# type = 'Continue'
-	
-
 ############### fin de l'ajout
 	
 	
@@ -190,7 +200,7 @@ class OpNode(Node):
             self.nbargs = 1
         
     def __repr__(self):
-        return "%s (%s)" % (self.op, self.nbargs)
+        return "%s" % (self.op)
     
 # class AssignNode(Node):
     # type = '='
