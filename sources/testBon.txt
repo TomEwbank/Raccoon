@@ -1,0 +1,39 @@
+/* 
+   Test program for Raccoon
+   Group 2 
+   */
+
+//return true if the number nbr is prime. Return false otherwise
+function prime(nbr):
+
+	n becomes nbr-1
+	for i in range (2,n):
+		if nbr mod i =? 0:
+			return false
+		end
+	end
+
+	return true
+
+end
+
+
+//return true if one of the number between nbr1 and nbr2 is prime. Return false otherwise
+function primeRange(nbr1,nbr2):
+
+	if nbr2 < nbr1:
+		return false
+	end
+
+	for i in range (nbr1,nbr2):
+		if prime(i)=? true:
+			return true
+		end
+	end
+
+	return false
+
+end
+ 
+ 
+a becomes primeRange(345,542)

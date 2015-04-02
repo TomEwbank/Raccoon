@@ -23,8 +23,6 @@ tokens = [
 	'COLON',
 	'LPAREN',
 	'RPAREN',
-	'QUOTE',
-	'APOSTROPHE',
 	'LSBRACKET',
 	'RSBRACKET',
 	
@@ -77,8 +75,6 @@ t_RPAREN= r'\)'
 t_COMMA= r','
 t_COLON= r':'
 
-t_QUOTE=r'\"'
-t_APOSTROPHE=r'\''
 t_LSBRACKET=r'\['
 t_RSBRACKET=r'\]'
 
