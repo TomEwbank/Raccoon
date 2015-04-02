@@ -1,10 +1,5 @@
 Created by PLY version 3.4 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    QUOTE
-    APOSTROPHE
-
 Grammar
 
 Rule 0     S' -> program
@@ -80,7 +75,6 @@ Terminals, with rules where they appear
 
 ADD_OP               : 33
 AND                  : 41
-APOSTROPHE           : 
 ASSIGN               : 16 17
 BREAK                : 14
 CEQ                  : 42
@@ -111,7 +105,6 @@ LSBRACKET            : 17 24
 MOD_OP               : 37
 MUL_OP               : 35
 OR                   : 40
-QUOTE                : 
 RANGE                : 60
 RETURN               : 12 13
 RPAREN               : 19 20 26 53 54 60
