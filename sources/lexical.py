@@ -53,10 +53,6 @@ reserved = {
 	'in' : 'IN',
 	'becomes':'ASSIGN',
 	'is':'CONST',
-<<<<<<< HEAD
-=======
-	'elseif' : 'ELSEIF',
->>>>>>> 930610a92bbef8c0996cf9842b9c7e8dde1a0a11
 	'function' :  'FUNCTION',
 	'end' : 'END',
 
