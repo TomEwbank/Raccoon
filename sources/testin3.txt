@@ -1,3 +1,6 @@
+
+
+
 /* 
    Test program for Raccoon
    Group 2 
@@ -6,35 +9,25 @@
 //return true if the number nbr is prime. Return false otherwise
 function prime(nbr):
 
-	n becomes nbr-1
-	for i in range (2,n): 
-		if nbr mod i =? 0: //etgz	
-			return false
-		end
-	end
+    n becomes nbr-1
+    for i in range (2,n):
 
-	return true //egsrth
-end // ytyjt
+        if nbr mod i =? 0:
+            return false
 
+    return true //egsrth
 
 //return true if one of the number between nbr1 and nbr2 is prime. Return false otherwise
 function primeRange(nbr1,nbr2):
 
-	if nbr2 < nbr1:
-		return false
-	end
+    if nbr2 < nbr1:
+        return false
 
-	for i in range (nbr1,nbr2) 
-		if prime =? true:
-			return true
-		end
-	
-	
-	//end missing here
+    for i in range (nbr1,nbr2) 
+        if prime =? true:
+            return true
+     //blbla
+    return false
 
-	return false
 
-end
- 
- 
 a becomes primeRange(345,542)

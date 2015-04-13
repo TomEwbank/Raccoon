@@ -1,0 +1,33 @@
+/*  grheh */
+
+//return true if the number nbr is prime. Return false otherwise
+function prime(nbr):
+
+	n becomes nbr-1
+	a becomes b
+	for i in range (2,n):
+
+		if nbr mod i =? 0:
+			return false
+
+	return true
+
+//return true if one of the number between nbr1 and nbr2 is prime. Return false otherwise
+function primeRange(nbr1,nbr2):
+	
+		
+	if nbr2 < nbr1:	
+			display(youyou)
+			return false	
+
+	for i in range (nbr1,nbr2): // prout
+		if prime =? true:
+			return true /* na */
+	//blbla
+	return false
+
+
+a becomes primeRange(345,542)
+while True:
+	if False:
+		coucou

@@ -54,22 +54,22 @@ Rule 48    compound_stmt -> func_def
 Rule 49    compound_stmt -> if_stmt
 Rule 50    compound_stmt -> while_stmt
 Rule 51    compound_stmt -> for_stmt
-Rule 52    func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT
+Rule 52    func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT
 Rule 53    head -> IDENTIFIER LPAREN func_def_args RPAREN COLON
 Rule 54    head -> IDENTIFIER LPAREN RPAREN COLON
 Rule 55    func_def_args -> IDENTIFIER
 Rule 56    func_def_args -> IDENTIFIER COMMA func_def_args
 Rule 57    body -> stmt
 Rule 58    body -> stmt body
-Rule 59    while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT
-Rule 60    for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-Rule 61    for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
-Rule 62    if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT
-Rule 63    if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-Rule 64    if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-Rule 65    if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-Rule 66    elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT
-Rule 67    elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
+Rule 59    while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT
+Rule 60    for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+Rule 61    for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
+Rule 62    if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT
+Rule 63    if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+Rule 64    if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+Rule 65    if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+Rule 66    elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT
+Rule 67    elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
 
 Terminals, with rules where they appear
 
@@ -87,18 +87,19 @@ COLON                : 53 54 59 60 61 62 63 64 64 65 65 66 67
 COMMA                : 22 56 60
 CONST                : 18
 CONTINUE             : 15
+DEDENT               : 52 59 60 61 62 63 64 64 65 65 66 67
 DIV_OP               : 36
 DOUBLE               : 29
 ELSE                 : 64 65
 ELSEIF               : 66 67
-END                  : 52 59 60 61 62 63 64 64 65 65 66 67
-END_STATEMENT        : 3 6 52 52 59 59 60 60 61 61 62 62 63 63 64 64 64 64 65 65 65 65 66 66 67 67
+END_STATEMENT        : 3 6 52 59 60 61 62 63 64 64 65 65 66 67
 FALSE                : 32
 FOR                  : 60 61
 FUNCTION             : 52
 IDENTIFIER           : 16 17 18 19 20 23 24 53 54 55 56 60 61 61
 IF                   : 62 63 64 65
 IN                   : 60 61
+INDENT               : 52 59 60 61 62 63 64 64 65 65 66 67
 INTEGER              : 28
 LPAREN               : 19 20 26 53 54 60
 LSBRACKET            : 17 24
@@ -161,14 +162,14 @@ state 0
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -198,7 +199,7 @@ state 0
 
     END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -210,7 +211,7 @@ state 0
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
     small_stmt                     shift and go to state 2
     boolean                        shift and go to state 4
@@ -224,14 +225,14 @@ state 0
     stmt                           shift and go to state 19
     for_stmt                       shift and go to state 20
     loop_stmt                      shift and go to state 21
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     if_stmt                        shift and go to state 26
     expr                           shift and go to state 27
     while_stmt                     shift and go to state 29
 
 state 1
 
-    (52) func_def -> FUNCTION . head END_STATEMENT body END END_STATEMENT
+    (52) func_def -> FUNCTION . head END_STATEMENT INDENT body DEDENT
     (53) head -> . IDENTIFIER LPAREN func_def_args RPAREN COLON
     (54) head -> . IDENTIFIER LPAREN RPAREN COLON
 
@@ -248,7 +249,7 @@ state 2
 
 state 3
 
-    (59) while_stmt -> WHILE . expr COLON END_STATEMENT body END END_STATEMENT
+    (59) while_stmt -> WHILE . expr COLON END_STATEMENT INDENT body DEDENT
     (23) expr -> . IDENTIFIER
     (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
     (25) expr -> . STRING
@@ -275,9 +276,9 @@ state 3
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 36
     boolean                        shift and go to state 4
 
@@ -285,6 +286,7 @@ state 4
 
     (30) expr -> boolean .
 
+    RPAREN          reduce using rule 30 (expr -> boolean .)
     ADD_OP          reduce using rule 30 (expr -> boolean .)
     SUB_OP          reduce using rule 30 (expr -> boolean .)
     MUL_OP          reduce using rule 30 (expr -> boolean .)
@@ -298,11 +300,10 @@ state 4
     CLE             reduce using rule 30 (expr -> boolean .)
     CGT             reduce using rule 30 (expr -> boolean .)
     CGE             reduce using rule 30 (expr -> boolean .)
+    COMMA           reduce using rule 30 (expr -> boolean .)
+    RSBRACKET       reduce using rule 30 (expr -> boolean .)
     END_STATEMENT   reduce using rule 30 (expr -> boolean .)
     COLON           reduce using rule 30 (expr -> boolean .)
-    RPAREN          reduce using rule 30 (expr -> boolean .)
-    RSBRACKET       reduce using rule 30 (expr -> boolean .)
-    COMMA           reduce using rule 30 (expr -> boolean .)
 
 
 state 5
@@ -343,9 +344,9 @@ state 6
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 37
     boolean                        shift and go to state 4
 
@@ -353,6 +354,7 @@ state 7
 
     (28) expr -> INTEGER .
 
+    RPAREN          reduce using rule 28 (expr -> INTEGER .)
     ADD_OP          reduce using rule 28 (expr -> INTEGER .)
     SUB_OP          reduce using rule 28 (expr -> INTEGER .)
     MUL_OP          reduce using rule 28 (expr -> INTEGER .)
@@ -366,11 +368,10 @@ state 7
     CLE             reduce using rule 28 (expr -> INTEGER .)
     CGT             reduce using rule 28 (expr -> INTEGER .)
     CGE             reduce using rule 28 (expr -> INTEGER .)
+    COMMA           reduce using rule 28 (expr -> INTEGER .)
+    RSBRACKET       reduce using rule 28 (expr -> INTEGER .)
     END_STATEMENT   reduce using rule 28 (expr -> INTEGER .)
     COLON           reduce using rule 28 (expr -> INTEGER .)
-    RPAREN          reduce using rule 28 (expr -> INTEGER .)
-    RSBRACKET       reduce using rule 28 (expr -> INTEGER .)
-    COMMA           reduce using rule 28 (expr -> INTEGER .)
 
 
 state 8
@@ -399,8 +400,8 @@ state 8
 
 state 9
 
-    (60) for_stmt -> FOR . IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> FOR . IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR . IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> FOR . IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
 
     IDENTIFIER      shift and go to state 38
 
@@ -466,7 +467,7 @@ state 13
     CONTINUE        reduce using rule 5 (stmt -> compound_stmt .)
     TRUE            reduce using rule 5 (stmt -> compound_stmt .)
     FALSE           reduce using rule 5 (stmt -> compound_stmt .)
-    END             reduce using rule 5 (stmt -> compound_stmt .)
+    DEDENT          reduce using rule 5 (stmt -> compound_stmt .)
     END_STATEMENT   reduce using rule 5 (stmt -> compound_stmt .)
     $end            reduce using rule 5 (stmt -> compound_stmt .)
 
@@ -486,14 +487,14 @@ state 14
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -522,7 +523,7 @@ state 14
     (32) boolean -> . FALSE
 
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -534,7 +535,7 @@ state 14
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
     small_stmt                     shift and go to state 2
     boolean                        shift and go to state 4
@@ -547,7 +548,7 @@ state 14
     stmt                           shift and go to state 43
     for_stmt                       shift and go to state 20
     loop_stmt                      shift and go to state 21
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     if_stmt                        shift and go to state 26
     expr                           shift and go to state 27
     while_stmt                     shift and go to state 29
@@ -556,6 +557,7 @@ state 15
 
     (25) expr -> STRING .
 
+    RPAREN          reduce using rule 25 (expr -> STRING .)
     ADD_OP          reduce using rule 25 (expr -> STRING .)
     SUB_OP          reduce using rule 25 (expr -> STRING .)
     MUL_OP          reduce using rule 25 (expr -> STRING .)
@@ -569,18 +571,16 @@ state 15
     CLE             reduce using rule 25 (expr -> STRING .)
     CGT             reduce using rule 25 (expr -> STRING .)
     CGE             reduce using rule 25 (expr -> STRING .)
+    COMMA           reduce using rule 25 (expr -> STRING .)
+    RSBRACKET       reduce using rule 25 (expr -> STRING .)
     END_STATEMENT   reduce using rule 25 (expr -> STRING .)
     COLON           reduce using rule 25 (expr -> STRING .)
-    RPAREN          reduce using rule 25 (expr -> STRING .)
-    RSBRACKET       reduce using rule 25 (expr -> STRING .)
-    COMMA           reduce using rule 25 (expr -> STRING .)
 
 
 state 16
 
     (48) compound_stmt -> func_def .
 
-    END_STATEMENT   reduce using rule 48 (compound_stmt -> func_def .)
     FUNCTION        reduce using rule 48 (compound_stmt -> func_def .)
     IF              reduce using rule 48 (compound_stmt -> func_def .)
     WHILE           reduce using rule 48 (compound_stmt -> func_def .)
@@ -595,8 +595,9 @@ state 16
     CONTINUE        reduce using rule 48 (compound_stmt -> func_def .)
     TRUE            reduce using rule 48 (compound_stmt -> func_def .)
     FALSE           reduce using rule 48 (compound_stmt -> func_def .)
+    DEDENT          reduce using rule 48 (compound_stmt -> func_def .)
+    END_STATEMENT   reduce using rule 48 (compound_stmt -> func_def .)
     $end            reduce using rule 48 (compound_stmt -> func_def .)
-    END             reduce using rule 48 (compound_stmt -> func_def .)
 
 
 state 17
@@ -617,7 +618,7 @@ state 17
     CONTINUE        reduce using rule 4 (stmt -> simple_stmt .)
     TRUE            reduce using rule 4 (stmt -> simple_stmt .)
     FALSE           reduce using rule 4 (stmt -> simple_stmt .)
-    END             reduce using rule 4 (stmt -> simple_stmt .)
+    DEDENT          reduce using rule 4 (stmt -> simple_stmt .)
     END_STATEMENT   reduce using rule 4 (stmt -> simple_stmt .)
     $end            reduce using rule 4 (stmt -> simple_stmt .)
 
@@ -648,14 +649,14 @@ state 19
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -686,7 +687,7 @@ state 19
     $end            reduce using rule 1 (program -> stmt .)
     END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -698,7 +699,7 @@ state 19
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
     small_stmt                     shift and go to state 2
     boolean                        shift and go to state 4
@@ -712,7 +713,7 @@ state 19
     stmt                           shift and go to state 19
     for_stmt                       shift and go to state 20
     loop_stmt                      shift and go to state 21
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     if_stmt                        shift and go to state 26
     expr                           shift and go to state 27
     while_stmt                     shift and go to state 29
@@ -721,7 +722,6 @@ state 20
 
     (51) compound_stmt -> for_stmt .
 
-    END_STATEMENT   reduce using rule 51 (compound_stmt -> for_stmt .)
     FUNCTION        reduce using rule 51 (compound_stmt -> for_stmt .)
     IF              reduce using rule 51 (compound_stmt -> for_stmt .)
     WHILE           reduce using rule 51 (compound_stmt -> for_stmt .)
@@ -736,8 +736,9 @@ state 20
     CONTINUE        reduce using rule 51 (compound_stmt -> for_stmt .)
     TRUE            reduce using rule 51 (compound_stmt -> for_stmt .)
     FALSE           reduce using rule 51 (compound_stmt -> for_stmt .)
+    DEDENT          reduce using rule 51 (compound_stmt -> for_stmt .)
+    END_STATEMENT   reduce using rule 51 (compound_stmt -> for_stmt .)
     $end            reduce using rule 51 (compound_stmt -> for_stmt .)
-    END             reduce using rule 51 (compound_stmt -> for_stmt .)
 
 
 state 21
@@ -776,18 +777,42 @@ state 22
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 45
     boolean                        shift and go to state 4
 
 state 23
 
-    (62) if_stmt -> IF . expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> IF . expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> IF . expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF . expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (32) boolean -> FALSE .
+
+    ADD_OP          reduce using rule 32 (boolean -> FALSE .)
+    SUB_OP          reduce using rule 32 (boolean -> FALSE .)
+    MUL_OP          reduce using rule 32 (boolean -> FALSE .)
+    DIV_OP          reduce using rule 32 (boolean -> FALSE .)
+    MOD_OP          reduce using rule 32 (boolean -> FALSE .)
+    OR              reduce using rule 32 (boolean -> FALSE .)
+    AND             reduce using rule 32 (boolean -> FALSE .)
+    CEQ             reduce using rule 32 (boolean -> FALSE .)
+    CNE             reduce using rule 32 (boolean -> FALSE .)
+    CLT             reduce using rule 32 (boolean -> FALSE .)
+    CLE             reduce using rule 32 (boolean -> FALSE .)
+    CGT             reduce using rule 32 (boolean -> FALSE .)
+    CGE             reduce using rule 32 (boolean -> FALSE .)
+    END_STATEMENT   reduce using rule 32 (boolean -> FALSE .)
+    COLON           reduce using rule 32 (boolean -> FALSE .)
+    RPAREN          reduce using rule 32 (boolean -> FALSE .)
+    RSBRACKET       reduce using rule 32 (boolean -> FALSE .)
+    COMMA           reduce using rule 32 (boolean -> FALSE .)
+
+
+state 24
+
+    (62) if_stmt -> IF . expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> IF . expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> IF . expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> IF . expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
     (23) expr -> . IDENTIFIER
     (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
     (25) expr -> . STRING
@@ -814,16 +839,17 @@ state 23
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 46
     boolean                        shift and go to state 4
 
-state 24
+state 25
 
     (27) expr -> func_call .
 
+    RPAREN          reduce using rule 27 (expr -> func_call .)
     ADD_OP          reduce using rule 27 (expr -> func_call .)
     SUB_OP          reduce using rule 27 (expr -> func_call .)
     MUL_OP          reduce using rule 27 (expr -> func_call .)
@@ -837,42 +863,16 @@ state 24
     CLE             reduce using rule 27 (expr -> func_call .)
     CGT             reduce using rule 27 (expr -> func_call .)
     CGE             reduce using rule 27 (expr -> func_call .)
+    COMMA           reduce using rule 27 (expr -> func_call .)
+    RSBRACKET       reduce using rule 27 (expr -> func_call .)
     END_STATEMENT   reduce using rule 27 (expr -> func_call .)
     COLON           reduce using rule 27 (expr -> func_call .)
-    RPAREN          reduce using rule 27 (expr -> func_call .)
-    RSBRACKET       reduce using rule 27 (expr -> func_call .)
-    COMMA           reduce using rule 27 (expr -> func_call .)
-
-
-state 25
-
-    (32) boolean -> FALSE .
-
-    ADD_OP          reduce using rule 32 (boolean -> FALSE .)
-    SUB_OP          reduce using rule 32 (boolean -> FALSE .)
-    MUL_OP          reduce using rule 32 (boolean -> FALSE .)
-    DIV_OP          reduce using rule 32 (boolean -> FALSE .)
-    MOD_OP          reduce using rule 32 (boolean -> FALSE .)
-    OR              reduce using rule 32 (boolean -> FALSE .)
-    AND             reduce using rule 32 (boolean -> FALSE .)
-    CEQ             reduce using rule 32 (boolean -> FALSE .)
-    CNE             reduce using rule 32 (boolean -> FALSE .)
-    CLT             reduce using rule 32 (boolean -> FALSE .)
-    CLE             reduce using rule 32 (boolean -> FALSE .)
-    CGT             reduce using rule 32 (boolean -> FALSE .)
-    CGE             reduce using rule 32 (boolean -> FALSE .)
-    END_STATEMENT   reduce using rule 32 (boolean -> FALSE .)
-    COLON           reduce using rule 32 (boolean -> FALSE .)
-    RPAREN          reduce using rule 32 (boolean -> FALSE .)
-    RSBRACKET       reduce using rule 32 (boolean -> FALSE .)
-    COMMA           reduce using rule 32 (boolean -> FALSE .)
 
 
 state 26
 
     (49) compound_stmt -> if_stmt .
 
-    END_STATEMENT   reduce using rule 49 (compound_stmt -> if_stmt .)
     FUNCTION        reduce using rule 49 (compound_stmt -> if_stmt .)
     IF              reduce using rule 49 (compound_stmt -> if_stmt .)
     WHILE           reduce using rule 49 (compound_stmt -> if_stmt .)
@@ -887,8 +887,9 @@ state 26
     CONTINUE        reduce using rule 49 (compound_stmt -> if_stmt .)
     TRUE            reduce using rule 49 (compound_stmt -> if_stmt .)
     FALSE           reduce using rule 49 (compound_stmt -> if_stmt .)
+    DEDENT          reduce using rule 49 (compound_stmt -> if_stmt .)
+    END_STATEMENT   reduce using rule 49 (compound_stmt -> if_stmt .)
     $end            reduce using rule 49 (compound_stmt -> if_stmt .)
-    END             reduce using rule 49 (compound_stmt -> if_stmt .)
 
 
 state 27
@@ -939,7 +940,6 @@ state 29
 
     (50) compound_stmt -> while_stmt .
 
-    END_STATEMENT   reduce using rule 50 (compound_stmt -> while_stmt .)
     FUNCTION        reduce using rule 50 (compound_stmt -> while_stmt .)
     IF              reduce using rule 50 (compound_stmt -> while_stmt .)
     WHILE           reduce using rule 50 (compound_stmt -> while_stmt .)
@@ -954,8 +954,9 @@ state 29
     CONTINUE        reduce using rule 50 (compound_stmt -> while_stmt .)
     TRUE            reduce using rule 50 (compound_stmt -> while_stmt .)
     FALSE           reduce using rule 50 (compound_stmt -> while_stmt .)
+    DEDENT          reduce using rule 50 (compound_stmt -> while_stmt .)
+    END_STATEMENT   reduce using rule 50 (compound_stmt -> while_stmt .)
     $end            reduce using rule 50 (compound_stmt -> while_stmt .)
-    END             reduce using rule 50 (compound_stmt -> while_stmt .)
 
 
 state 30
@@ -969,6 +970,7 @@ state 31
 
     (29) expr -> DOUBLE .
 
+    RPAREN          reduce using rule 29 (expr -> DOUBLE .)
     ADD_OP          reduce using rule 29 (expr -> DOUBLE .)
     SUB_OP          reduce using rule 29 (expr -> DOUBLE .)
     MUL_OP          reduce using rule 29 (expr -> DOUBLE .)
@@ -982,16 +984,15 @@ state 31
     CLE             reduce using rule 29 (expr -> DOUBLE .)
     CGT             reduce using rule 29 (expr -> DOUBLE .)
     CGE             reduce using rule 29 (expr -> DOUBLE .)
+    COMMA           reduce using rule 29 (expr -> DOUBLE .)
+    RSBRACKET       reduce using rule 29 (expr -> DOUBLE .)
     END_STATEMENT   reduce using rule 29 (expr -> DOUBLE .)
     COLON           reduce using rule 29 (expr -> DOUBLE .)
-    RPAREN          reduce using rule 29 (expr -> DOUBLE .)
-    RSBRACKET       reduce using rule 29 (expr -> DOUBLE .)
-    COMMA           reduce using rule 29 (expr -> DOUBLE .)
 
 
 state 32
 
-    (52) func_def -> FUNCTION head . END_STATEMENT body END END_STATEMENT
+    (52) func_def -> FUNCTION head . END_STATEMENT INDENT body DEDENT
 
     END_STATEMENT   shift and go to state 62
 
@@ -1022,7 +1023,7 @@ state 34
     CONTINUE        reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     TRUE            reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     FALSE           reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
-    END             reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
+    DEDENT          reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     END_STATEMENT   reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
     $end            reduce using rule 6 (simple_stmt -> small_stmt END_STATEMENT .)
 
@@ -1034,6 +1035,7 @@ state 35
     (19) func_call -> IDENTIFIER . LPAREN list_args RPAREN
     (20) func_call -> IDENTIFIER . LPAREN RPAREN
 
+    RPAREN          reduce using rule 23 (expr -> IDENTIFIER .)
     ADD_OP          reduce using rule 23 (expr -> IDENTIFIER .)
     SUB_OP          reduce using rule 23 (expr -> IDENTIFIER .)
     MUL_OP          reduce using rule 23 (expr -> IDENTIFIER .)
@@ -1047,18 +1049,17 @@ state 35
     CLE             reduce using rule 23 (expr -> IDENTIFIER .)
     CGT             reduce using rule 23 (expr -> IDENTIFIER .)
     CGE             reduce using rule 23 (expr -> IDENTIFIER .)
+    COMMA           reduce using rule 23 (expr -> IDENTIFIER .)
+    RSBRACKET       reduce using rule 23 (expr -> IDENTIFIER .)
     END_STATEMENT   reduce using rule 23 (expr -> IDENTIFIER .)
     COLON           reduce using rule 23 (expr -> IDENTIFIER .)
-    RPAREN          reduce using rule 23 (expr -> IDENTIFIER .)
-    RSBRACKET       reduce using rule 23 (expr -> IDENTIFIER .)
-    COMMA           reduce using rule 23 (expr -> IDENTIFIER .)
     LSBRACKET       shift and go to state 40
     LPAREN          shift and go to state 41
 
 
 state 36
 
-    (59) while_stmt -> WHILE expr . COLON END_STATEMENT body END END_STATEMENT
+    (59) while_stmt -> WHILE expr . COLON END_STATEMENT INDENT body DEDENT
     (33) expr -> expr . ADD_OP expr
     (34) expr -> expr . SUB_OP expr
     (35) expr -> expr . MUL_OP expr
@@ -1132,8 +1133,8 @@ state 37
 
 state 38
 
-    (60) for_stmt -> FOR IDENTIFIER . IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> FOR IDENTIFIER . IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER . IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> FOR IDENTIFIER . IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
 
     IN              shift and go to state 65
 
@@ -1167,9 +1168,9 @@ state 39
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 66
     boolean                        shift and go to state 4
 
@@ -1202,9 +1203,9 @@ state 40
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 67
     boolean                        shift and go to state 4
 
@@ -1241,9 +1242,9 @@ state 41
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 70
     boolean                        shift and go to state 4
     list_args                      shift and go to state 68
@@ -1279,9 +1280,9 @@ state 42
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 72
     boolean                        shift and go to state 4
 
@@ -1303,14 +1304,14 @@ state 43
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -1340,7 +1341,7 @@ state 43
 
     END_STATEMENT   shift and go to state 14
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -1352,7 +1353,7 @@ state 43
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
     small_stmt                     shift and go to state 2
     boolean                        shift and go to state 4
@@ -1366,7 +1367,7 @@ state 43
     stmt                           shift and go to state 19
     for_stmt                       shift and go to state 20
     loop_stmt                      shift and go to state 21
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     if_stmt                        shift and go to state 26
     expr                           shift and go to state 27
     while_stmt                     shift and go to state 29
@@ -1417,10 +1418,10 @@ state 45
 
 state 46
 
-    (62) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF expr . COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (62) if_stmt -> IF expr . COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> IF expr . COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> IF expr . COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> IF expr . COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
     (33) expr -> expr . ADD_OP expr
     (34) expr -> expr . SUB_OP expr
     (35) expr -> expr . MUL_OP expr
@@ -1510,9 +1511,9 @@ state 49
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 76
     boolean                        shift and go to state 4
 
@@ -1571,9 +1572,9 @@ state 52
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 77
     boolean                        shift and go to state 4
 
@@ -1606,9 +1607,9 @@ state 53
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 78
     boolean                        shift and go to state 4
 
@@ -1641,9 +1642,9 @@ state 54
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 79
     boolean                        shift and go to state 4
 
@@ -1676,9 +1677,9 @@ state 55
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 80
     boolean                        shift and go to state 4
 
@@ -1737,9 +1738,9 @@ state 58
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 81
     boolean                        shift and go to state 4
 
@@ -1785,9 +1786,9 @@ state 60
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 82
     boolean                        shift and go to state 4
 
@@ -1806,87 +1807,10 @@ state 61
 
 state 62
 
-    (52) func_def -> FUNCTION head END_STATEMENT . body END END_STATEMENT
-    (57) body -> . stmt
-    (58) body -> . stmt body
-    (4) stmt -> . simple_stmt
-    (5) stmt -> . compound_stmt
-    (6) simple_stmt -> . small_stmt END_STATEMENT
-    (48) compound_stmt -> . func_def
-    (49) compound_stmt -> . if_stmt
-    (50) compound_stmt -> . while_stmt
-    (51) compound_stmt -> . for_stmt
-    (7) small_stmt -> . assignment
-    (8) small_stmt -> . const_decl
-    (9) small_stmt -> . expr
-    (10) small_stmt -> . return_stmt
-    (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
-    (16) assignment -> . IDENTIFIER ASSIGN expr
-    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
-    (18) const_decl -> . IDENTIFIER CONST expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (12) return_stmt -> . RETURN
-    (13) return_stmt -> . RETURN expr
-    (14) loop_stmt -> . BREAK
-    (15) loop_stmt -> . CONTINUE
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
+    (52) func_def -> FUNCTION head END_STATEMENT . INDENT body DEDENT
 
-    FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
-    WHILE           shift and go to state 3
-    FOR             shift and go to state 9
-    IDENTIFIER      shift and go to state 12
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    RETURN          shift and go to state 6
-    BREAK           shift and go to state 28
-    CONTINUE        shift and go to state 30
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    INDENT          shift and go to state 83
 
-    body                           shift and go to state 83
-    func_call                      shift and go to state 24
-    if_stmt                        shift and go to state 26
-    func_def                       shift and go to state 16
-    simple_stmt                    shift and go to state 17
-    assignment                     shift and go to state 18
-    for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
-    small_stmt                     shift and go to state 2
-    while_stmt                     shift and go to state 29
-    boolean                        shift and go to state 4
-    return_stmt                    shift and go to state 5
-    loop_stmt                      shift and go to state 21
-    expr                           shift and go to state 27
-    const_decl                     shift and go to state 10
-    compound_stmt                  shift and go to state 13
 
 state 63
 
@@ -1895,25 +1819,25 @@ state 63
     (55) func_def_args -> . IDENTIFIER
     (56) func_def_args -> . IDENTIFIER COMMA func_def_args
 
-    RPAREN          shift and go to state 86
-    IDENTIFIER      shift and go to state 87
+    RPAREN          shift and go to state 85
+    IDENTIFIER      shift and go to state 86
 
-    func_def_args                  shift and go to state 85
+    func_def_args                  shift and go to state 84
 
 state 64
 
-    (59) while_stmt -> WHILE expr COLON . END_STATEMENT body END END_STATEMENT
+    (59) while_stmt -> WHILE expr COLON . END_STATEMENT INDENT body DEDENT
 
-    END_STATEMENT   shift and go to state 88
+    END_STATEMENT   shift and go to state 87
 
 
 state 65
 
-    (60) for_stmt -> FOR IDENTIFIER IN . RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> FOR IDENTIFIER IN . IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN . RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> FOR IDENTIFIER IN . IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
 
-    RANGE           shift and go to state 89
-    IDENTIFIER      shift and go to state 90
+    RANGE           shift and go to state 88
+    IDENTIFIER      shift and go to state 89
 
 
 state 66
@@ -1972,7 +1896,7 @@ state 67
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
-    RSBRACKET       shift and go to state 91
+    RSBRACKET       shift and go to state 90
     ADD_OP          shift and go to state 58
     SUB_OP          shift and go to state 54
     MUL_OP          shift and go to state 49
@@ -1994,7 +1918,7 @@ state 68
 
     (19) func_call -> IDENTIFIER LPAREN list_args . RPAREN
 
-    RPAREN          shift and go to state 92
+    RPAREN          shift and go to state 91
 
 
 state 69
@@ -2043,7 +1967,7 @@ state 70
 
     RSBRACKET       reduce using rule 21 (list_args -> expr .)
     RPAREN          reduce using rule 21 (list_args -> expr .)
-    COMMA           shift and go to state 93
+    COMMA           shift and go to state 92
     ADD_OP          shift and go to state 58
     SUB_OP          shift and go to state 54
     MUL_OP          shift and go to state 49
@@ -2092,12 +2016,12 @@ state 71
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 70
     boolean                        shift and go to state 4
-    list_args                      shift and go to state 94
+    list_args                      shift and go to state 93
 
 state 72
 
@@ -2147,6 +2071,7 @@ state 74
 
     (26) expr -> LPAREN expr RPAREN .
 
+    RPAREN          reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     ADD_OP          reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     SUB_OP          reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     MUL_OP          reduce using rule 26 (expr -> LPAREN expr RPAREN .)
@@ -2160,21 +2085,20 @@ state 74
     CLE             reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     CGT             reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     CGE             reduce using rule 26 (expr -> LPAREN expr RPAREN .)
+    COMMA           reduce using rule 26 (expr -> LPAREN expr RPAREN .)
+    RSBRACKET       reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     END_STATEMENT   reduce using rule 26 (expr -> LPAREN expr RPAREN .)
     COLON           reduce using rule 26 (expr -> LPAREN expr RPAREN .)
-    RPAREN          reduce using rule 26 (expr -> LPAREN expr RPAREN .)
-    RSBRACKET       reduce using rule 26 (expr -> LPAREN expr RPAREN .)
-    COMMA           reduce using rule 26 (expr -> LPAREN expr RPAREN .)
 
 
 state 75
 
-    (62) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF expr COLON . END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (62) if_stmt -> IF expr COLON . END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> IF expr COLON . END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> IF expr COLON . END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> IF expr COLON . END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
 
-    END_STATEMENT   shift and go to state 95
+    END_STATEMENT   shift and go to state 94
 
 
 state 76
@@ -2196,6 +2120,7 @@ state 76
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
+    RPAREN          reduce using rule 35 (expr -> expr MUL_OP expr .)
     ADD_OP          reduce using rule 35 (expr -> expr MUL_OP expr .)
     SUB_OP          reduce using rule 35 (expr -> expr MUL_OP expr .)
     MUL_OP          reduce using rule 35 (expr -> expr MUL_OP expr .)
@@ -2209,11 +2134,10 @@ state 76
     CLE             reduce using rule 35 (expr -> expr MUL_OP expr .)
     CGT             reduce using rule 35 (expr -> expr MUL_OP expr .)
     CGE             reduce using rule 35 (expr -> expr MUL_OP expr .)
+    COMMA           reduce using rule 35 (expr -> expr MUL_OP expr .)
+    RSBRACKET       reduce using rule 35 (expr -> expr MUL_OP expr .)
     END_STATEMENT   reduce using rule 35 (expr -> expr MUL_OP expr .)
     COLON           reduce using rule 35 (expr -> expr MUL_OP expr .)
-    RPAREN          reduce using rule 35 (expr -> expr MUL_OP expr .)
-    RSBRACKET       reduce using rule 35 (expr -> expr MUL_OP expr .)
-    COMMA           reduce using rule 35 (expr -> expr MUL_OP expr .)
 
   ! ADD_OP          [ shift and go to state 58 ]
   ! SUB_OP          [ shift and go to state 54 ]
@@ -2264,11 +2188,11 @@ state 77
   ! shift/reduce conflict for CLE resolved as shift
   ! shift/reduce conflict for CGT resolved as shift
   ! shift/reduce conflict for CGE resolved as shift
+    RPAREN          reduce using rule 38 (expr -> expr comb_op expr .)
+    COMMA           reduce using rule 38 (expr -> expr comb_op expr .)
+    RSBRACKET       reduce using rule 38 (expr -> expr comb_op expr .)
     END_STATEMENT   reduce using rule 38 (expr -> expr comb_op expr .)
     COLON           reduce using rule 38 (expr -> expr comb_op expr .)
-    RPAREN          reduce using rule 38 (expr -> expr comb_op expr .)
-    RSBRACKET       reduce using rule 38 (expr -> expr comb_op expr .)
-    COMMA           reduce using rule 38 (expr -> expr comb_op expr .)
     ADD_OP          shift and go to state 58
     SUB_OP          shift and go to state 54
     MUL_OP          shift and go to state 49
@@ -2332,11 +2256,11 @@ state 78
   ! shift/reduce conflict for CLE resolved as shift
   ! shift/reduce conflict for CGT resolved as shift
   ! shift/reduce conflict for CGE resolved as shift
+    RPAREN          reduce using rule 39 (expr -> expr comp_op expr .)
+    COMMA           reduce using rule 39 (expr -> expr comp_op expr .)
+    RSBRACKET       reduce using rule 39 (expr -> expr comp_op expr .)
     END_STATEMENT   reduce using rule 39 (expr -> expr comp_op expr .)
     COLON           reduce using rule 39 (expr -> expr comp_op expr .)
-    RPAREN          reduce using rule 39 (expr -> expr comp_op expr .)
-    RSBRACKET       reduce using rule 39 (expr -> expr comp_op expr .)
-    COMMA           reduce using rule 39 (expr -> expr comp_op expr .)
     ADD_OP          shift and go to state 58
     SUB_OP          shift and go to state 54
     MUL_OP          shift and go to state 49
@@ -2387,6 +2311,7 @@ state 79
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
+    RPAREN          reduce using rule 34 (expr -> expr SUB_OP expr .)
     ADD_OP          reduce using rule 34 (expr -> expr SUB_OP expr .)
     SUB_OP          reduce using rule 34 (expr -> expr SUB_OP expr .)
     OR              reduce using rule 34 (expr -> expr SUB_OP expr .)
@@ -2397,11 +2322,10 @@ state 79
     CLE             reduce using rule 34 (expr -> expr SUB_OP expr .)
     CGT             reduce using rule 34 (expr -> expr SUB_OP expr .)
     CGE             reduce using rule 34 (expr -> expr SUB_OP expr .)
+    COMMA           reduce using rule 34 (expr -> expr SUB_OP expr .)
+    RSBRACKET       reduce using rule 34 (expr -> expr SUB_OP expr .)
     END_STATEMENT   reduce using rule 34 (expr -> expr SUB_OP expr .)
     COLON           reduce using rule 34 (expr -> expr SUB_OP expr .)
-    RPAREN          reduce using rule 34 (expr -> expr SUB_OP expr .)
-    RSBRACKET       reduce using rule 34 (expr -> expr SUB_OP expr .)
-    COMMA           reduce using rule 34 (expr -> expr SUB_OP expr .)
     MUL_OP          shift and go to state 49
     DIV_OP          shift and go to state 55
     MOD_OP          shift and go to state 60
@@ -2442,6 +2366,7 @@ state 80
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
+    RPAREN          reduce using rule 36 (expr -> expr DIV_OP expr .)
     ADD_OP          reduce using rule 36 (expr -> expr DIV_OP expr .)
     SUB_OP          reduce using rule 36 (expr -> expr DIV_OP expr .)
     MUL_OP          reduce using rule 36 (expr -> expr DIV_OP expr .)
@@ -2455,11 +2380,10 @@ state 80
     CLE             reduce using rule 36 (expr -> expr DIV_OP expr .)
     CGT             reduce using rule 36 (expr -> expr DIV_OP expr .)
     CGE             reduce using rule 36 (expr -> expr DIV_OP expr .)
+    COMMA           reduce using rule 36 (expr -> expr DIV_OP expr .)
+    RSBRACKET       reduce using rule 36 (expr -> expr DIV_OP expr .)
     END_STATEMENT   reduce using rule 36 (expr -> expr DIV_OP expr .)
     COLON           reduce using rule 36 (expr -> expr DIV_OP expr .)
-    RPAREN          reduce using rule 36 (expr -> expr DIV_OP expr .)
-    RSBRACKET       reduce using rule 36 (expr -> expr DIV_OP expr .)
-    COMMA           reduce using rule 36 (expr -> expr DIV_OP expr .)
 
   ! ADD_OP          [ shift and go to state 58 ]
   ! SUB_OP          [ shift and go to state 54 ]
@@ -2497,6 +2421,7 @@ state 81
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
+    RPAREN          reduce using rule 33 (expr -> expr ADD_OP expr .)
     ADD_OP          reduce using rule 33 (expr -> expr ADD_OP expr .)
     SUB_OP          reduce using rule 33 (expr -> expr ADD_OP expr .)
     OR              reduce using rule 33 (expr -> expr ADD_OP expr .)
@@ -2507,11 +2432,10 @@ state 81
     CLE             reduce using rule 33 (expr -> expr ADD_OP expr .)
     CGT             reduce using rule 33 (expr -> expr ADD_OP expr .)
     CGE             reduce using rule 33 (expr -> expr ADD_OP expr .)
+    COMMA           reduce using rule 33 (expr -> expr ADD_OP expr .)
+    RSBRACKET       reduce using rule 33 (expr -> expr ADD_OP expr .)
     END_STATEMENT   reduce using rule 33 (expr -> expr ADD_OP expr .)
     COLON           reduce using rule 33 (expr -> expr ADD_OP expr .)
-    RPAREN          reduce using rule 33 (expr -> expr ADD_OP expr .)
-    RSBRACKET       reduce using rule 33 (expr -> expr ADD_OP expr .)
-    COMMA           reduce using rule 33 (expr -> expr ADD_OP expr .)
     MUL_OP          shift and go to state 49
     DIV_OP          shift and go to state 55
     MOD_OP          shift and go to state 60
@@ -2552,6 +2476,7 @@ state 82
     (46) comp_op -> . CGT
     (47) comp_op -> . CGE
 
+    RPAREN          reduce using rule 37 (expr -> expr MOD_OP expr .)
     ADD_OP          reduce using rule 37 (expr -> expr MOD_OP expr .)
     SUB_OP          reduce using rule 37 (expr -> expr MOD_OP expr .)
     MUL_OP          reduce using rule 37 (expr -> expr MOD_OP expr .)
@@ -2565,11 +2490,10 @@ state 82
     CLE             reduce using rule 37 (expr -> expr MOD_OP expr .)
     CGT             reduce using rule 37 (expr -> expr MOD_OP expr .)
     CGE             reduce using rule 37 (expr -> expr MOD_OP expr .)
+    COMMA           reduce using rule 37 (expr -> expr MOD_OP expr .)
+    RSBRACKET       reduce using rule 37 (expr -> expr MOD_OP expr .)
     END_STATEMENT   reduce using rule 37 (expr -> expr MOD_OP expr .)
     COLON           reduce using rule 37 (expr -> expr MOD_OP expr .)
-    RPAREN          reduce using rule 37 (expr -> expr MOD_OP expr .)
-    RSBRACKET       reduce using rule 37 (expr -> expr MOD_OP expr .)
-    COMMA           reduce using rule 37 (expr -> expr MOD_OP expr .)
 
   ! ADD_OP          [ shift and go to state 58 ]
   ! SUB_OP          [ shift and go to state 54 ]
@@ -2590,15 +2514,7 @@ state 82
 
 state 83
 
-    (52) func_def -> FUNCTION head END_STATEMENT body . END END_STATEMENT
-
-    END             shift and go to state 96
-
-
-state 84
-
-    (57) body -> stmt .
-    (58) body -> stmt . body
+    (52) func_def -> FUNCTION head END_STATEMENT INDENT . body DEDENT
     (57) body -> . stmt
     (58) body -> . stmt body
     (4) stmt -> . simple_stmt
@@ -2613,14 +2529,14 @@ state 84
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -2648,9 +2564,8 @@ state 84
     (31) boolean -> . TRUE
     (32) boolean -> . FALSE
 
-    END             reduce using rule 57 (body -> stmt .)
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -2662,16 +2577,16 @@ state 84
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    body                           shift and go to state 97
-    func_call                      shift and go to state 24
+    body                           shift and go to state 95
+    func_call                      shift and go to state 25
     if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     assignment                     shift and go to state 18
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
+    stmt                           shift and go to state 96
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -2681,131 +2596,55 @@ state 84
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
 
-state 85
+state 84
 
     (53) head -> IDENTIFIER LPAREN func_def_args . RPAREN COLON
 
-    RPAREN          shift and go to state 98
+    RPAREN          shift and go to state 97
 
 
-state 86
+state 85
 
     (54) head -> IDENTIFIER LPAREN RPAREN . COLON
 
-    COLON           shift and go to state 99
+    COLON           shift and go to state 98
 
 
-state 87
+state 86
 
     (55) func_def_args -> IDENTIFIER .
     (56) func_def_args -> IDENTIFIER . COMMA func_def_args
 
     RPAREN          reduce using rule 55 (func_def_args -> IDENTIFIER .)
-    COMMA           shift and go to state 100
+    COMMA           shift and go to state 99
+
+
+state 87
+
+    (59) while_stmt -> WHILE expr COLON END_STATEMENT . INDENT body DEDENT
+
+    INDENT          shift and go to state 100
 
 
 state 88
 
-    (59) while_stmt -> WHILE expr COLON END_STATEMENT . body END END_STATEMENT
-    (57) body -> . stmt
-    (58) body -> . stmt body
-    (4) stmt -> . simple_stmt
-    (5) stmt -> . compound_stmt
-    (6) simple_stmt -> . small_stmt END_STATEMENT
-    (48) compound_stmt -> . func_def
-    (49) compound_stmt -> . if_stmt
-    (50) compound_stmt -> . while_stmt
-    (51) compound_stmt -> . for_stmt
-    (7) small_stmt -> . assignment
-    (8) small_stmt -> . const_decl
-    (9) small_stmt -> . expr
-    (10) small_stmt -> . return_stmt
-    (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
-    (16) assignment -> . IDENTIFIER ASSIGN expr
-    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
-    (18) const_decl -> . IDENTIFIER CONST expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (12) return_stmt -> . RETURN
-    (13) return_stmt -> . RETURN expr
-    (14) loop_stmt -> . BREAK
-    (15) loop_stmt -> . CONTINUE
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE . LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
 
-    FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
-    WHILE           shift and go to state 3
-    FOR             shift and go to state 9
-    IDENTIFIER      shift and go to state 12
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    RETURN          shift and go to state 6
-    BREAK           shift and go to state 28
-    CONTINUE        shift and go to state 30
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    LPAREN          shift and go to state 101
 
-    body                           shift and go to state 101
-    func_call                      shift and go to state 24
-    if_stmt                        shift and go to state 26
-    func_def                       shift and go to state 16
-    simple_stmt                    shift and go to state 17
-    expr                           shift and go to state 27
-    for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
-    small_stmt                     shift and go to state 2
-    while_stmt                     shift and go to state 29
-    boolean                        shift and go to state 4
-    return_stmt                    shift and go to state 5
-    loop_stmt                      shift and go to state 21
-    assignment                     shift and go to state 18
-    const_decl                     shift and go to state 10
-    compound_stmt                  shift and go to state 13
 
 state 89
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE . LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
+    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER . COLON END_STATEMENT INDENT body DEDENT
 
-    LPAREN          shift and go to state 102
+    COLON           shift and go to state 102
 
 
 state 90
 
-    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER . COLON END_STATEMENT body END END_STATEMENT
-
-    COLON           shift and go to state 103
-
-
-state 91
-
     (24) expr -> IDENTIFIER LSBRACKET expr RSBRACKET .
 
+    RPAREN          reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     ADD_OP          reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     SUB_OP          reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     MUL_OP          reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
@@ -2819,14 +2658,13 @@ state 91
     CLE             reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     CGT             reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     CGE             reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
+    COMMA           reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
+    RSBRACKET       reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     END_STATEMENT   reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
     COLON           reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
-    RPAREN          reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
-    RSBRACKET       reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
-    COMMA           reduce using rule 24 (expr -> IDENTIFIER LSBRACKET expr RSBRACKET .)
 
 
-state 92
+state 91
 
     (19) func_call -> IDENTIFIER LPAREN list_args RPAREN .
 
@@ -2850,7 +2688,7 @@ state 92
     COMMA           reduce using rule 19 (func_call -> IDENTIFIER LPAREN list_args RPAREN .)
 
 
-state 93
+state 92
 
     (22) list_args -> expr COMMA . list_args
     (21) list_args -> . expr
@@ -2881,26 +2719,41 @@ state 93
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 70
     boolean                        shift and go to state 4
-    list_args                      shift and go to state 104
+    list_args                      shift and go to state 103
 
-state 94
+state 93
 
     (17) assignment -> IDENTIFIER ASSIGN LSBRACKET list_args . RSBRACKET
 
-    RSBRACKET       shift and go to state 105
+    RSBRACKET       shift and go to state 104
+
+
+state 94
+
+    (62) if_stmt -> IF expr COLON END_STATEMENT . INDENT body DEDENT
+    (63) if_stmt -> IF expr COLON END_STATEMENT . INDENT body DEDENT elseif_list
+    (64) if_stmt -> IF expr COLON END_STATEMENT . INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT . INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+
+    INDENT          shift and go to state 105
 
 
 state 95
 
-    (62) if_stmt -> IF expr COLON END_STATEMENT . body END END_STATEMENT
-    (63) if_stmt -> IF expr COLON END_STATEMENT . body END END_STATEMENT elseif_list
-    (64) if_stmt -> IF expr COLON END_STATEMENT . body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF expr COLON END_STATEMENT . body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> FUNCTION head END_STATEMENT INDENT body . DEDENT
+
+    DEDENT          shift and go to state 106
+
+
+state 96
+
+    (57) body -> stmt .
+    (58) body -> stmt . body
     (57) body -> . stmt
     (58) body -> . stmt body
     (4) stmt -> . simple_stmt
@@ -2915,14 +2768,123 @@ state 95
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    DEDENT          reduce using rule 57 (body -> stmt .)
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 24
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 23
+
+    body                           shift and go to state 107
+    func_call                      shift and go to state 25
+    if_stmt                        shift and go to state 26
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    assignment                     shift and go to state 18
+    for_stmt                       shift and go to state 20
+    stmt                           shift and go to state 96
+    small_stmt                     shift and go to state 2
+    while_stmt                     shift and go to state 29
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    loop_stmt                      shift and go to state 21
+    expr                           shift and go to state 27
+    const_decl                     shift and go to state 10
+    compound_stmt                  shift and go to state 13
+
+state 97
+
+    (53) head -> IDENTIFIER LPAREN func_def_args RPAREN . COLON
+
+    COLON           shift and go to state 108
+
+
+state 98
+
+    (54) head -> IDENTIFIER LPAREN RPAREN COLON .
+
+    END_STATEMENT   reduce using rule 54 (head -> IDENTIFIER LPAREN RPAREN COLON .)
+
+
+state 99
+
+    (56) func_def_args -> IDENTIFIER COMMA . func_def_args
+    (55) func_def_args -> . IDENTIFIER
+    (56) func_def_args -> . IDENTIFIER COMMA func_def_args
+
+    IDENTIFIER      shift and go to state 86
+
+    func_def_args                  shift and go to state 109
+
+state 100
+
+    (59) while_stmt -> WHILE expr COLON END_STATEMENT INDENT . body DEDENT
+    (57) body -> . stmt
+    (58) body -> . stmt body
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -2951,7 +2913,7 @@ state 95
     (32) boolean -> . FALSE
 
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -2963,15 +2925,16 @@ state 95
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    body                           shift and go to state 106
-    func_call                      shift and go to state 24
+    body                           shift and go to state 110
+    func_call                      shift and go to state 25
+    if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     expr                           shift and go to state 27
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
+    stmt                           shift and go to state 96
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -2980,56 +2943,10 @@ state 95
     assignment                     shift and go to state 18
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
-    if_stmt                        shift and go to state 26
-
-state 96
-
-    (52) func_def -> FUNCTION head END_STATEMENT body END . END_STATEMENT
-
-    END_STATEMENT   shift and go to state 107
-
-
-state 97
-
-    (58) body -> stmt body .
-
-    END             reduce using rule 58 (body -> stmt body .)
-
-
-state 98
-
-    (53) head -> IDENTIFIER LPAREN func_def_args RPAREN . COLON
-
-    COLON           shift and go to state 108
-
-
-state 99
-
-    (54) head -> IDENTIFIER LPAREN RPAREN COLON .
-
-    END_STATEMENT   reduce using rule 54 (head -> IDENTIFIER LPAREN RPAREN COLON .)
-
-
-state 100
-
-    (56) func_def_args -> IDENTIFIER COMMA . func_def_args
-    (55) func_def_args -> . IDENTIFIER
-    (56) func_def_args -> . IDENTIFIER COMMA func_def_args
-
-    IDENTIFIER      shift and go to state 87
-
-    func_def_args                  shift and go to state 109
 
 state 101
 
-    (59) while_stmt -> WHILE expr COLON END_STATEMENT body . END END_STATEMENT
-
-    END             shift and go to state 110
-
-
-state 102
-
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN . expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN . expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
     (23) expr -> . IDENTIFIER
     (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
     (25) expr -> . STRING
@@ -3056,20 +2973,20 @@ state 102
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 111
     boolean                        shift and go to state 4
 
-state 103
+state 102
 
-    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON . END_STATEMENT body END END_STATEMENT
+    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON . END_STATEMENT INDENT body DEDENT
 
     END_STATEMENT   shift and go to state 112
 
 
-state 104
+state 103
 
     (22) list_args -> expr COMMA list_args .
 
@@ -3077,44 +2994,128 @@ state 104
     RPAREN          reduce using rule 22 (list_args -> expr COMMA list_args .)
 
 
-state 105
+state 104
 
     (17) assignment -> IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET .
 
     END_STATEMENT   reduce using rule 17 (assignment -> IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET .)
 
 
+state 105
+
+    (62) if_stmt -> IF expr COLON END_STATEMENT INDENT . body DEDENT
+    (63) if_stmt -> IF expr COLON END_STATEMENT INDENT . body DEDENT elseif_list
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT . body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT . body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (57) body -> . stmt
+    (58) body -> . stmt body
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 24
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 23
+
+    body                           shift and go to state 113
+    func_call                      shift and go to state 25
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    expr                           shift and go to state 27
+    for_stmt                       shift and go to state 20
+    stmt                           shift and go to state 96
+    small_stmt                     shift and go to state 2
+    while_stmt                     shift and go to state 29
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    loop_stmt                      shift and go to state 21
+    assignment                     shift and go to state 18
+    const_decl                     shift and go to state 10
+    compound_stmt                  shift and go to state 13
+    if_stmt                        shift and go to state 26
+
 state 106
 
-    (62) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT
-    (63) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT elseif_list
-    (64) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF expr COLON END_STATEMENT body . END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .
 
-    END             shift and go to state 113
+    FUNCTION        reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    END_STATEMENT   reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT INDENT body DEDENT .)
 
 
 state 107
 
-    (52) func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .
+    (58) body -> stmt body .
 
-    FUNCTION        reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    END_STATEMENT   reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 52 (func_def -> FUNCTION head END_STATEMENT body END END_STATEMENT .)
+    DEDENT          reduce using rule 58 (body -> stmt body .)
 
 
 state 108
@@ -3133,14 +3134,14 @@ state 109
 
 state 110
 
-    (59) while_stmt -> WHILE expr COLON END_STATEMENT body END . END_STATEMENT
+    (59) while_stmt -> WHILE expr COLON END_STATEMENT INDENT body . DEDENT
 
-    END_STATEMENT   shift and go to state 114
+    DEDENT          shift and go to state 114
 
 
 state 111
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr . COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr . COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
     (33) expr -> expr . ADD_OP expr
     (34) expr -> expr . SUB_OP expr
     (35) expr -> expr . MUL_OP expr
@@ -3177,7 +3178,82 @@ state 111
 
 state 112
 
-    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT . body END END_STATEMENT
+    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT . INDENT body DEDENT
+
+    INDENT          shift and go to state 116
+
+
+state 113
+
+    (62) if_stmt -> IF expr COLON END_STATEMENT INDENT body . DEDENT
+    (63) if_stmt -> IF expr COLON END_STATEMENT INDENT body . DEDENT elseif_list
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body . DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body . DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+
+    DEDENT          shift and go to state 117
+
+
+state 114
+
+    (59) while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .
+
+    FUNCTION        reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    END_STATEMENT   reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT INDENT body DEDENT .)
+
+
+state 115
+
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA . expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    IDENTIFIER      shift and go to state 35
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 23
+
+    func_call                      shift and go to state 25
+    expr                           shift and go to state 118
+    boolean                        shift and go to state 4
+
+state 116
+
+    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT . body DEDENT
     (57) body -> . stmt
     (58) body -> . stmt body
     (4) stmt -> . simple_stmt
@@ -3192,14 +3268,14 @@ state 112
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -3228,7 +3304,7 @@ state 112
     (32) boolean -> . FALSE
 
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -3240,16 +3316,16 @@ state 112
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    body                           shift and go to state 116
-    func_call                      shift and go to state 24
+    body                           shift and go to state 119
+    func_call                      shift and go to state 25
     if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     assignment                     shift and go to state 18
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
+    stmt                           shift and go to state 96
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -3259,107 +3335,32 @@ state 112
     const_decl                     shift and go to state 10
     compound_stmt                  shift and go to state 13
 
-state 113
-
-    (62) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT
-    (63) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT elseif_list
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END . END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-
-    END_STATEMENT   shift and go to state 117
-
-
-state 114
-
-    (59) while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .
-
-    FUNCTION        reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    END_STATEMENT   reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 59 (while_stmt -> WHILE expr COLON END_STATEMENT body END END_STATEMENT .)
-
-
-state 115
-
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA . expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
-
-    IDENTIFIER      shift and go to state 35
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
-
-    func_call                      shift and go to state 24
-    expr                           shift and go to state 118
-    boolean                        shift and go to state 4
-
-state 116
-
-    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body . END END_STATEMENT
-
-    END             shift and go to state 119
-
-
 state 117
 
-    (62) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .
-    (63) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT . elseif_list
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT . elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT . ELSE COLON END_STATEMENT body END END_STATEMENT
-    (66) elseif_list -> . ELSEIF expr COLON END_STATEMENT body END END_STATEMENT
-    (67) elseif_list -> . ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (62) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .
+    (63) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT . elseif_list
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT . elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT . ELSE COLON END_STATEMENT INDENT body DEDENT
+    (66) elseif_list -> . ELSEIF expr COLON END_STATEMENT INDENT body DEDENT
+    (67) elseif_list -> . ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
 
-    FUNCTION        reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    END_STATEMENT   reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT .)
+    FUNCTION        reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    END_STATEMENT   reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 62 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT .)
     ELSE            shift and go to state 121
     ELSEIF          shift and go to state 122
 
@@ -3367,7 +3368,7 @@ state 117
 
 state 118
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr . RPAREN COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr . RPAREN COLON END_STATEMENT INDENT body DEDENT
     (33) expr -> expr . ADD_OP expr
     (34) expr -> expr . SUB_OP expr
     (35) expr -> expr . MUL_OP expr
@@ -3404,47 +3405,47 @@ state 118
 
 state 119
 
-    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END . END_STATEMENT
+    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body . DEDENT
 
-    END_STATEMENT   shift and go to state 124
+    DEDENT          shift and go to state 124
 
 
 state 120
 
-    (63) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list . ELSE COLON END_STATEMENT body END END_STATEMENT
+    (63) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list . ELSE COLON END_STATEMENT INDENT body DEDENT
 
-    FUNCTION        reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    IF              reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    WHILE           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    FOR             reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    IDENTIFIER      reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    STRING          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    LPAREN          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    INTEGER         reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    DOUBLE          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    RETURN          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    BREAK           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    CONTINUE        reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    TRUE            reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    FALSE           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    END             reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    END_STATEMENT   reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    $end            reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
+    FUNCTION        reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    IF              reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    WHILE           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    FOR             reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    IDENTIFIER      reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    STRING          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    LPAREN          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    INTEGER         reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    DOUBLE          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    RETURN          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    BREAK           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    CONTINUE        reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    TRUE            reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    FALSE           reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    DEDENT          reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    END_STATEMENT   reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    $end            reduce using rule 63 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
     ELSE            shift and go to state 125
 
 
 state 121
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE . COLON END_STATEMENT body END END_STATEMENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE . COLON END_STATEMENT INDENT body DEDENT
 
     COLON           shift and go to state 126
 
 
 state 122
 
-    (66) elseif_list -> ELSEIF . expr COLON END_STATEMENT body END END_STATEMENT
-    (67) elseif_list -> ELSEIF . expr COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (66) elseif_list -> ELSEIF . expr COLON END_STATEMENT INDENT body DEDENT
+    (67) elseif_list -> ELSEIF . expr COLON END_STATEMENT INDENT body DEDENT elseif_list
     (23) expr -> . IDENTIFIER
     (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
     (25) expr -> . STRING
@@ -3471,60 +3472,60 @@ state 122
     INTEGER         shift and go to state 7
     DOUBLE          shift and go to state 31
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    func_call                      shift and go to state 24
+    func_call                      shift and go to state 25
     expr                           shift and go to state 127
     boolean                        shift and go to state 4
 
 state 123
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN . COLON END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN . COLON END_STATEMENT INDENT body DEDENT
 
     COLON           shift and go to state 128
 
 
 state 124
 
-    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .
+    (61) for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .
 
-    END_STATEMENT   reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    FUNCTION        reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT .)
+    END_STATEMENT   reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    FUNCTION        reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 61 (for_stmt -> FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT .)
 
 
 state 125
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE . COLON END_STATEMENT body END END_STATEMENT
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE . COLON END_STATEMENT INDENT body DEDENT
 
     COLON           shift and go to state 129
 
 
 state 126
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON . END_STATEMENT body END END_STATEMENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON . END_STATEMENT INDENT body DEDENT
 
     END_STATEMENT   shift and go to state 130
 
 
 state 127
 
-    (66) elseif_list -> ELSEIF expr . COLON END_STATEMENT body END END_STATEMENT
-    (67) elseif_list -> ELSEIF expr . COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (66) elseif_list -> ELSEIF expr . COLON END_STATEMENT INDENT body DEDENT
+    (67) elseif_list -> ELSEIF expr . COLON END_STATEMENT INDENT body DEDENT elseif_list
     (33) expr -> expr . ADD_OP expr
     (34) expr -> expr . SUB_OP expr
     (35) expr -> expr . MUL_OP expr
@@ -3561,289 +3562,50 @@ state 127
 
 state 128
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON . END_STATEMENT body END END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON . END_STATEMENT INDENT body DEDENT
 
     END_STATEMENT   shift and go to state 132
 
 
 state 129
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON . END_STATEMENT body END END_STATEMENT
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON . END_STATEMENT INDENT body DEDENT
 
     END_STATEMENT   shift and go to state 133
 
 
 state 130
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT . body END END_STATEMENT
-    (57) body -> . stmt
-    (58) body -> . stmt body
-    (4) stmt -> . simple_stmt
-    (5) stmt -> . compound_stmt
-    (6) simple_stmt -> . small_stmt END_STATEMENT
-    (48) compound_stmt -> . func_def
-    (49) compound_stmt -> . if_stmt
-    (50) compound_stmt -> . while_stmt
-    (51) compound_stmt -> . for_stmt
-    (7) small_stmt -> . assignment
-    (8) small_stmt -> . const_decl
-    (9) small_stmt -> . expr
-    (10) small_stmt -> . return_stmt
-    (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
-    (16) assignment -> . IDENTIFIER ASSIGN expr
-    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
-    (18) const_decl -> . IDENTIFIER CONST expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (12) return_stmt -> . RETURN
-    (13) return_stmt -> . RETURN expr
-    (14) loop_stmt -> . BREAK
-    (15) loop_stmt -> . CONTINUE
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT . INDENT body DEDENT
 
-    FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
-    WHILE           shift and go to state 3
-    FOR             shift and go to state 9
-    IDENTIFIER      shift and go to state 12
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    RETURN          shift and go to state 6
-    BREAK           shift and go to state 28
-    CONTINUE        shift and go to state 30
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    INDENT          shift and go to state 134
 
-    body                           shift and go to state 134
-    func_call                      shift and go to state 24
-    if_stmt                        shift and go to state 26
-    func_def                       shift and go to state 16
-    simple_stmt                    shift and go to state 17
-    expr                           shift and go to state 27
-    for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
-    small_stmt                     shift and go to state 2
-    while_stmt                     shift and go to state 29
-    boolean                        shift and go to state 4
-    return_stmt                    shift and go to state 5
-    loop_stmt                      shift and go to state 21
-    assignment                     shift and go to state 18
-    const_decl                     shift and go to state 10
-    compound_stmt                  shift and go to state 13
 
 state 131
 
-    (66) elseif_list -> ELSEIF expr COLON . END_STATEMENT body END END_STATEMENT
-    (67) elseif_list -> ELSEIF expr COLON . END_STATEMENT body END END_STATEMENT elseif_list
+    (66) elseif_list -> ELSEIF expr COLON . END_STATEMENT INDENT body DEDENT
+    (67) elseif_list -> ELSEIF expr COLON . END_STATEMENT INDENT body DEDENT elseif_list
 
     END_STATEMENT   shift and go to state 135
 
 
 state 132
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT . body END END_STATEMENT
-    (57) body -> . stmt
-    (58) body -> . stmt body
-    (4) stmt -> . simple_stmt
-    (5) stmt -> . compound_stmt
-    (6) simple_stmt -> . small_stmt END_STATEMENT
-    (48) compound_stmt -> . func_def
-    (49) compound_stmt -> . if_stmt
-    (50) compound_stmt -> . while_stmt
-    (51) compound_stmt -> . for_stmt
-    (7) small_stmt -> . assignment
-    (8) small_stmt -> . const_decl
-    (9) small_stmt -> . expr
-    (10) small_stmt -> . return_stmt
-    (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
-    (16) assignment -> . IDENTIFIER ASSIGN expr
-    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
-    (18) const_decl -> . IDENTIFIER CONST expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (12) return_stmt -> . RETURN
-    (13) return_stmt -> . RETURN expr
-    (14) loop_stmt -> . BREAK
-    (15) loop_stmt -> . CONTINUE
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT . INDENT body DEDENT
 
-    FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
-    WHILE           shift and go to state 3
-    FOR             shift and go to state 9
-    IDENTIFIER      shift and go to state 12
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    RETURN          shift and go to state 6
-    BREAK           shift and go to state 28
-    CONTINUE        shift and go to state 30
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    INDENT          shift and go to state 136
 
-    body                           shift and go to state 136
-    func_call                      shift and go to state 24
-    if_stmt                        shift and go to state 26
-    func_def                       shift and go to state 16
-    simple_stmt                    shift and go to state 17
-    expr                           shift and go to state 27
-    for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
-    small_stmt                     shift and go to state 2
-    while_stmt                     shift and go to state 29
-    boolean                        shift and go to state 4
-    return_stmt                    shift and go to state 5
-    loop_stmt                      shift and go to state 21
-    assignment                     shift and go to state 18
-    const_decl                     shift and go to state 10
-    compound_stmt                  shift and go to state 13
 
 state 133
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT . body END END_STATEMENT
-    (57) body -> . stmt
-    (58) body -> . stmt body
-    (4) stmt -> . simple_stmt
-    (5) stmt -> . compound_stmt
-    (6) simple_stmt -> . small_stmt END_STATEMENT
-    (48) compound_stmt -> . func_def
-    (49) compound_stmt -> . if_stmt
-    (50) compound_stmt -> . while_stmt
-    (51) compound_stmt -> . for_stmt
-    (7) small_stmt -> . assignment
-    (8) small_stmt -> . const_decl
-    (9) small_stmt -> . expr
-    (10) small_stmt -> . return_stmt
-    (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
-    (16) assignment -> . IDENTIFIER ASSIGN expr
-    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
-    (18) const_decl -> . IDENTIFIER CONST expr
-    (23) expr -> . IDENTIFIER
-    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
-    (25) expr -> . STRING
-    (26) expr -> . LPAREN expr RPAREN
-    (27) expr -> . func_call
-    (28) expr -> . INTEGER
-    (29) expr -> . DOUBLE
-    (30) expr -> . boolean
-    (33) expr -> . expr ADD_OP expr
-    (34) expr -> . expr SUB_OP expr
-    (35) expr -> . expr MUL_OP expr
-    (36) expr -> . expr DIV_OP expr
-    (37) expr -> . expr MOD_OP expr
-    (38) expr -> . expr comb_op expr
-    (39) expr -> . expr comp_op expr
-    (12) return_stmt -> . RETURN
-    (13) return_stmt -> . RETURN expr
-    (14) loop_stmt -> . BREAK
-    (15) loop_stmt -> . CONTINUE
-    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
-    (20) func_call -> . IDENTIFIER LPAREN RPAREN
-    (31) boolean -> . TRUE
-    (32) boolean -> . FALSE
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT . INDENT body DEDENT
 
-    FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
-    WHILE           shift and go to state 3
-    FOR             shift and go to state 9
-    IDENTIFIER      shift and go to state 12
-    STRING          shift and go to state 15
-    LPAREN          shift and go to state 22
-    INTEGER         shift and go to state 7
-    DOUBLE          shift and go to state 31
-    RETURN          shift and go to state 6
-    BREAK           shift and go to state 28
-    CONTINUE        shift and go to state 30
-    TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    INDENT          shift and go to state 137
 
-    body                           shift and go to state 137
-    func_call                      shift and go to state 24
-    func_def                       shift and go to state 16
-    simple_stmt                    shift and go to state 17
-    expr                           shift and go to state 27
-    for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
-    small_stmt                     shift and go to state 2
-    while_stmt                     shift and go to state 29
-    boolean                        shift and go to state 4
-    return_stmt                    shift and go to state 5
-    loop_stmt                      shift and go to state 21
-    assignment                     shift and go to state 18
-    const_decl                     shift and go to state 10
-    compound_stmt                  shift and go to state 13
-    if_stmt                        shift and go to state 26
 
 state 134
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body . END END_STATEMENT
-
-    END             shift and go to state 138
-
-
-state 135
-
-    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT . body END END_STATEMENT
-    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT . body END END_STATEMENT elseif_list
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT . body DEDENT
     (57) body -> . stmt
     (58) body -> . stmt body
     (4) stmt -> . simple_stmt
@@ -3858,14 +3620,14 @@ state 135
     (9) small_stmt -> . expr
     (10) small_stmt -> . return_stmt
     (11) small_stmt -> . loop_stmt
-    (52) func_def -> . FUNCTION head END_STATEMENT body END END_STATEMENT
-    (62) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT
-    (63) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-    (64) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-    (65) if_stmt -> . IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT
-    (59) while_stmt -> . WHILE expr COLON END_STATEMENT body END END_STATEMENT
-    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
     (16) assignment -> . IDENTIFIER ASSIGN expr
     (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
     (18) const_decl -> . IDENTIFIER CONST expr
@@ -3894,7 +3656,7 @@ state 135
     (32) boolean -> . FALSE
 
     FUNCTION        shift and go to state 1
-    IF              shift and go to state 23
+    IF              shift and go to state 24
     WHILE           shift and go to state 3
     FOR             shift and go to state 9
     IDENTIFIER      shift and go to state 12
@@ -3906,15 +3668,191 @@ state 135
     BREAK           shift and go to state 28
     CONTINUE        shift and go to state 30
     TRUE            shift and go to state 8
-    FALSE           shift and go to state 25
+    FALSE           shift and go to state 23
 
-    body                           shift and go to state 139
-    func_call                      shift and go to state 24
+    body                           shift and go to state 138
+    func_call                      shift and go to state 25
+    if_stmt                        shift and go to state 26
     func_def                       shift and go to state 16
     simple_stmt                    shift and go to state 17
     expr                           shift and go to state 27
     for_stmt                       shift and go to state 20
-    stmt                           shift and go to state 84
+    stmt                           shift and go to state 96
+    small_stmt                     shift and go to state 2
+    while_stmt                     shift and go to state 29
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    loop_stmt                      shift and go to state 21
+    assignment                     shift and go to state 18
+    const_decl                     shift and go to state 10
+    compound_stmt                  shift and go to state 13
+
+state 135
+
+    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT . INDENT body DEDENT
+    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT . INDENT body DEDENT elseif_list
+
+    INDENT          shift and go to state 139
+
+
+state 136
+
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT . body DEDENT
+    (57) body -> . stmt
+    (58) body -> . stmt body
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 24
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 23
+
+    body                           shift and go to state 140
+    func_call                      shift and go to state 25
+    if_stmt                        shift and go to state 26
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    expr                           shift and go to state 27
+    for_stmt                       shift and go to state 20
+    stmt                           shift and go to state 96
+    small_stmt                     shift and go to state 2
+    while_stmt                     shift and go to state 29
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    loop_stmt                      shift and go to state 21
+    assignment                     shift and go to state 18
+    const_decl                     shift and go to state 10
+    compound_stmt                  shift and go to state 13
+
+state 137
+
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT . body DEDENT
+    (57) body -> . stmt
+    (58) body -> . stmt body
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
+
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 24
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 23
+
+    body                           shift and go to state 141
+    func_call                      shift and go to state 25
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    expr                           shift and go to state 27
+    for_stmt                       shift and go to state 20
+    stmt                           shift and go to state 96
     small_stmt                     shift and go to state 2
     while_stmt                     shift and go to state 29
     boolean                        shift and go to state 4
@@ -3925,177 +3863,240 @@ state 135
     compound_stmt                  shift and go to state 13
     if_stmt                        shift and go to state 26
 
-state 136
-
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body . END END_STATEMENT
-
-    END             shift and go to state 140
-
-
-state 137
-
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body . END END_STATEMENT
-
-    END             shift and go to state 141
-
-
 state 138
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END . END_STATEMENT
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body . DEDENT
 
-    END_STATEMENT   shift and go to state 142
+    DEDENT          shift and go to state 142
 
 
 state 139
 
-    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT body . END END_STATEMENT
-    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body . END END_STATEMENT elseif_list
+    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT . body DEDENT
+    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT . body DEDENT elseif_list
+    (57) body -> . stmt
+    (58) body -> . stmt body
+    (4) stmt -> . simple_stmt
+    (5) stmt -> . compound_stmt
+    (6) simple_stmt -> . small_stmt END_STATEMENT
+    (48) compound_stmt -> . func_def
+    (49) compound_stmt -> . if_stmt
+    (50) compound_stmt -> . while_stmt
+    (51) compound_stmt -> . for_stmt
+    (7) small_stmt -> . assignment
+    (8) small_stmt -> . const_decl
+    (9) small_stmt -> . expr
+    (10) small_stmt -> . return_stmt
+    (11) small_stmt -> . loop_stmt
+    (52) func_def -> . FUNCTION head END_STATEMENT INDENT body DEDENT
+    (62) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT
+    (63) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+    (64) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+    (65) if_stmt -> . IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT
+    (59) while_stmt -> . WHILE expr COLON END_STATEMENT INDENT body DEDENT
+    (60) for_stmt -> . FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+    (61) for_stmt -> . FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT
+    (16) assignment -> . IDENTIFIER ASSIGN expr
+    (17) assignment -> . IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+    (18) const_decl -> . IDENTIFIER CONST expr
+    (23) expr -> . IDENTIFIER
+    (24) expr -> . IDENTIFIER LSBRACKET expr RSBRACKET
+    (25) expr -> . STRING
+    (26) expr -> . LPAREN expr RPAREN
+    (27) expr -> . func_call
+    (28) expr -> . INTEGER
+    (29) expr -> . DOUBLE
+    (30) expr -> . boolean
+    (33) expr -> . expr ADD_OP expr
+    (34) expr -> . expr SUB_OP expr
+    (35) expr -> . expr MUL_OP expr
+    (36) expr -> . expr DIV_OP expr
+    (37) expr -> . expr MOD_OP expr
+    (38) expr -> . expr comb_op expr
+    (39) expr -> . expr comp_op expr
+    (12) return_stmt -> . RETURN
+    (13) return_stmt -> . RETURN expr
+    (14) loop_stmt -> . BREAK
+    (15) loop_stmt -> . CONTINUE
+    (19) func_call -> . IDENTIFIER LPAREN list_args RPAREN
+    (20) func_call -> . IDENTIFIER LPAREN RPAREN
+    (31) boolean -> . TRUE
+    (32) boolean -> . FALSE
 
-    END             shift and go to state 143
+    FUNCTION        shift and go to state 1
+    IF              shift and go to state 24
+    WHILE           shift and go to state 3
+    FOR             shift and go to state 9
+    IDENTIFIER      shift and go to state 12
+    STRING          shift and go to state 15
+    LPAREN          shift and go to state 22
+    INTEGER         shift and go to state 7
+    DOUBLE          shift and go to state 31
+    RETURN          shift and go to state 6
+    BREAK           shift and go to state 28
+    CONTINUE        shift and go to state 30
+    TRUE            shift and go to state 8
+    FALSE           shift and go to state 23
 
+    body                           shift and go to state 143
+    func_call                      shift and go to state 25
+    func_def                       shift and go to state 16
+    simple_stmt                    shift and go to state 17
+    expr                           shift and go to state 27
+    for_stmt                       shift and go to state 20
+    stmt                           shift and go to state 96
+    small_stmt                     shift and go to state 2
+    while_stmt                     shift and go to state 29
+    boolean                        shift and go to state 4
+    return_stmt                    shift and go to state 5
+    loop_stmt                      shift and go to state 21
+    assignment                     shift and go to state 18
+    const_decl                     shift and go to state 10
+    compound_stmt                  shift and go to state 13
+    if_stmt                        shift and go to state 26
 
 state 140
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END . END_STATEMENT
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body . DEDENT
 
-    END_STATEMENT   shift and go to state 144
+    DEDENT          shift and go to state 144
 
 
 state 141
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END . END_STATEMENT
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body . DEDENT
 
-    END_STATEMENT   shift and go to state 145
+    DEDENT          shift and go to state 145
 
 
 state 142
 
-    (65) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .
+    (65) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .
 
-    FUNCTION        reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    END_STATEMENT   reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT .)
+    FUNCTION        reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    END_STATEMENT   reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 65 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT .)
 
 
 state 143
 
-    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT body END . END_STATEMENT
-    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body END . END_STATEMENT elseif_list
+    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body . DEDENT
+    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body . DEDENT elseif_list
 
-    END_STATEMENT   shift and go to state 146
+    DEDENT          shift and go to state 146
 
 
 state 144
 
-    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .
+    (60) for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .
 
-    END_STATEMENT   reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    FUNCTION        reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT .)
+    END_STATEMENT   reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    FUNCTION        reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 60 (for_stmt -> FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT .)
 
 
 state 145
 
-    (64) if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .
+    (64) if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .
 
-    FUNCTION        reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    END_STATEMENT   reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT .)
+    FUNCTION        reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    END_STATEMENT   reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 64 (if_stmt -> IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT .)
 
 
 state 146
 
-    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .
-    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT . elseif_list
-    (66) elseif_list -> . ELSEIF expr COLON END_STATEMENT body END END_STATEMENT
-    (67) elseif_list -> . ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
+    (66) elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .
+    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT . elseif_list
+    (66) elseif_list -> . ELSEIF expr COLON END_STATEMENT INDENT body DEDENT
+    (67) elseif_list -> . ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
 
-    ELSE            reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    END_STATEMENT   reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    FUNCTION        reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    IF              reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    WHILE           reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    FOR             reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    IDENTIFIER      reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    STRING          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    LPAREN          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    INTEGER         reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    DOUBLE          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    RETURN          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    BREAK           reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    CONTINUE        reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    TRUE            reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    FALSE           reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    $end            reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
-    END             reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT .)
+    ELSE            reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    END_STATEMENT   reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    FUNCTION        reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    IF              reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    WHILE           reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    FOR             reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    IDENTIFIER      reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    STRING          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    LPAREN          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    INTEGER         reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    DOUBLE          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    RETURN          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    BREAK           reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    CONTINUE        reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    TRUE            reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    FALSE           reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    $end            reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
+    DEDENT          reduce using rule 66 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT .)
     ELSEIF          shift and go to state 122
 
     elseif_list                    shift and go to state 147
 
 state 147
 
-    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .
+    (67) elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .
 
-    ELSE            reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    END_STATEMENT   reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    FUNCTION        reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    IF              reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    WHILE           reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    FOR             reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    IDENTIFIER      reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    STRING          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    LPAREN          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    INTEGER         reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    DOUBLE          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    RETURN          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    BREAK           reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    CONTINUE        reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    TRUE            reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    FALSE           reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    $end            reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
-    END             reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list .)
+    ELSE            reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    END_STATEMENT   reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    FUNCTION        reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    IF              reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    WHILE           reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    FOR             reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    IDENTIFIER      reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    STRING          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    LPAREN          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    INTEGER         reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    DOUBLE          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    RETURN          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    BREAK           reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    CONTINUE        reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    TRUE            reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    FALSE           reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    $end            reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
+    DEDENT          reduce using rule 67 (elseif_list -> ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list .)
 
 WARNING: 
 WARNING: Conflicts:

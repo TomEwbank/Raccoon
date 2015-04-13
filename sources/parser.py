@@ -2,8 +2,9 @@ import ply.yacc as yacc
 #import Lexer
 import AST
 import os
-
+import re
 from lexical import tokens
+from lexical import lexer
 
 precedence = (
     ('left', 'OR', 'AND'),
@@ -11,7 +12,6 @@ precedence = (
 	('left', 'ADD_OP', 'SUB_OP') ,
 	('left', 'MUL_OP', 'DIV_OP', 'MOD_OP') ,
 )
-
 
 def p_program(p):
 	'''program : stmt
@@ -156,8 +156,8 @@ def p_compound_stmt(p):
 	p[0] = p[1]	
 
 def p_func_def(p):
-	'''func_def : FUNCTION head END_STATEMENT body END END_STATEMENT'''
-	p[0] = AST.FuncDefNode([p[2], p[4]])
+	'''func_def : FUNCTION head END_STATEMENT INDENT body DEDENT'''
+	p[0] = AST.FuncDefNode([p[2], p[5]])
 
 def p_head(p):
 	'''head : IDENTIFIER LPAREN func_def_args RPAREN COLON
@@ -184,61 +184,83 @@ def p_body(p):
 		p[0] = AST.BodyNode([p[1]] + p[2].children)
 
 def p_while(p):
-	'''while_stmt : WHILE expr COLON END_STATEMENT body END END_STATEMENT''' # What if no body? same issue with func_def, if,... 
-	p[0] = AST.WhileNode([p[2], p[5]])
+	'''while_stmt : WHILE expr COLON END_STATEMENT INDENT body DEDENT''' # What if no body? same issue with func_def, if,... 
+	p[0] = AST.WhileNode([p[2], p[6]])
 	
 
 def p_for(p):
-	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT body END END_STATEMENT
-                | FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT body END END_STATEMENT'''
+	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
+                | FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT'''
 	if len(p) == 15:
 		iter = AST.TokenNode(p[2])
 		lowLim = p[6]
 		highLim = p[8]
-		p[0] = AST.ForNode([AST.InRangeNode([iter, lowLim, highLim]), p[12]])
+		p[0] = AST.ForNode([AST.InRangeNode([iter, lowLim, highLim]), p[13]])
 	if len(p) == 10:
-		p[0] = AST.ForNode([AST.InNode([AST.TokenNode(p[2]), AST.TokenNode(p[4])]), p[7]])
+		p[0] = AST.ForNode([AST.InNode([AST.TokenNode(p[2]), AST.TokenNode(p[4])]), p[8]])
 		
 
 def p_if(p):
-	'''if_stmt : IF expr COLON END_STATEMENT body END END_STATEMENT
-			   | IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list
-			   | IF expr COLON END_STATEMENT body END END_STATEMENT elseif_list ELSE COLON END_STATEMENT body END END_STATEMENT
-               | IF expr COLON END_STATEMENT body END END_STATEMENT ELSE COLON END_STATEMENT body END END_STATEMENT'''
+	'''if_stmt : IF expr COLON END_STATEMENT INDENT body DEDENT
+			   | IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
+			   | IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
+               | IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT'''
 	if len(p) == 8:
-		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])])
+		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[6]])])
 	if len(p) == 9:
-		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])] + p[8].children)
+		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[6]])] + p[8].children)
 	if len(p) == 15:
-		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]])] + p[8].children + [AST.ElseNode([p[12]])])
+		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[6]])] + p[8].children + [AST.ElseNode([p[13]])])
 	if len(p) == 14:
-		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[5]]), AST.ElseNode([p[12]])])
+		p[0] = AST.ConditionnalNode([AST.IfNode([p[2], p[6]]), AST.ElseNode([p[12]])])
 
 def p_elseif(p):
-	'''elseif_list : ELSEIF expr COLON END_STATEMENT body END END_STATEMENT
-                   | ELSEIF expr COLON END_STATEMENT body END END_STATEMENT elseif_list'''
+	'''elseif_list : ELSEIF expr COLON END_STATEMENT INDENT body DEDENT
+                   | ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list'''
 	if len(p) == 8:
-		p[0] = AST.Node([AST.ElseifNode([p[2], p[5]])])
+		p[0] = AST.Node([AST.ElseifNode([p[2], p[6]])])
 	if len(p) == 9:
-		p[0] = AST.Node([AST.ElseifNode([p[2], p[5]])] + p[8].children)
+		p[0] = AST.Node([AST.ElseifNode([p[2], p[6]])] + p[9].children)
+
+# def p_error(p):
+	
+	# if p:
+		# print("Syntax error in line %d" % p.lineno)	
+		# yacc.errok()
+	# else:
+		# print("Syntax error: NEWLINE missing at last statement")
 
 def p_error(p):
-	
-	if p:
-		print("Syntax error in line %d" % p.lineno)	
-		yacc.errok()
-	else:
-		print("Syntax error: NEWLINE missing at last statement")
+    global flag_for_error
+    flag_for_error = 1
 
+    if p is not None:
+		print("Syntax error in line %d" % p.lineno)
+		yacc.errok()
+    else:
+        print("Unexpected end of input")
 		
 
 yacc.yacc(outputdir='generated')
 
+def remove_comments(text):
+	def replacer(match):
+		s = match.group(0)
+		if s.startswith('/'):
+			return ""
+		else:
+			return s
+	pattern = re.compile(
+		r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+		re.DOTALL | re.MULTILINE
+	)
+	return re.sub(pattern, replacer, text)
+
 if __name__ == "__main__":
 
 	import sys
-	prog = file(sys.argv[1]).read()
-	result = yacc.parse(prog)
+	prog = remove_comments(open(sys.argv[1]).read())
+	result = yacc.yacc().parse(prog, lexer)
 	#print(result)
 	import os
 	try:
