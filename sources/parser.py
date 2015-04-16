@@ -59,11 +59,14 @@ def p_continue(p):
 				  
 def p_assign(p):
 	'''assignment : IDENTIFIER ASSIGN expr
-				  | IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET'''
+				  | IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
+				  | IDENTIFIER LSBRACKET expr RSBRACKET ASSIGN expr'''
 	if len(p) == 4:
 		p[0] = AST.AssignNode([AST.TokenNode(p[1])] + [p[3]])
 	if len(p) == 6:
 		p[0] = AST.AssignNode([AST.TokenNode(p[1]), AST.ListNode(p[4].children)])
+	if len(p) == 7:
+		p[0] = AST.AssignNode([AST.ListElementNode([AST.TokenNode(p[1]), p[3]]), p[6]])
 	
 def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr'''
