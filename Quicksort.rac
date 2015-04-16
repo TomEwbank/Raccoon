@@ -1,0 +1,30 @@
+
+function Quicksort(A,low,high)
+	if low < high:
+		pivot becomes A[low]
+		leftwall becomes low
+
+		for i in range (low + 1, high):
+			if (A[i] < pivot):
+				leftwall becomes leftwall + 1
+				temp becomes A[i]
+				A[i] becomes A[leftwall]
+				A[leftwall] becomes temp
+			end
+		end
+
+		temp becomes A[low]
+		A[low] becomes A[leftwall]
+		A[leftwall] becomes temp
+		pivot_location become leftwall
+		
+		A becomes Quicksort(A,low, pivot_location - 1)
+		A becomes Quicksort(A, pivot_location + 1, high)
+	end
+return A
+
+
+A = [2 67 8 99 87 654 32 5 4 12 ]
+print(A)
+OrderedA = Quicksort(A,1,10)
+print(OrderedA)
