@@ -81,11 +81,18 @@ for_end
   
   store i32 %leftwall, i32* %pivot    ;pivot:=leftwall
   
- X      ;appel fct 1
+  %1415 = load i32* %pivot   A := Quicksort(A,low, pivot - 1)
+  %14a = load i32* %low
+  %14b = sub i32 %1415, 1
+  %14 = call fastcc void (i32*, i32, i32)* @swap(i32* %A, i32 %14a , i32 %14b) ;
+  store i32 %A, i32* %14
  
- X      ;appel fct 1
-
-
+  %15a = add i32 %1415, 1   A := Quicksort(A, pivot + 1, high)
+  %15b = load i32* %high
+  %15 = call fastcc void (i32*, i32, i32)* @swap(i32* %A, i32 %15a , i32 %15b) ;
+  store i32 %A, i32* %15
+ 
+ 
 end
   ret i32* %A
   
