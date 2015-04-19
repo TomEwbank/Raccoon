@@ -1,5 +1,3 @@
-;En cours
-
 define fastcc i32 *@Quicksort(i32* %A,i32 %low, i32 %high){
 
 entry:
@@ -88,9 +86,6 @@ for_end
   %15b = load i32* %high
   %A = call fastcc void (i32*, i32, i32)* @swap(i32* %A, i32 %15a , i32 %15b) 
   
-  
- 
- 
 end
   ret i32* %A
   
