@@ -26,3 +26,4 @@ if_end:
 
 end
   ret i1 1                  ; return true
+  }
