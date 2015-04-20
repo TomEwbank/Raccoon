@@ -1,10 +1,8 @@
 import ply.yacc as yacc
-#import Lexer
-import AST
-import os
-import re
+from lexical import remove_comments
 from lexical import tokens
 from lexical import lexer
+import AST
 
 precedence = (
     ('left', 'OR', 'AND'),
@@ -62,11 +60,11 @@ def p_assign(p):
 				  | IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
 				  | IDENTIFIER LSBRACKET expr RSBRACKET ASSIGN expr'''
 	if len(p) == 4:
-		p[0] = AST.AssignNode([AST.TokenNode(p[1])] + [p[3]])
+		p[0] = AST.AssignNode([AST.AssignVarNode(p[1])] + [p[3]])
 	if len(p) == 6:
-		p[0] = AST.AssignNode([AST.TokenNode(p[1]), AST.ListNode(p[4].children)])
+		p[0] = AST.AssignNode([AST.AssignVarNode(p[1]), AST.ListNode(p[4].children)])
 	if len(p) == 7:
-		p[0] = AST.AssignNode([AST.ListElementNode([AST.TokenNode(p[1]), p[3]]), p[6]])
+		p[0] = AST.AssignNode([AST.ListElementNode([AST.AssignVarNode(p[1]), p[3]]), p[6]])
 	
 def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr'''
@@ -100,7 +98,7 @@ def p_expr_id(p):
 
 def p_expr_string(p):
 	'''expr : STRING'''
-	p[0] = AST.StringNode()
+	p[0] = AST.StringNode(p[1])
 		
 def p_expr(p):
 	'''expr : LPAREN expr RPAREN
@@ -166,17 +164,17 @@ def p_head(p):
 	'''head : IDENTIFIER LPAREN func_def_args RPAREN COLON
 			| IDENTIFIER LPAREN RPAREN COLON'''
 	if len(p) == 6:
-		p[0] = AST.HeadNode([AST.TokenNode(p[1])] + p[3].children)
+		p[0] = AST.HeadNode([AST.FuncDefNameNode(p[1])] + p[3].children)
 	if  len(p) == 5: 
-		p[0] = AST.HeadNode([AST.TokenNode(p[1])])
+		p[0] = AST.HeadNode([AST.FuncDefNameNode(p[1])])
 
 def p_func_def_args(p):
 	'''func_def_args : IDENTIFIER 
                      | IDENTIFIER COMMA func_def_args'''
 	if len(p) == 2:
-		p[0] = AST.Node([AST.TokenNode(p[1])])
+		p[0] = AST.Node([AST.FuncDefArgNode(p[1])])
 	if len(p) == 4:
-		p[0] = AST.Node([AST.TokenNode(p[1])] + p[3].children)
+		p[0] = AST.Node([AST.FuncDefArgNode(p[1])] + p[3].children)
 
 def p_body(p):
 	'''body : stmt
@@ -195,12 +193,12 @@ def p_for(p):
 	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
                 | FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT'''
 	if len(p) == 15:
-		iter = AST.TokenNode(p[2])
+		iter = AST.NumIteratorNode(p[2])
 		lowLim = p[6]
 		highLim = p[8]
 		p[0] = AST.ForNode([AST.InRangeNode([iter, lowLim, highLim]), p[13]])
 	if len(p) == 10:
-		p[0] = AST.ForNode([AST.InNode([AST.TokenNode(p[2]), AST.TokenNode(p[4])]), p[8]])
+		p[0] = AST.ForNode([AST.InNode([AST.ListIteratorNode(p[2]), AST.TokenNode(p[4])]), p[8]])
 		
 
 def p_if(p):
@@ -246,19 +244,13 @@ def p_error(p):
 
 yacc.yacc(outputdir='generated')
 
-def remove_comments(text):
-	def replacer(match):
-		s = match.group(0)
-		if s.startswith('/'):
-			return ""
-		else:
-			return s
-	pattern = re.compile(
-		r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
-		re.DOTALL | re.MULTILINE
-	)
-	return re.sub(pattern, replacer, text)
 
+def parse(program):
+	prog = remove_comments(program)
+	return yacc.yacc().parse(prog, lexer)
+
+############################
+	
 if __name__ == "__main__":
 
 	import sys

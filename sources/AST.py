@@ -16,87 +16,152 @@ pas toujours optimal...
 
 import pydot
 
+
+class Scope:
+	def __init__(self):
+		self.typeStack = []
+		self.varHash = {}
+		self.funcHash = {}
+	
+	def addVariable(self, varName, type):
+		varHash[varName] = type
+	
+	def hasVariable(self, varName):
+		return self.varHash.has_key(varName)
+	
+	def addFunction(self, funcName, nbArgs):
+		self.funcHash[funcName] = nbArgs
+	
+	def hasFunction(self, funcName):
+		return self.funcHash.has_key(funcName)
+		
+	def removeVariable(self, varName):
+		varHash.pop(varName, 0)
+	
+	
+		
+	
+
+class ScopeStack:
+	def __init__(self):
+		self.stack = [Scope()]
+		self.currentScope = 0
+		self.scopeNumber = 1
+		
+	def newScope(self):
+		self.currentScope += 1
+		self.scopeNumber += 1
+		self.stack.append(Scope())
+	
+	def addVariable(self, varName, type):
+		self.stack[currentScope].addVariable(varName, type)
+	
+	def hasVariable(self, varName):
+		return self.stack[currentScope].hasVariable(varName)
+	
+	def addFunction(self, funcName, nbArgs):
+		self.stack[currentScope].addFunction(funcName, nbArgs)
+	
+	def hasFunction(self, funcName):
+		for scope in self.stack:
+			if scope.hasFunction(funcName):
+				return True
+				
+				
+		return False
+	
+	
+	
+		
 class Node:
-    count = 0
-    type = 'Node (unspecified)'
-    shape = 'ellipse'
-    def __init__(self,children=None):
-        self.ID = str(Node.count)
-        Node.count+=1
-        if not children: self.children = []
-        elif hasattr(children,'__len__'):
-            self.children = children
-        else:
-            self.children = [children]
-        self.next = []
+	count = 0
+	type = 'Node (unspecified)'
+	shape = 'ellipse'
+	
+	scopeStack = ScopeStack()
+	
+	def __init__(self,children=None):
+		self.ID = str(Node.count)
+		Node.count+=1
+		self.parent = None
+		if not children: self.children = []
+		elif hasattr(children,'__len__'):
+			self.children = children
+			for child in children:
+				child.parent = self
+		else:
+			self.children = [children]
+			for child in children:
+				child.parent = self
+		self.next = []
 
-    def addNext(self,next):
-        self.next.append(next)
+	def addNext(self,next):
+		self.next.append(next)
 
-    def asciitree(self, prefix=''):
-        result = "%s%s\n" % (prefix, repr(self))
-        prefix += '|  '
-        for c in self.children:
-            if not isinstance(c,Node):
-                result += "%s*** Error: Child of type %r: %r\n" % (prefix,type(c),c)
-                continue
-            result += c.asciitree(prefix)
-        return result
-    
-    def __str__(self):
-        return self.asciitree()
-    
-    def __repr__(self):
-        return self.type
-    
-    def makegraphicaltree(self, dot=None, edgeLabels=True):
-            if not dot: dot = pydot.Dot()
-            dot.add_node(pydot.Node(self.ID,label=repr(self), shape=self.shape))
-            label = edgeLabels and len(self.children)-1
-            for i, c in enumerate(self.children):
-                c.makegraphicaltree(dot, edgeLabels)
-                edge = pydot.Edge(self.ID,c.ID)
-                if label:
-                    edge.set_label(str(i))
-                dot.add_edge(edge)
-                #Workaround for a bug in pydot 1.0.2 on Windows:
-                #dot.set_graphviz_executables({'dot': r'C:\Program Files\Graphviz2.16\bin\dot.exe'})
-            return dot
-        
-    def threadTree(self, graph, seen = None, col=0):
-            colors = ('red', 'green', 'blue', 'yellow', 'magenta', 'cyan')
-            if not seen: seen = []
-            if self in seen: return
-            seen.append(self)
-            new = not graph.get_node(self.ID)
-            if new:
-                graphnode = pydot.Node(self.ID,label=repr(self), shape=self.shape)
-                graphnode.set_style('dotted')
-                graph.add_node(graphnode)
-            label = len(self.next)-1
-            for i,c in enumerate(self.next):
-                if not c: return
-                col = (col + 1) % len(colors)
-                color = colors[col]                
-                c.threadTree(graph, seen, col)
-                edge = pydot.Edge(self.ID,c.ID)
-                edge.set_color(color)
-                edge.set_arrowsize('.5')
-                # Les arrêtes correspondant aux coutures ne sont pas prises en compte
-                # pour le layout du graphe. Ceci permet de garder l'arbre dans sa représentation
-                # "standard", mais peut provoquer des surprises pour le trajet parfois un peu
-                # tarabiscoté des coutures...
-                # En commantant cette ligne, le layout sera bien meilleur, mais l'arbre nettement
-                # moins reconnaissable.
-                edge.set_constraint('false') 
-                if label:
-                    edge.set_taillabel(str(i))
-                    edge.set_labelfontcolor(color)
-                graph.add_edge(edge)
-            return graph    
-        
+	def asciitree(self, prefix=''):
+		result = "%s%s\n" % (prefix, repr(self))
+		prefix += '|  '
+		for c in self.children:
+			if not isinstance(c,Node):
+				result += "%s*** Error: Child of type %r: %r\n" % (prefix,type(c),c)
+				continue
+			result += c.asciitree(prefix)
+		return result
+	
+	def __str__(self):
+		return self.asciitree()
+	
+	def __repr__(self):
+		return self.type
+	
+	def makegraphicaltree(self, dot=None, edgeLabels=True):
+			if not dot: dot = pydot.Dot()
+			dot.add_node(pydot.Node(self.ID,label=repr(self), shape=self.shape))
+			label = edgeLabels and len(self.children)-1
+			for i, c in enumerate(self.children):
+				c.makegraphicaltree(dot, edgeLabels)
+				edge = pydot.Edge(self.ID,c.ID)
+				if label:
+					edge.set_label(str(i))
+				dot.add_edge(edge)
+				#Workaround for a bug in pydot 1.0.2 on Windows:
+				#dot.set_graphviz_executables({'dot': r'C:\Program Files\Graphviz2.16\bin\dot.exe'})
+			return dot
+		
+	def threadTree(self, graph, seen = None, col=0):
+			colors = ('red', 'green', 'blue', 'yellow', 'magenta', 'cyan')
+			if not seen: seen = []
+			if self in seen: return
+			seen.append(self)
+			new = not graph.get_node(self.ID)
+			if new:
+				graphnode = pydot.Node(self.ID,label=repr(self), shape=self.shape)
+				graphnode.set_style('dotted')
+				graph.add_node(graphnode)
+			label = len(self.next)-1
+			for i,c in enumerate(self.next):
+				if not c: return
+				col = (col + 1) % len(colors)
+				color = colors[col]                
+				c.threadTree(graph, seen, col)
+				edge = pydot.Edge(self.ID,c.ID)
+				edge.set_color(color)
+				edge.set_arrowsize('.5')
+				# Les arrêtes correspondant aux coutures ne sont pas prises en compte
+				# pour le layout du graphe. Ceci permet de garder l'arbre dans sa représentation
+				# "standard", mais peut provoquer des surprises pour le trajet parfois un peu
+				# tarabiscoté des coutures...
+				# En commantant cette ligne, le layout sera bien meilleur, mais l'arbre nettement
+				# moins reconnaissable.
+				edge.set_constraint('false') 
+				if label:
+					edge.set_taillabel(str(i))
+					edge.set_labelfontcolor(color)
+				graph.add_edge(edge)
+			return graph    
+		
 class ProgramNode(Node):
-    type = 'Program'
+	type = 'Program'
 
 
 ############ ajout	
@@ -179,59 +244,108 @@ class ListNode(Node):
 	
 class StringNode(Node):
 	type = 'String'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
 	
+class AssignVarNode(Node):
+	type = 'Assignment variable'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+
+	def __repr__(self):
+		return repr(self.tok)
+		
+class FuncDefNameNode(Node):
+	type = 'Function name'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+
+	def __repr__(self):
+		return repr(self.tok)
+
+class FuncDefArgNode(Node):
+	type = 'Function argument'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+
+	def __repr__(self):
+		return repr(self.tok)
+		
+
+class NumIteratorNode(Node):
+	type = 'Numeric iterator'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+
+	def __repr__(self):
+		return repr(self.tok)
+		
+class ListIteratorNode(Node):
+	type = 'List iterator'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+
+	def __repr__(self):
+		return repr(self.tok)
+		
+		
 ############### fin de l'ajout
-	
-	
-        
+
+
 class TokenNode(Node):
-    type = 'token'
-    def __init__(self, tok):
-        Node.__init__(self)
-        self.tok = tok
-        
-    def __repr__(self):
-        return repr(self.tok)
-    
+	type = 'token'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+		
+	def __repr__(self):
+		return repr(self.tok)
+	
 class OpNode(Node):
-    def __init__(self, op, children):
-        Node.__init__(self,children)
-        self.op = op
-        try:
-            self.nbargs = len(children)
-        except AttributeError:
-            self.nbargs = 1
-        
-    def __repr__(self):
-        return "%s" % (self.op)
-    
+	def __init__(self, op, children):
+		Node.__init__(self,children)
+		self.op = op
+		try:
+			self.nbargs = len(children)
+		except AttributeError:
+			self.nbargs = 1
+		
+	def __repr__(self):
+		return "%s" % (self.op)
+	
 # class AssignNode(Node):
-    # type = '='
-    
+	# type = '='
+	
 # class PrintNode(Node):
-    # type = 'print'
-    
+	# type = 'print'
+	
 # class WhileNode(Node):
-    # type = 'while'
-    
-# class EntryNode(Node):
-    # type = 'ENTRY'
-    # def __init__(self):
-        # Node.__init__(self, None)
-    
+	# type = 'while'
+	
+class EntryNode(Node):
+	type = 'ENTRY'
+	def __init__(self):
+		Node.__init__(self, None)
+	
 def addToClass(cls):
-    ''' Décorateur permettant d'ajouter la fonction décorée en tant que méthode
-    à une classe.
-    
-    Permet d'implémenter une forme élémentaire de programmation orientée
-    aspects en regroupant les méthodes de différentes classes implémentant
-    une même fonctionnalité en un seul endroit.
-    
-    Attention, après utilisation de ce décorateur, la fonction décorée reste dans
-    le namespace courant. Si cela dérange, on peut utiliser del pour la détruire.
-    Je ne sais pas s'il existe un moyen d'éviter ce phénomène.
-    '''
-    def decorator(func):
-        setattr(cls,func.__name__,func)
-        return func
-    return decorator
+	''' Décorateur permettant d'ajouter la fonction décorée en tant que méthode
+	à une classe.
+	
+	Permet d'implémenter une forme élémentaire de programmation orientée
+	aspects en regroupant les méthodes de différentes classes implémentant
+	une même fonctionnalité en un seul endroit.
+	
+	Attention, après utilisation de ce décorateur, la fonction décorée reste dans
+	le namespace courant. Si cela dérange, on peut utiliser del pour la détruire.
+	Je ne sais pas s'il existe un moyen d'éviter ce phénomène.
+	'''
+	def decorator(func):
+		setattr(cls,func.__name__,func)
+		return func
+	return decorator

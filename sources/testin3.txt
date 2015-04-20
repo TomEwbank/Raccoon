@@ -1,33 +1,23 @@
+n becomes nbr-1
+while i =? a+b:
+
+	if nbr mod i =? 0:
+		return a[1+5*9+b]
+
+function bbbb(a):
+	return true //egsrth
 
 
+if nbr2 < nbr1:
+	return "bitch please"
 
-/* 
-   Test program for Raccoon
-   Group 2 
-   */
+for i in range (nbr1,nbr2):
 
-//return true if the number nbr is prime. Return false otherwise
-function prime(nbr):
+	if prime =? true:
+		return true
+	else if prime =? False:
+		return False
+	else:
+		impossible
 
-    n becomes nbr-1
-    for i in range (2,n):
-
-        if nbr mod i =? 0:
-            return false
-
-    return true //egsrth
-
-//return true if one of the number between nbr1 and nbr2 is prime. Return false otherwise
-function primeRange(nbr1,nbr2):
-
-    if nbr2 < nbr1:
-        return false
-
-    for i in range (nbr1,nbr2) 
-        if prime =? true:
-            return true
-     //blbla
-    return false
-
-
-a becomes primeRange(345,542)
+return false
