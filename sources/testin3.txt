@@ -3,6 +3,7 @@ while i =? a+b:
 
 	if nbr mod i =? 0:
 		return a[1+5*9+b]
+		continue
 
 function bbbb(a):
 	return true //egsrth
@@ -19,5 +20,5 @@ for i in range (nbr1,nbr2):
 		return False
 	else:
 		impossible
-
+break
 return false

@@ -1,5 +1,5 @@
 import AST
-from AST import addToClass
+from AST import * #addToClass
 
 ##### adding functions for the "couture" of the AST ####
 
@@ -16,77 +16,98 @@ def thread(tree):
 	return entry
 
 ##### adding functions for the semantic analysis ####
-	
+
+@addToClass(AST.Node)	
 def semAnalysis(self):
-	if len(self.next) > 0
-		self.next[0].semAnalysis()
+	self.next[0].semAnalysis()
+
+@addToClass(AST.ProgramNode)	
+def semAnalysis(self):
+	print("Semantic analysis terminated with %d errors" %(self.nbSemErrors))
 		
-@addToClass(AST.AssignNode):
+@addToClass(AST.AssignNode)
 def semAnalysis(self):
-	Node.scopeStack.addVariable(self.children[0].tok,'unknown')
-	self.next.semAnalysis()
+	if isinstance(self.children[0], ListElementNode): 
+		AST.Node.scopeStack.addVariable(self.children[0].children[0].tok,'unknown')
+	else:
+		AST.Node.scopeStack.addVariable(self.children[0].tok,'unknown')
+	
+	self.next[0].semAnalysis()
 
-@addToClass(AST.TokenNode):
+@addToClass(AST.TokenNode)
 def semAnalysis(self):
-	if not Node.scopeStack.hasVariable(self.tok):
-		print("error: uninitialized variable ", self.tok)
-	self.next.semAnalysis()
+	if not AST.Node.scopeStack.hasVariable(self.tok):
+		print("error: uninitialized variable '%s'" %(self.tok))
+		AST.Node.nbSemErrors += 1
+	self.next[0].semAnalysis()
 
-@addToClass(AST.HeadNode):
+@addToClass(AST.HeadNode)
 def semAnalysis(self):
-	Node.scopeStack.addFunction(self.children[0].tok, len(self.children)-1)
-	Node.scopeStack.newScope
+	AST.Node.scopeStack.addFunction(self.children[0].tok, len(self.children)-1)
+	AST.Node.scopeStack.newScope()
 	for argument in self.children[1:]:
-		Node.scopeStack.addVariable(argument.tok,'unknown')
-	self.next.semAnalysis()
+		AST.Node.scopeStack.addVariable(argument.tok,'unknown')
+	self.next[0].semAnalysis()
+	
+@addToClass(FuncCallNameNode)
+def semAnalysis(self):
+	if not AST.Node.scopeStack.hasFunction(self.tok):
+		print("error: undefined function '%s'" %(self.tok))
+		AST.Node.nbSemErrors += 1
+	self.next[0].semAnalysis()
 
-@addToClass(AST.FuncDefNode):
+@addToClass(AST.FuncDefNode)
 def semAnalysis(self):
-	Node.scopeStack.pop()
-	self.next.semAnalysis()
+	AST.Node.scopeStack.pop()
+	self.next[0].semAnalysis()
 	
-@addToClass(AST.NumIteratorNode):
+@addToClass(AST.NumIteratorNode)
 def semAnalysis(self):
-	Node.scopeStack.addVariable(self.tok,'integer')
-	self.next.semAnalysis()
+	AST.Node.scopeStack.addVariable(self.tok,'integer')
+	self.next[0].semAnalysis()
 	
-@addToClass(AST.ListIteratorNode):
+@addToClass(AST.ListIteratorNode)
 def semAnalysis(self):
-	Node.scopeStack.addVariable(self.tok,'unknown')
-	self.next.semAnalysis()
+	AST.Node.scopeStack.addVariable(self.tok,'unknown')
+	self.next[0].semAnalysis()
 	
-@addToClass(AST.ListIteratorNode):
+@addToClass(AST.ListIteratorNode)
 def semAnalysis(self):
-	Node.scopeStack.addVariable(self.tok,'unknown')
-	self.next.semAnalysis()
+	AST.Node.scopeStack.addVariable(self.tok,'unknown')
+	self.next[0].semAnalysis()
 	
-@addToClass(AST.ForNode):
+@addToClass(AST.ForNode)
 def semAnalysis(self):
-	Node.scopeStack.removeVariable(self.children[0].children[0].tok)
-	self.next.semAnalysis()
-	
-@addToClass(AST.ReturnNode):
+	AST.Node.scopeStack.removeVariable(self.children[0].children[0].tok)
+	self.next[0].semAnalysis()
+
+
+
+@addToClass(AST.ReturnNode)
 def semAnalysis(self):
 	node = self
 	while not isinstance(node.parent, FuncDefNode):
-		if self.parent == None:
+		if node.parent == None:
 			print("error: return statement not in a function")
+			AST.Node.nbSemErrors += 1
 			break
 		else:
-			node = self.parent
-	self.next.semAnalysis()
+			node = node.parent
+
+	self.next[0].semAnalysis()
 	
-@addToClass(AST.BreakNode):
-@addToClass(AST.ContinueNode):
+@addToClass(AST.BreakNode)
+@addToClass(AST.ContinueNode)
 def semAnalysis(self):
 	node = self
 	while not isinstance(node.parent, ForNode) and not isinstance(node.parent, WhileNode):
-		if self.parent == None:
+		if node.parent == None:
 			print("error: break/continue statement not in a loop")
+			AST.Node.nbSemErrors += 1
 			break
 		else:
-			node = self.parent
-	self.next.semAnalysis()
+			node = node.parent
+	self.next[0].semAnalysis()
 		
 	
 if __name__ == "__main__":
@@ -103,5 +124,4 @@ if __name__ == "__main__":
 	graph.write_pdf(name)
 	print("wrote threaded ast to", name)
 	entry.semAnalysis()
-	
 	
