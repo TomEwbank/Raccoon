@@ -24,7 +24,7 @@ class Scope:
 		self.funcHash = {}
 	
 	def addVariable(self, varName, type):
-		varHash[varName] = type
+		self.varHash[varName] = type
 	
 	def hasVariable(self, varName):
 		return self.varHash.has_key(varName)
@@ -36,7 +36,7 @@ class Scope:
 		return self.funcHash.has_key(funcName)
 		
 	def removeVariable(self, varName):
-		varHash.pop(varName, 0)
+		self.varHash.pop(varName, 0)
 	
 	
 		
@@ -52,22 +52,33 @@ class ScopeStack:
 		self.currentScope += 1
 		self.scopeNumber += 1
 		self.stack.append(Scope())
+		# print("new scope")
+	
+	def pop(self):
+		self.stack.pop()
+		self.currentScope -= 1
+		self.scopeNumber -= 1
+		# print("pop scope")
+		
 	
 	def addVariable(self, varName, type):
-		self.stack[currentScope].addVariable(varName, type)
+		# print(self.currentScope)
+		self.stack[self.currentScope].addVariable(varName, type)
+		
+	def removeVariable(self, varName):
+		self.stack[self.currentScope].removeVariable(varName)
 	
 	def hasVariable(self, varName):
-		return self.stack[currentScope].hasVariable(varName)
+		return self.stack[self.currentScope].hasVariable(varName)
 	
 	def addFunction(self, funcName, nbArgs):
-		self.stack[currentScope].addFunction(funcName, nbArgs)
+		self.stack[self.currentScope].addFunction(funcName, nbArgs)
 	
 	def hasFunction(self, funcName):
 		for scope in self.stack:
 			if scope.hasFunction(funcName):
 				return True
-				
-				
+							
 		return False
 	
 	
@@ -79,6 +90,7 @@ class Node:
 	shape = 'ellipse'
 	
 	scopeStack = ScopeStack()
+	nbSemErrors = 0
 	
 	def __init__(self,children=None):
 		self.ID = str(Node.count)
@@ -293,7 +305,24 @@ class ListIteratorNode(Node):
 
 	def __repr__(self):
 		return repr(self.tok)
-		
+
+class NumNode(Node):
+	type = 'Number'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+
+	def __repr__(self):
+		return repr(self.tok)
+
+class FuncCallNameNode(Node):
+	type = 'Function call name'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+
+	def __repr__(self):
+		return repr(self.tok)
 		
 ############### fin de l'ajout
 

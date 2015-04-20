@@ -75,9 +75,9 @@ def p_func_call(p):
 	'''func_call : IDENTIFIER LPAREN list_args RPAREN
                  | IDENTIFIER LPAREN RPAREN'''
 	if len(p) == 5:
-		p[0] = AST.FuncCallNode([AST.TokenNode(p[1])] + p[3].children)
+		p[0] = AST.FuncCallNode([AST.FuncCallNameNode(p[1])] + p[3].children)
 	if len(p) == 4:
-		p[0] = AST.FuncCallNode([AST.TokenNode(p[1])])
+		p[0] = AST.FuncCallNode([AST.FuncCallNameNode(p[1])])
 		
 def p_list_args(p):
 	'''list_args : expr 
@@ -111,7 +111,7 @@ def p_expr(p):
 def p_expr_num(p):
 	'''expr : INTEGER 
 			| DOUBLE'''
-	p[0] = AST.TokenNode(p[1])
+	p[0] = AST.NumNode(p[1])
 
 def p_expr_bool(p):
 	'''expr : boolean'''
