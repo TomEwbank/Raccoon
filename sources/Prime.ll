@@ -1,44 +1,37 @@
 ;//return true if the number nbr is prime. Return false otherwise
 
-;	for i in range (2,n):
-;		if nbr mod i =? 0:
-;			return false
-;		end
+;for i in range (2,n):
+;	if nbr mod i =? 0:
+;		return false
 ;	end
-;	return true
+;end
 
 
 define fastcc i32 *@Prime(i32 %nbr){
 
 entry:
   %n = alloca i32                         ; n := nbr-1
-  %1=sub i32 1, %nbr
+  %1 = sub i32 1, %nbr
   store i32 %1, i32* %n
-  
-for:
-  %i = i32 2                              ;for i [2 -> n]
-  %2 = icmp ule i32 %i, %n   
-  br i1 %2, label %for_body label %for_end
-  
-for_body: ;si i<=n, if_body  sinon for_end
+  %i = alloca i32                       ; i := 2
+  %i = i32 2  
 
+for:                   
+  %2 = icmp ule i32 %i, %n     ;for i [2 -> n]
+  br i1 %2, label %for_body label %end
+  
+for_body:                               ;if nbr mod i =? 0
+   %3 =  ;nbr mod i XXX
+   %4 = icmp eq i32 %3, 0       
+    br i1 %4, label %if_body, label %if_end
 
-if_body::	if nbr mod i =? 0: if_body sinon if_end
-    ret i32* %A   return false
+if_body:	    
+    ret i32* %A   ; XXX return false
 
 if_end:
-  %4c = add i32 1, %i                     ; i:=i+1
-  store i32 %i, i32* %4c
+  %5 = add i32 1, %i                     ; i:=i+1
+  store i32 %i, i32* %5
   br label %for
 
-
-for_end
-
-
-
-
-
-
-
 end
-  ret i32* %A   return true
+  ret i32* %A   ; XXX return true
