@@ -12,12 +12,12 @@ for:
   br i1 %2, label %for_body label %end
   
 for_body:                   ; if nbr mod i =? 0
-  %3 =  ;nbr mod i XXX
+  %3 = urem i32 %nbr, %i    ;nbr mod i 
   %4 = icmp eq i32 %3, 0       
   br i1 %4, label %if_body, label %if_end
 
 if_body:	    
-  ret i1 0                  ; XXX return false
+  ret i1 0                  ; return false
 
 if_end:
   %5 = add i32 1, %i        ; i:=i+1
@@ -25,4 +25,4 @@ if_end:
   br label %for
 
 end
-  ret i1 1                  ; XXX return true
+  ret i1 1                  ; return true
