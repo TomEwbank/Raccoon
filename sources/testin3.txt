@@ -6,10 +6,18 @@ while i =? a+b:
 		continue
 
 function bbbb(a):
+	gne()
+
+	function gne():
+		blablabla
+		
+	gne()	
+	
 	return true //egsrth
 
 
 if nbr2 < nbr1:
+	gne()
 	return "bitch please"
 
 for i in range (nbr1,nbr2):

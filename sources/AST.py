@@ -175,8 +175,32 @@ class Node:
 class ProgramNode(Node):
 	type = 'Program'
 
+class TokenNode(Node):
+	type = 'token'
+	def __init__(self, tok):
+		Node.__init__(self)
+		self.tok = tok
+		
+	def __repr__(self):
+		return repr(self.tok)
+	
+class OpNode(Node):
+	def __init__(self, op, children):
+		Node.__init__(self,children)
+		self.op = op
+		try:
+			self.nbargs = len(children)
+		except AttributeError:
+			self.nbargs = 1
+		
+	def __repr__(self):
+		return "%s" % (self.op)
 
+		
 ############ ajout	
+
+class IdNode(TokenNode):
+	type = 'Identifier'
 	
 class AssignNode(Node):
 	type = 'Assignment'
@@ -260,93 +284,32 @@ class StringNode(Node):
 		Node.__init__(self)
 		self.tok = tok
 	
-class AssignVarNode(Node):
+class AssignVarNode(TokenNode):
 	type = 'Assignment variable'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-
-	def __repr__(self):
-		return repr(self.tok)
 		
-class FuncDefNameNode(Node):
+class FuncDefNameNode(TokenNode):
 	type = 'Function name'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
 
-	def __repr__(self):
-		return repr(self.tok)
-
-class FuncDefArgNode(Node):
+class FuncDefArgNode(TokenNode):
 	type = 'Function argument'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-
-	def __repr__(self):
-		return repr(self.tok)
 		
-
-class NumIteratorNode(Node):
+class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-
-	def __repr__(self):
-		return repr(self.tok)
 		
-class ListIteratorNode(Node):
+class ListIteratorNode(TokenNode):
 	type = 'List iterator'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
 
-	def __repr__(self):
-		return repr(self.tok)
-
-class NumNode(Node):
+class NumNode(TokenNode):
 	type = 'Number'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
 
-	def __repr__(self):
-		return repr(self.tok)
-
-class FuncCallNameNode(Node):
+class FuncCallNameNode(TokenNode):
 	type = 'Function call name'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
 
-	def __repr__(self):
-		return repr(self.tok)
 		
 ############### fin de l'ajout
 
 
-class TokenNode(Node):
-	type = 'token'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-		
-	def __repr__(self):
-		return repr(self.tok)
-	
-class OpNode(Node):
-	def __init__(self, op, children):
-		Node.__init__(self,children)
-		self.op = op
-		try:
-			self.nbargs = len(children)
-		except AttributeError:
-			self.nbargs = 1
-		
-	def __repr__(self):
-		return "%s" % (self.op)
+
 	
 # class AssignNode(Node):
 	# type = '='

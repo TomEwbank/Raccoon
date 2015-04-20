@@ -34,7 +34,7 @@ def semAnalysis(self):
 	
 	self.next[0].semAnalysis()
 
-@addToClass(AST.TokenNode)
+@addToClass(AST.IdNode)
 def semAnalysis(self):
 	if not AST.Node.scopeStack.hasVariable(self.tok):
 		print("error: uninitialized variable '%s'" %(self.tok))

@@ -68,7 +68,7 @@ def p_assign(p):
 	
 def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr'''
-	p[0] = AST.ConstNode([AST.TokenNode(p[1]), p[3]])
+	p[0] = AST.ConstNode([AST.IdNode(p[1]), p[3]])
 
 	
 def p_func_call(p):
@@ -92,9 +92,9 @@ def p_expr_id(p):
 	'''expr : IDENTIFIER
 	        | IDENTIFIER LSBRACKET expr RSBRACKET'''
 	if len(p) == 2:
-		p[0] = AST.TokenNode(p[1])
+		p[0] = AST.IdNode(p[1])
 	if len(p) == 5:
-		p[0] = AST.ListElementNode([AST.TokenNode(p[1]), p[3]])
+		p[0] = AST.ListElementNode([AST.IdNode(p[1]), p[3]])
 
 def p_expr_string(p):
 	'''expr : STRING'''
@@ -198,7 +198,7 @@ def p_for(p):
 		highLim = p[8]
 		p[0] = AST.ForNode([AST.InRangeNode([iter, lowLim, highLim]), p[13]])
 	if len(p) == 10:
-		p[0] = AST.ForNode([AST.InNode([AST.ListIteratorNode(p[2]), AST.TokenNode(p[4])]), p[8]])
+		p[0] = AST.ForNode([AST.InNode([AST.ListIteratorNode(p[2]), AST.IdNode(p[4])]), p[8]])
 		
 
 def p_if(p):
