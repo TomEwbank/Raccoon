@@ -37,9 +37,9 @@ class Scope:
 		
 	def removeVariable(self, varName):
 		self.varHash.pop(varName, 0)
-	
-	
 		
+	def getArgNumber(self, funcName):
+		return self.funcHash[funcName]
 	
 
 class ScopeStack:
@@ -59,7 +59,6 @@ class ScopeStack:
 		self.currentScope -= 1
 		self.scopeNumber -= 1
 		# print("pop scope")
-		
 	
 	def addVariable(self, varName, type):
 		# print(self.currentScope)
@@ -80,6 +79,13 @@ class ScopeStack:
 				return True
 							
 		return False
+		
+	def getArgNumber(self, funcName):
+		for scope in self.stack:
+			if scope.hasFunction(funcName):
+				return scope.getArgNumber(funcName)
+							
+		return -1
 	
 	
 	

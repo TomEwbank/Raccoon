@@ -11,11 +11,16 @@ function bbbb(a):
 	function gne():
 		blablabla
 		
-	gne()	
+	gne(a, b+d)	
 	
 	return true //egsrth
 
+function gne():
+	prout
 
+function gne(a) :
+	return
+	
 if nbr2 < nbr1:
 	gne()
 	return "bitch please"

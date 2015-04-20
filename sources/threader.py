@@ -1,5 +1,5 @@
 import AST
-from AST import * #addToClass
+from AST import * 
 
 ##### adding functions for the "couture" of the AST ####
 
@@ -43,17 +43,29 @@ def semAnalysis(self):
 
 @addToClass(AST.HeadNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.addFunction(self.children[0].tok, len(self.children)-1)
+	if AST.Node.scopeStack.hasFunction(self.children[0].tok):
+		print("error: function '%s' already defined" %(self.children[0].tok)) #polymorphism not allowed
+		AST.Node.nbSemErrors += 1
+	else:
+		AST.Node.scopeStack.addFunction(self.children[0].tok, len(self.children)-1)
+	
+	# analyse scope of the function even if it was already define
 	AST.Node.scopeStack.newScope()
 	for argument in self.children[1:]:
 		AST.Node.scopeStack.addVariable(argument.tok,'unknown')
+	
 	self.next[0].semAnalysis()
 	
-@addToClass(FuncCallNameNode)
+@addToClass(FuncCallNode)
 def semAnalysis(self):
-	if not AST.Node.scopeStack.hasFunction(self.tok):
-		print("error: undefined function '%s'" %(self.tok))
+	if not AST.Node.scopeStack.hasFunction(self.children[0].tok):
+		print("error: undefined function '%s'" %(self.children[0].tok))
 		AST.Node.nbSemErrors += 1
+	else:
+		if len(self.children)-1 != AST.Node.scopeStack.getArgNumber(self.children[0].tok): 
+			print("error: wrong number of arguments for function '%s'" %(self.children[0].tok))
+			AST.Node.nbSemErrors += 1
+			
 	self.next[0].semAnalysis()
 
 @addToClass(AST.FuncDefNode)
