@@ -108,11 +108,14 @@ def p_expr(p):
 	if len(p) == 4:
 		p[0] = p[2]
 
-def p_expr_num(p):
-	'''expr : INTEGER 
-			| DOUBLE'''
-	p[0] = AST.NumNode(p[1])
+def p_expr_int(p):
+	'''expr : INTEGER'''
+	p[0] = AST.IntNode(p[1])
 
+def p_expr_double(p):
+	'''expr : DOUBLE'''
+	p[0] = AST.DoubleNode(p[1])
+	
 def p_expr_bool(p):
 	'''expr : boolean'''
 	p[0] = p[1]

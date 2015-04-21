@@ -40,6 +40,39 @@ class Scope:
 		
 	def getArgNumber(self, funcName):
 		return self.funcHash[funcName]
+		
+	def getVarType(self, varName):
+		return self.varHash[varName]
+	
+	def pushType(self, type):
+		self.typeStack.append(type)
+		
+	def mergeTypes(self):
+		if len(self.typeStack) < 2:
+			return -1
+		
+		type1 = self.typeStack.pop()
+		type2 = self.typeStack.pop()
+		
+		if type1 == type2 or type1 == 'unknown':
+			self.typeStack.append(type2)
+			return True
+		elif type2 == 'unknown':
+			self.typeStack.append(type1)
+			return True
+		elif (type1 == 'Double' or type1 == 'Integer' or type1 == 'Boolean') and \
+		     (type2 == 'Double' or type2 == 'Integer' or type2 == 'Boolean'):
+			self.typeStack.append('Double')
+			return True
+		else:
+			self.typeStack.append('Forbidden')
+			return False
+	
+	def getMergeType(self):
+		if len(self.typeStack) > 0:
+			return self.typeStack.pop()
+		else:
+			return 'error'
 	
 
 class ScopeStack:
@@ -87,7 +120,17 @@ class ScopeStack:
 							
 		return -1
 	
+	def getVarType(self, varName):
+		return self.stack[self.currentScope].getVarType(varName)
 	
+	def pushType(self, type):
+		self.stack[self.currentScope].pushType(type)
+		
+	def mergeTypes(self):
+		return self.stack[self.currentScope].mergeTypes()
+	
+	def getMergeType(self):
+		return self.stack[self.currentScope].getMergeType()
 	
 		
 class Node:
@@ -305,9 +348,12 @@ class NumIteratorNode(TokenNode):
 class ListIteratorNode(TokenNode):
 	type = 'List iterator'
 
-class NumNode(TokenNode):
-	type = 'Number'
+class IntNode(TokenNode):
+	type = 'Integer'
 
+class DoubleNode(TokenNode):
+	type = 'Double'
+	
 class FuncCallNameNode(TokenNode):
 	type = 'Function call name'
 
