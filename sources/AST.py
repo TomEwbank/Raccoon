@@ -141,9 +141,10 @@ class Node:
 	scopeStack = ScopeStack()
 	nbSemErrors = 0
 	
-	def __init__(self,children=None):
+	def __init__(self,n,children=None):
 		self.ID = str(Node.count)
 		Node.count+=1
+		self.lineNb = n
 		self.parent = None
 		if not children: self.children = []
 		elif hasattr(children,'__len__'):
@@ -152,8 +153,7 @@ class Node:
 				child.parent = self
 		else:
 			self.children = [children]
-			for child in children:
-				child.parent = self
+			children.parent = self
 		self.next = []
 
 	def addNext(self,next):
@@ -226,16 +226,16 @@ class ProgramNode(Node):
 
 class TokenNode(Node):
 	type = 'token'
-	def __init__(self, tok):
-		Node.__init__(self)
+	def __init__(self, n, tok):
+		Node.__init__(self, n)
 		self.tok = tok
 		
 	def __repr__(self):
 		return repr(self.tok)
 	
 class OpNode(Node):
-	def __init__(self, op, children):
-		Node.__init__(self,children)
+	def __init__(self, n, op, children):
+		Node.__init__(self,n,children)
 		self.op = op
 		try:
 			self.nbargs = len(children)
@@ -262,12 +262,6 @@ class FuncCallNode(Node):
 	
 class ReturnNode(Node):
 	type = 'Return'
-	# def __init__(self, tok, retValue, nline = 0):
-		# Node.__init__(self, None, nline)
-		# self.tok = tok
-		# self.retValue = retValue
-		
-		# Node.__init__(self, [cond, block], nline)
 	
 class FuncDefNode(Node):
 	type = 'Function Definition'
@@ -280,12 +274,6 @@ class HeadNode(Node):
 	
 class WhileNode(Node):
 	type = 'While'
-	# def __init__(self, cond, body, nline = 0):
-		# self.cond = cond
-		# self.body = body
-		
-		# Node.__init__(self, [cond, body], nline)
-
 		
 class ForNode(Node):
 	type = 'For'
@@ -329,8 +317,8 @@ class ListNode(Node):
 	
 class StringNode(Node):
 	type = 'String'
-	def __init__(self, tok):
-		Node.__init__(self)
+	def __init__(self, n, tok):
+		Node.__init__(self, n)
 		self.tok = tok
 	
 class AssignVarNode(TokenNode):
@@ -361,16 +349,10 @@ class FuncCallNameNode(TokenNode):
 ############### fin de l'ajout
 
 
-
-	
-# class AssignNode(Node):
-	# type = '='
 	
 # class PrintNode(Node):
 	# type = 'print'
-	
-# class WhileNode(Node):
-	# type = 'while'
+
 	
 class EntryNode(Node):
 	type = 'ENTRY'
