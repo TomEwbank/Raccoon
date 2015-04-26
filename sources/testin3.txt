@@ -3,12 +3,26 @@ while i =? a+b:
 
 	if nbr mod i =? 0:
 		return a[1+5*9+b]
-
+		continue
+n becomes "prout" + 1
 function bbbb(a):
+	gne()
+
+	function gne():
+		blablabla
+		
+	gne(a, b+d)	
+	
 	return true //egsrth
 
+function gne():
+	prout
 
+function gne(a) :
+	return
+	
 if nbr2 < nbr1:
+	gne()
 	return "bitch please"
 
 for i in range (nbr1,nbr2):
@@ -19,5 +33,5 @@ for i in range (nbr1,nbr2):
 		return False
 	else:
 		impossible
-
+break
 return false

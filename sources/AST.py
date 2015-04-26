@@ -24,7 +24,7 @@ class Scope:
 		self.funcHash = {}
 	
 	def addVariable(self, varName, type):
-		varHash[varName] = type
+		self.varHash[varName] = type
 	
 	def hasVariable(self, varName):
 		return self.varHash.has_key(varName)
@@ -36,10 +36,43 @@ class Scope:
 		return self.funcHash.has_key(funcName)
 		
 	def removeVariable(self, varName):
-		varHash.pop(varName, 0)
-	
-	
+		self.varHash.pop(varName, 0)
 		
+	def getArgNumber(self, funcName):
+		return self.funcHash[funcName]
+		
+	def getVarType(self, varName):
+		return self.varHash[varName]
+	
+	def pushType(self, type):
+		self.typeStack.append(type)
+		
+	def mergeTypes(self):
+		if len(self.typeStack) < 2:
+			return -1
+		
+		type1 = self.typeStack.pop()
+		type2 = self.typeStack.pop()
+		
+		if type1 == type2 or type1 == 'unknown':
+			self.typeStack.append(type2)
+			return True
+		elif type2 == 'unknown':
+			self.typeStack.append(type1)
+			return True
+		elif (type1 == 'Double' or type1 == 'Integer' or type1 == 'Boolean') and \
+		     (type2 == 'Double' or type2 == 'Integer' or type2 == 'Boolean'):
+			self.typeStack.append('Double')
+			return True
+		else:
+			self.typeStack.append('Forbidden')
+			return False
+	
+	def getMergeType(self):
+		if len(self.typeStack) > 0:
+			return self.typeStack.pop()
+		else:
+			return 'error'
 	
 
 class ScopeStack:
@@ -52,25 +85,52 @@ class ScopeStack:
 		self.currentScope += 1
 		self.scopeNumber += 1
 		self.stack.append(Scope())
+		# print("new scope")
+	
+	def pop(self):
+		self.stack.pop()
+		self.currentScope -= 1
+		self.scopeNumber -= 1
+		# print("pop scope")
 	
 	def addVariable(self, varName, type):
-		self.stack[currentScope].addVariable(varName, type)
+		# print(self.currentScope)
+		self.stack[self.currentScope].addVariable(varName, type)
+		
+	def removeVariable(self, varName):
+		self.stack[self.currentScope].removeVariable(varName)
 	
 	def hasVariable(self, varName):
-		return self.stack[currentScope].hasVariable(varName)
+		return self.stack[self.currentScope].hasVariable(varName)
 	
 	def addFunction(self, funcName, nbArgs):
-		self.stack[currentScope].addFunction(funcName, nbArgs)
+		self.stack[self.currentScope].addFunction(funcName, nbArgs)
 	
 	def hasFunction(self, funcName):
 		for scope in self.stack:
 			if scope.hasFunction(funcName):
 				return True
-				
-				
+							
 		return False
+		
+	def getArgNumber(self, funcName):
+		for scope in self.stack:
+			if scope.hasFunction(funcName):
+				return scope.getArgNumber(funcName)
+							
+		return -1
 	
+	def getVarType(self, varName):
+		return self.stack[self.currentScope].getVarType(varName)
 	
+	def pushType(self, type):
+		self.stack[self.currentScope].pushType(type)
+		
+	def mergeTypes(self):
+		return self.stack[self.currentScope].mergeTypes()
+	
+	def getMergeType(self):
+		return self.stack[self.currentScope].getMergeType()
 	
 		
 class Node:
@@ -79,10 +139,12 @@ class Node:
 	shape = 'ellipse'
 	
 	scopeStack = ScopeStack()
+	nbSemErrors = 0
 	
-	def __init__(self,children=None):
+	def __init__(self,n,children=None):
 		self.ID = str(Node.count)
 		Node.count+=1
+		self.lineNb = n
 		self.parent = None
 		if not children: self.children = []
 		elif hasattr(children,'__len__'):
@@ -91,8 +153,7 @@ class Node:
 				child.parent = self
 		else:
 			self.children = [children]
-			for child in children:
-				child.parent = self
+			children.parent = self
 		self.next = []
 
 	def addNext(self,next):
@@ -163,8 +224,32 @@ class Node:
 class ProgramNode(Node):
 	type = 'Program'
 
+class TokenNode(Node):
+	type = 'token'
+	def __init__(self, n, tok):
+		Node.__init__(self, n)
+		self.tok = tok
+		
+	def __repr__(self):
+		return repr(self.tok)
+	
+class OpNode(Node):
+	def __init__(self, n, op, children):
+		Node.__init__(self,n,children)
+		self.op = op
+		try:
+			self.nbargs = len(children)
+		except AttributeError:
+			self.nbargs = 1
+		
+	def __repr__(self):
+		return "%s" % (self.op)
 
+		
 ############ ajout	
+
+class IdNode(TokenNode):
+	type = 'Identifier'
 	
 class AssignNode(Node):
 	type = 'Assignment'
@@ -177,12 +262,6 @@ class FuncCallNode(Node):
 	
 class ReturnNode(Node):
 	type = 'Return'
-	# def __init__(self, tok, retValue, nline = 0):
-		# Node.__init__(self, None, nline)
-		# self.tok = tok
-		# self.retValue = retValue
-		
-		# Node.__init__(self, [cond, block], nline)
 	
 class FuncDefNode(Node):
 	type = 'Function Definition'
@@ -195,12 +274,6 @@ class HeadNode(Node):
 	
 class WhileNode(Node):
 	type = 'While'
-	# def __init__(self, cond, body, nline = 0):
-		# self.cond = cond
-		# self.body = body
-		
-		# Node.__init__(self, [cond, body], nline)
-
 		
 class ForNode(Node):
 	type = 'For'
@@ -244,89 +317,42 @@ class ListNode(Node):
 	
 class StringNode(Node):
 	type = 'String'
-	def __init__(self, tok):
-		Node.__init__(self)
+	def __init__(self, n, tok):
+		Node.__init__(self, n)
 		self.tok = tok
 	
-class AssignVarNode(Node):
+class AssignVarNode(TokenNode):
 	type = 'Assignment variable'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-
-	def __repr__(self):
-		return repr(self.tok)
 		
-class FuncDefNameNode(Node):
+class FuncDefNameNode(TokenNode):
 	type = 'Function name'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
 
-	def __repr__(self):
-		return repr(self.tok)
-
-class FuncDefArgNode(Node):
+class FuncDefArgNode(TokenNode):
 	type = 'Function argument'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-
-	def __repr__(self):
-		return repr(self.tok)
 		
-
-class NumIteratorNode(Node):
+class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-
-	def __repr__(self):
-		return repr(self.tok)
 		
-class ListIteratorNode(Node):
+class ListIteratorNode(TokenNode):
 	type = 'List iterator'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
 
-	def __repr__(self):
-		return repr(self.tok)
-		
+class IntNode(TokenNode):
+	type = 'Integer'
+
+class DoubleNode(TokenNode):
+	type = 'Double'
+	
+class FuncCallNameNode(TokenNode):
+	type = 'Function call name'
+
 		
 ############### fin de l'ajout
 
 
-class TokenNode(Node):
-	type = 'token'
-	def __init__(self, tok):
-		Node.__init__(self)
-		self.tok = tok
-		
-	def __repr__(self):
-		return repr(self.tok)
-	
-class OpNode(Node):
-	def __init__(self, op, children):
-		Node.__init__(self,children)
-		self.op = op
-		try:
-			self.nbargs = len(children)
-		except AttributeError:
-			self.nbargs = 1
-		
-	def __repr__(self):
-		return "%s" % (self.op)
-	
-# class AssignNode(Node):
-	# type = '='
 	
 # class PrintNode(Node):
 	# type = 'print'
-	
-# class WhileNode(Node):
-	# type = 'while'
+
 	
 class EntryNode(Node):
 	type = 'ENTRY'
