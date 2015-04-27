@@ -91,7 +91,7 @@ t_LSBRACKET=r'\['
 t_RSBRACKET=r'\]'
 
 def t_END_STATEMENT(t):
-	r'[\n\t]*\n[\t]*'
+	r'[\n\t ]*\n[\t]*'
 	l = t.value.count('\n')*'\n'
 	t.lexer.lineno += len(l)
 	return t
