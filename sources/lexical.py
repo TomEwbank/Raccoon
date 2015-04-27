@@ -1,4 +1,11 @@
-# coding: latin-1
+#############################################################################################
+#  lexical.py,																				#
+#																							#
+# Lexical analyser for the Raccoon language, using PLY.										#				#
+#																							#
+# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.								#
+#############################################################################################
+
 import ply.lex as lex
 import re
 import sys
@@ -83,16 +90,7 @@ t_COMMA= r','
 t_COLON= r':'
 
 t_LSBRACKET=r'\['
-t_RSBRACKET=r'\]'	
-
-# def t_COMMENTS(t):
-	# r'[ ]*//.*\n[\]'
-	# t.lexer.lineno += 1
-
-# def t_BLOCK_COMMENTS(t):
-	# r'/\*(\n|.)*?(\*/)\n'
-	# l = t.value.count('\n')*'\n'
-	# t.lexer.lineno += len(l)
+t_RSBRACKET=r'\]'
 
 def t_END_STATEMENT(t):
 	r'[\n\t]*\n[\t]*'
@@ -136,7 +134,6 @@ def t_error(t) :
 	print("Illegal character '%s'" %t.value[0])
 	t.lexer.skip(1)
 
-
 t_ignore = ' '
 
 # create the first stage
@@ -146,10 +143,9 @@ lexer = lex.lex()
 #### SECOND LEXING STAGE ####
 
 class IndentLexer(object):
-	"""
-	A second lexing stage that interprets WHITESPACE
-	Manages Off-Side Rule for indentation
-	"""
+	'''A second lexing stage that interprets TABS
+	   Manages Off-Side Rule for indentation'''
+	
 	def __init__(self, lexer):
 		self.indents = [0]  # indentation stack
 		self.tokens = []    # token queue
@@ -216,7 +212,8 @@ class IndentLexer(object):
 		return token
 
 	def _calc_indent(self, nbTabs):
-		"returns a number representing indents added or removed"
+		'''returns a number representing indents added or removed'''
+		
 		indents = self.indents # stack of space numbers
 		if nbTabs > indents[-1]:
 			indents.append(nbTabs)
@@ -238,8 +235,7 @@ class IndentLexer(object):
 # create the second stage
 lexer = IndentLexer(lexer)
 
-
-#### DISPLAY ####
+#### comments remover function ####
 
 def remove_comments(text):
 	def replacer(match):
@@ -253,6 +249,9 @@ def remove_comments(text):
 		re.DOTALL | re.MULTILINE
 	)
 	return re.sub(pattern, replacer, text)
+
+	
+#########################################################
 
 if __name__ == "__main__":
 	prog = remove_comments(open(sys.argv[1]).read())

@@ -1,15 +1,15 @@
-# coding: latin-1
-
 #############################################################################################
 #  AST.py,																					#
 #																							#
 # Module which permits to construct, manipulate and represent abstract syntax trees.		#
+#																							#
 # This module uses Pydot and Graphviz to represent the tree either in an ASCII-art format,	#
 # either in a more readable pdf graph.														#
+#																							#
 # This module is derived from the module of Matthew AMIGUET and has been adapted to be		#
 # used specifically for the development of a compiler for the Raccoon language.				#
 #																							#
-# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Élodie.								#
+# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.								#
 #############################################################################################
 
 import pydot
@@ -75,7 +75,7 @@ class Scope:
 	
 	def getMergedType(self):
 		'''Return the type at the top of the stack,
-		   wich is supposed to be the type of the last
+		   which is supposed to be the type of the last
 		   encountered expression'''
 		   
 		if len(self.typeStack) > 0:
@@ -85,7 +85,7 @@ class Scope:
 	
 
 class ScopeStack:
-	'''Class wich goal is to manage the different scopes
+	'''Class which goal is to manage the different scopes
 	   that can be encountered in a Raccoon program'''
 	   
 	def __init__(self):
@@ -217,12 +217,12 @@ class Node:
 				edge = pydot.Edge(self.ID,c.ID)
 				edge.set_color(color)
 				edge.set_arrowsize('.5')
-				# Les arrêtes correspondant aux coutures ne sont pas prises en compte
-				# pour le layout du graphe. Ceci permet de garder l'arbre dans sa représentation
-				# "standard", mais peut provoquer des surprises pour le trajet parfois un peu
-				# tarabiscoté des coutures...
-				# En commantant cette ligne, le layout sera bien meilleur, mais l'arbre nettement
-				# moins reconnaissable.
+				# The edges corresponding to the "coutures" are not taken into account
+				# for the layout of the graph. This permits to keep the tree in his
+				# "standard" representation, but may also provoke surprises with the
+				# representation of the coutures...
+				# By commenting this line, the layout will be quite better, but the
+				# tree will be much more difficult to recognize.
 				edge.set_constraint('false') 
 				if label:
 					edge.set_taillabel(str(i))
@@ -365,7 +365,8 @@ class EntryNode(Node):
 	def __init__(self):
 		Node.__init__(self, None)
 
-################################################################################
+
+#### Decorator ####
 		
 def addToClass(cls):
 	'''Decorator which permits to add the decorated function as a method

@@ -1,7 +1,20 @@
+#############################################################################################
+#  semantic.py,																				#
+#																							#
+# Semantic analyser for the Raccoon language.												#
+#																							#
+# This module adds functions to the nodes of the AST. The first part of these functions		#
+# permits the "couture" of the AST, allowing a particular traversing of the tree,			#
+# which will then be useful to the second part of these functions which performs the		#
+# actual semantic analysis.																	#
+#																							#
+# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.								#
+#############################################################################################
+
 import AST
 from AST import * 
 
-##### adding functions for the "couture" of the AST ####
+#### Functions for the "couture" of the AST ####
 
 @addToClass(AST.Node)
 def thread(self, lastNode):
@@ -15,7 +28,7 @@ def thread(tree):
 	tree.thread(entry)
 	return entry
 
-##### adding functions for the semantic analysis ####
+#### Functions for the semantic analysis ####
 
 @addToClass(AST.Node)	
 def semAnalysis(self):
@@ -221,7 +234,7 @@ def semAnalysis(self):
 def semAnalysis(self):
 	node = self
 	while not isinstance(node.parent, FuncDefNode):
-		if node.parent == None:
+		if node.parent == None: #we reached the root of the tree without finding function node
 			print("error l.%d: return statement not in a function" %(self.lineNb))
 			AST.Node.nbSemErrors += 1
 			break
@@ -235,7 +248,7 @@ def semAnalysis(self):
 def semAnalysis(self):
 	node = self
 	while not isinstance(node.parent, ForNode) and not isinstance(node.parent, WhileNode):
-		if node.parent == None:
+		if node.parent == None: #we reached the root of the tree without finding loop node
 			print("error l.%d: break/continue statement not in a loop" %(self.lineNb))
 			AST.Node.nbSemErrors += 1
 			break
@@ -244,7 +257,7 @@ def semAnalysis(self):
 	self.next[0].semAnalysis()
 		
 
-#############################################
+###############################################################
 		
 if __name__ == "__main__":
 	from parsing import parse

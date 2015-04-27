@@ -1,3 +1,11 @@
+#############################################################################################
+#  parsing.py,																				#
+#																							#
+# Parser for the Raccoon language, using PLY.												#
+#																							#
+# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.								#
+#############################################################################################
+
 import ply.yacc as yacc
 from lexical import remove_comments
 from lexical import tokens
@@ -38,7 +46,7 @@ def p_small_stmt(p):
 				  | expr
 			  	  | return_stmt
 				  | display
-			  	  | loop_stmt''' # return, break, and continue are not context free, leave to  semantic analysis? 
+			  	  | loop_stmt'''
 	p[0] = p[1]
 				  
 def p_(p):
@@ -237,6 +245,7 @@ def p_elseif(p):
 		p[0] = AST.Node(p.lineno(1), [AST.ElseifNode(p.lineno(1), [p[2], p[6]])] + p[9].children)
 
 def p_error(p):
+	# this is a panic mode error handling, not very handy but really easy to implement
     global flag_for_error
     flag_for_error = 1
 
@@ -251,14 +260,13 @@ def parse(program):
 	prog = remove_comments(program)
 	return yacc.yacc().parse(prog, lexer)
 
-############################
+#####################################################
 	
 if __name__ == "__main__":
 
 	import sys
 	prog = remove_comments(open(sys.argv[1]).read())
 	result = yacc.yacc().parse(prog, lexer)
-	#print(result)
 	import os
 	try:
 		graph = result.makegraphicaltree()
