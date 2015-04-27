@@ -1,23 +1,25 @@
 # coding: latin-1
 
-''' AST.py, version 0.2
-
-Petit module utilitaire pour la construction, la manipulation et la 
-représentation d'arbres syntaxiques abstraits.
-
-Sûrement plein de bugs et autres surprises. À prendre comme un 
-"work in progress"...
-Notamment, l'utilisation de pydot pour représenter un arbre syntaxique cousu
-est une utilisation un peu "limite" de graphviz. Ça marche, mais le layout n'est
-pas toujours optimal...
-
-2008-2009, Matthieu Amiguet, HE-Arc      !!!!!!MODIFIED VERSION!!!!!
-'''
+#############################################################################################
+#  AST.py,																					#
+#																							#
+# Module which permits to construct, manipulate and represent abstract syntax trees.		#
+# This module uses Pydot and Graphviz to represent the tree either in an ASCII-art format,	#
+# either in a more readable pdf graph.														#
+# This module is derived from the module of Matthew AMIGUET and has been adapted to be		#
+# used specifically for the development of a compiler for the Raccoon language.				#
+#																							#
+# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Élodie.								#
+#############################################################################################
 
 import pydot
 
-
 class Scope:
+	'''Class which goal is to keep track of variables 
+	   initialization, function definitions, and types of 
+	   expressions inside a particular scope of a Raccoon 
+	   program.'''
+
 	def __init__(self):
 		self.typeStack = []
 		self.varHash = {}
@@ -48,6 +50,9 @@ class Scope:
 		self.typeStack.append(type)
 		
 	def mergeTypes(self):
+		'''Compare the last 2 types that has been pushed on
+		   the stack, and merge them into one if they are compatible'''
+		  
 		if len(self.typeStack) < 2:
 			return -1
 		
@@ -68,7 +73,11 @@ class Scope:
 			self.typeStack.append('Forbidden')
 			return False
 	
-	def getMergeType(self):
+	def getMergedType(self):
+		'''Return the type at the top of the stack,
+		   wich is supposed to be the type of the last
+		   encountered expression'''
+		   
 		if len(self.typeStack) > 0:
 			return self.typeStack.pop()
 		else:
@@ -76,6 +85,9 @@ class Scope:
 	
 
 class ScopeStack:
+	'''Class wich goal is to manage the different scopes
+	   that can be encountered in a Raccoon program'''
+	   
 	def __init__(self):
 		self.stack = [Scope()]
 		self.currentScope = 0
@@ -85,16 +97,13 @@ class ScopeStack:
 		self.currentScope += 1
 		self.scopeNumber += 1
 		self.stack.append(Scope())
-		# print("new scope")
 	
 	def pop(self):
 		self.stack.pop()
 		self.currentScope -= 1
 		self.scopeNumber -= 1
-		# print("pop scope")
 	
 	def addVariable(self, varName, type):
-		# print(self.currentScope)
 		self.stack[self.currentScope].addVariable(varName, type)
 		
 	def removeVariable(self, varName):
@@ -129,8 +138,8 @@ class ScopeStack:
 	def mergeTypes(self):
 		return self.stack[self.currentScope].mergeTypes()
 	
-	def getMergeType(self):
-		return self.stack[self.currentScope].getMergeType()
+	def getMergedType(self):
+		return self.stack[self.currentScope].getMergedType()
 	
 		
 class Node:
@@ -220,7 +229,10 @@ class Node:
 					edge.set_labelfontcolor(color)
 				graph.add_edge(edge)
 			return graph    
-		
+
+
+#### Node types classes ####
+			
 class ProgramNode(Node):
 	type = 'Program'
 
@@ -244,9 +256,6 @@ class OpNode(Node):
 		
 	def __repr__(self):
 		return "%s" % (self.op)
-
-		
-############ ajout	
 
 class IdNode(TokenNode):
 	type = 'Identifier'
@@ -350,31 +359,23 @@ class DisplayNode(Node):
 	
 class MinusNode(Node):
 	type = '-'
-		
-############### fin de l'ajout
 
-
-	
-# class PrintNode(Node):
-	# type = 'print'
-
-	
 class EntryNode(Node):
 	type = 'ENTRY'
 	def __init__(self):
 		Node.__init__(self, None)
-	
+
+################################################################################
+		
 def addToClass(cls):
-	''' Décorateur permettant d'ajouter la fonction décorée en tant que méthode
-	à une classe.
+	'''Decorator which permits to add the decorated function as a method
+	to a class.
 	
-	Permet d'implémenter une forme élémentaire de programmation orientée
-	aspects en regroupant les méthodes de différentes classes implémentant
-	une même fonctionnalité en un seul endroit.
+	This permits to regroup all the methods that have a common goal in the 
+	same placed.
 	
-	Attention, après utilisation de ce décorateur, la fonction décorée reste dans
-	le namespace courant. Si cela dérange, on peut utiliser del pour la détruire.
-	Je ne sais pas s'il existe un moyen d'éviter ce phénomène.
+	Warning: After the utilisation of this decorator, the decorated function 
+	remains in the current namespace. If it bother, you can use del to delete it.
 	'''
 	def decorator(func):
 		setattr(cls,func.__name__,func)

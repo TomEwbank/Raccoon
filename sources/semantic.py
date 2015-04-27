@@ -28,7 +28,7 @@ def semAnalysis(self):
 @addToClass(AST.AssignNode)
 def semAnalysis(self):
 	stack = AST.Node.scopeStack
-	type = stack.getMergeType()
+	type = stack.getMergedType()
 	if isinstance(self.children[0], ListElementNode):
 		token = self.children[0].children[0].tok
 		trueType = stack.getVarType(token)
@@ -80,7 +80,7 @@ def semAnalysis(self):
 	for i in range(1, len(self.children)): 
 		AST.Node.scopeStack.mergeTypes()
 
-	listType = AST.Node.scopeStack.getMergeType()
+	listType = AST.Node.scopeStack.getMergedType()
 	
 	if listType == 'Forbidden':
 		print("error l.%d: all list elements must be the same type" %(self.lineNb))
@@ -118,7 +118,7 @@ def semAnalysis(self):
 	token = self.children[0].tok
 	
 	#check if the index is an integer
-	type = stack.getMergeType()
+	type = stack.getMergedType()
 	if type != 'Integer' and \
 	   type != 'unknown' :
 		print("error l.%d: wrong type for index" %(self.lineNb))
@@ -138,7 +138,7 @@ def semAnalysis(self):
 @addToClass(AST.IfNode)
 @addToClass(AST.ElseifNode)
 def semAnalysis(self):
-	type = AST.Node.scopeStack.getMergeType()
+	type = AST.Node.scopeStack.getMergedType()
 	if type != 'Double' and \
 	   type != 'Integer' and \
 	   type != 'Boolean' and \
@@ -199,8 +199,8 @@ def semAnalysis(self):
 	
 @addToClass(AST.InRangeNode)
 def semAnalysis(self):
-	type1 = AST.Node.scopeStack.getMergeType()
-	type2 = AST.Node.scopeStack.getMergeType()
+	type1 = AST.Node.scopeStack.getMergedType()
+	type2 = AST.Node.scopeStack.getMergedType()
 	if type1 != 'Integer' and type1 != 'unknown':
 		print("error l.%d: range first type should be integer" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
@@ -211,7 +211,7 @@ def semAnalysis(self):
 	
 @addToClass(AST.InNode)
 def semAnalysis(self):
-	type = AST.Node.scopeStack.getMergeType()
+	type = AST.Node.scopeStack.getMergedType()
 	if type[0:4] != 'List' and type != 'unknown':
 		print("error l.%d: %s is not a list" %(self.lineNb,self.children[1].tok))
 		AST.Node.nbSemErrors += 1
