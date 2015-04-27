@@ -345,6 +345,11 @@ class DoubleNode(TokenNode):
 class FuncCallNameNode(TokenNode):
 	type = 'Function call name'
 
+class DisplayNode(Node):
+	type = 'Display'
+	
+class MinusNode(Node):
+	type = '-'
 		
 ############### fin de l'ajout
 

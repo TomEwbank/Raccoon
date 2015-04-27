@@ -22,6 +22,6 @@ function Quicksort(A,low,high):
 
 
 A becomes [2, 67, 8, 99, 87, 654, 32, 5, 4, 12]
-print(A)
+display(A)
 OrderedA becomes Quicksort(A,1,10)
-print(OrderedA)
+display(OrderedA)

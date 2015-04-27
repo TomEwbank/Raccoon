@@ -8,7 +8,8 @@ precedence = (
     ('left', 'OR', 'AND'),
 	('left', 'CEQ', 'CNE', 'CLT', 'CLE', 'CGT', 'CGE'),
 	('left', 'ADD_OP', 'SUB_OP') ,
-	('left', 'MUL_OP', 'DIV_OP', 'MOD_OP') ,
+	('left', 'MUL_OP', 'DIV_OP', 'MOD_OP'),
+	('right','MINUS'),
 )
 
 def p_program(p):
@@ -36,6 +37,7 @@ def p_small_stmt(p):
 				  | const_decl 
 				  | expr
 			  	  | return_stmt
+				  | display
 			  	  | loop_stmt''' # return, break, and continue are not context free, leave to  semantic analysis? 
 	p[0] = p[1]
 				  
@@ -54,6 +56,10 @@ def p_break(p):
 def p_continue(p):
 	'''loop_stmt : CONTINUE'''
 	p[0] = AST.ContinueNode(p.lineno(1))
+	
+def p_display(p):
+	'''display : DISPLAY LPAREN expr RPAREN'''
+	p[0] = AST.DisplayNode(p.lineno(1), [p[3]])
 				  
 def p_assign(p):
 	'''assignment : IDENTIFIER ASSIGN expr
@@ -137,6 +143,10 @@ def p_op(p):
 			| expr comb_op expr
 			| expr comp_op expr'''
 	p[0] = AST.OpNode(p.lineno(2), p[2], [p[1], p[3]])
+	
+def p_expr_signed(p):
+	'''expr : SUB_OP expr %prec MINUS'''
+	p[0] =  AST.MinusNode(p.lineno(1), [p[2]])
 	
 def p_comb_op(p):
 	'''comb_op : OR 
@@ -226,14 +236,6 @@ def p_elseif(p):
 	if len(p) == 9:
 		p[0] = AST.Node(p.lineno(1), [AST.ElseifNode(p.lineno(1), [p[2], p[6]])] + p[9].children)
 
-# def p_error(p):
-	
-	# if p:
-		# print("Syntax error in line %d" % p.lineno)	
-		# yacc.errok()
-	# else:
-		# print("Syntax error: NEWLINE missing at last statement")
-
 def p_error(p):
     global flag_for_error
     flag_for_error = 1
@@ -242,10 +244,7 @@ def p_error(p):
 		print("Syntax error in line %d" % p.lineno)
 		yacc.errok()
     else:
-        print("Unexpected end of input")
-		
-
-yacc.yacc(outputdir='generated')
+        print("Syntax error: NEWLINE missing at last statement")
 
 
 def parse(program):

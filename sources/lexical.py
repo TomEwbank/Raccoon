@@ -58,6 +58,7 @@ reserved = {
 	'becomes':'ASSIGN',
 	'is':'CONST',
 	'function' :  'FUNCTION',
+	'display' : 'DISPLAY',
 
 }
 
