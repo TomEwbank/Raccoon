@@ -13,7 +13,8 @@ while i =? a+b:
 		
 
 n becomes "prout" + 1
-function bbbb(a):
+function bbbb(a): 
+
 	gne()
 
 	function gne():

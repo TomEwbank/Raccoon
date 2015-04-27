@@ -71,8 +71,6 @@ reserved = {
 
 tokens += list(reserved.values())
 
-# t_TAB = r'\t'
-
 t_ADD_OP= r'\+'
 t_SUB_OP= r'-'
 t_MUL_OP= r'\*'
