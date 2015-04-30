@@ -59,19 +59,22 @@ class Scope:
 		type1 = self.typeStack.pop()
 		type2 = self.typeStack.pop()
 		
-		if type1 == type2 or type1 == 'unknown':
+		if type1 == 'String' or type1 == 'List' or \
+		   type2 == 'String' or type2 == 'List':
+			# Raccoon can't deal with arithmetic/combinatory operation on lists and strings
+			self.typeStack.append('Forbidden')
+			return False
+		elif type1 == type2 or type1 == 'unknown':
 			self.typeStack.append(type2)
 			return True
 		elif type2 == 'unknown':
 			self.typeStack.append(type1)
 			return True
-		elif (type1 == 'Double' or type1 == 'Integer' or type1 == 'Boolean') and \
-		     (type2 == 'Double' or type2 == 'Integer' or type2 == 'Boolean'):
+		else: 
+			# The merging of 2 different numeric types leads to the type Double
+			# (Booleans are considered as numeric types: True = 1, False = 0)
 			self.typeStack.append('Double')
 			return True
-		else:
-			self.typeStack.append('Forbidden')
-			return False
 	
 	def getMergedType(self):
 		'''Return the type at the top of the stack,
@@ -140,15 +143,17 @@ class ScopeStack:
 	
 	def getMergedType(self):
 		return self.stack[self.currentScope].getMergedType()
-	
+
+#### Basic node class ####
 		
 class Node:
 	count = 0
 	type = 'Node (unspecified)'
 	shape = 'ellipse'
-	
-	scopeStack = ScopeStack()
+
+	nbSynErrors = 0
 	nbSemErrors = 0
+	scopeStack = ScopeStack()
 	
 	def __init__(self,n,children=None):
 		self.ID = str(Node.count)
@@ -362,6 +367,11 @@ class MinusNode(Node):
 
 class EntryNode(Node):
 	type = 'ENTRY'
+	def __init__(self):
+		Node.__init__(self, None)
+		
+class ErrorNode(Node):
+	type = 'ERROR'
 	def __init__(self):
 		Node.__init__(self, None)
 

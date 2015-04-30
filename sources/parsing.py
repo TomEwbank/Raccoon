@@ -49,7 +49,7 @@ def p_small_stmt(p):
 			  	  | loop_stmt'''
 	p[0] = p[1]
 				  
-def p_(p):
+def p_return(p):
 	'''return_stmt : RETURN
                    | RETURN expr'''			   
 	if len(p) == 2:
@@ -206,7 +206,7 @@ def p_body(p):
 		p[0] = AST.BodyNode(p.lineno(1), [p[1]] + p[2].children)
 
 def p_while(p):
-	'''while_stmt : WHILE expr COLON END_STATEMENT INDENT body DEDENT''' # What if no body? same issue with func_def, if,... 
+	'''while_stmt : WHILE expr COLON END_STATEMENT INDENT body DEDENT'''
 	p[0] = AST.WhileNode(p.lineno(1), [p[2], p[6]])
 	
 
@@ -244,10 +244,25 @@ def p_elseif(p):
 	if len(p) == 9:
 		p[0] = AST.Node(p.lineno(1), [AST.ElseifNode(p.lineno(1), [p[2], p[6]])] + p[9].children)
 
+#### A few rules for errors reporting ####
+
+def p_colon_forgotten(p):
+	'''stmt : IF expr END_STATEMENT INDENT body DEDENT
+			| ELSEIF expr END_STATEMENT INDENT body DEDENT
+			| ELSE expr END_STATEMENT INDENT body DEDENT
+			| FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN END_STATEMENT INDENT body DEDENT
+            | FOR IDENTIFIER IN IDENTIFIER END_STATEMENT INDENT body DEDENT
+			| WHILE expr END_STATEMENT INDENT body DEDENT
+			| FUNCTION IDENTIFIER LPAREN func_def_args RPAREN END_STATEMENT INDENT body DEDENT
+			| FUNCTION IDENTIFIER LPAREN RPAREN END_STATEMENT INDENT body DEDENT'''
+	
+	AST.Node.nbSynErrors += 1
+	print("Syntax error l.%d: colon missing at end of line" %(p.lineno(1)))
+	p[0] = AST.ErrorNode()
+
 def p_error(p):
 	# this is a panic mode error handling, not very handy but really easy to implement
-    global flag_for_error
-    flag_for_error = 1
+    AST.Node.nbSynErrors += 1
 
     if p is not None:
 		print("Syntax error in line %d" % p.lineno)
@@ -268,10 +283,13 @@ if __name__ == "__main__":
 	prog = remove_comments(open(sys.argv[1]).read())
 	result = yacc.yacc().parse(prog, lexer)
 	import os
-	try:
-		graph = result.makegraphicaltree()
-		name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"
-		graph.write_pdf(name)
-		print("wrote ast to" , name)
-	except (AttributeError, TypeError) as e:
-		print("Unable to build an AST because of the syntax errors")
+	if AST.Node.nbSynErrors < 0:
+		try:
+			graph = result.makegraphicaltree()
+			name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"
+			graph.write_pdf(name)
+			print("wrote ast to" , name)
+		except (AttributeError, TypeError) as e:
+			print("Unable to print the AST")
+	else:
+		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))

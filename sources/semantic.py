@@ -107,7 +107,7 @@ def semAnalysis(self):
 	if not AST.Node.scopeStack.hasVariable(self.tok):
 		print("error l.%d: uninitialized variable '%s'" %(self.lineNb,self.tok))
 		AST.Node.nbSemErrors += 1
-		AST.Node.scopeStack.pushType('unknown')
+		AST.Node.scopeStack.pushType('unknown') # permits to still continue the analysis 
 	else:
 		type = AST.Node.scopeStack.getVarType(self.tok)
 		if isinstance(self.parent, ListElementNode) and \
@@ -264,13 +264,16 @@ if __name__ == "__main__":
 	import sys, os
 	prog = file(sys.argv[1]).read()
 	ast = parse(prog)
-	entry = thread(ast)
-	
-	graph = ast.makegraphicaltree()
-	entry.threadTree(graph)
-	
-	name = os.path.splitext(sys.argv[1])[0]+"-ast-threaded.pdf"
-	graph.write_pdf(name)
-	print("wrote threaded ast to", name)
-	entry.semAnalysis()
+	if AST.Node.nbSynErrors > 0:
+		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
+	else:
+		entry = thread(ast)
+		
+		graph = ast.makegraphicaltree()
+		entry.threadTree(graph)
+		
+		name = os.path.splitext(sys.argv[1])[0]+"-ast-threaded.pdf"
+		graph.write_pdf(name)
+		print("wrote threaded ast to", name)
+		entry.semAnalysis()
 	

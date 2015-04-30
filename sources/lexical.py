@@ -90,6 +90,10 @@ t_COLON= r':'
 t_LSBRACKET=r'\['
 t_RSBRACKET=r'\]'
 
+def t_indent_error(t):
+	r'[\n\t ]*\n[\t]*[ ]+'
+	print("Syntax error l.%d: use of spaces after tab(s) leads to erronous indent" %(t.lexer.lineno+1))
+
 def t_END_STATEMENT(t):
 	r'[\n\t ]*\n[\t]*'
 	l = t.value.count('\n')*'\n'
