@@ -251,6 +251,7 @@ class TokenNode(Node):
 		return repr(self.tok)
 	
 class OpNode(Node):
+	type = 'Operation'
 	def __init__(self, n, op, children):
 		Node.__init__(self,n,children)
 		self.op = op

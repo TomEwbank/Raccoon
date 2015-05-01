@@ -26,9 +26,9 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> stmt','program',1,'p_program','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',24),
-  ('program -> stmt program','program',2,'p_program','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',25),
-  ('program -> END_STATEMENT stmt program','program',3,'p_program','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',26),
+  ('program -> stmt','program',1,'p_stmts','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',24),
+  ('program -> stmt program','program',2,'p_stmts','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',25),
+  ('program -> END_STATEMENT stmt program','program',3,'p_stmts','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',26),
   ('stmt -> simple_stmt','stmt',1,'p_stmt_type','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',35),
   ('stmt -> compound_stmt','stmt',1,'p_stmt_type','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',36),
   ('simple_stmt -> small_stmt END_STATEMENT','simple_stmt',2,'p_simple_stmt','D:\\Unif\\1er master\\compilers\\project\\Raccoon\\sources\\parsing.py',40),

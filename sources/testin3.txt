@@ -25,7 +25,7 @@ function bbbb(a):
 		  
 	gne(a, b+d)	
 	
-	return true //egsrth
+	return true		//egsrth
 
 function gne():
 	prout
@@ -47,3 +47,4 @@ for i in range (nbr1,nbr2):
 		impossible
 break
 return false
+	

@@ -20,7 +20,7 @@ precedence = (
 	('right','MINUS'),
 )
 
-def p_program(p):
+def p_stmts(p):
 	'''program : stmt
 			   | stmt program
                | END_STATEMENT stmt program'''
@@ -273,6 +273,7 @@ def p_error(p):
 
 def parse(program):
 	prog = remove_comments(program)
+	prog = prog + "\n"
 	return yacc.yacc().parse(prog, lexer)
 
 #####################################################
@@ -281,6 +282,7 @@ if __name__ == "__main__":
 
 	import sys
 	prog = remove_comments(open(sys.argv[1]).read())
+	prog = prog + "\n"
 	result = yacc.yacc().parse(prog, lexer)
 	import os
 	if AST.Node.nbSynErrors < 0:
