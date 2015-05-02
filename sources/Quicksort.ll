@@ -7,34 +7,35 @@ entry:
   
 body:
   %pivot = alloca i32                     ; pivot := A[low]
-  %2ptrlow = load i32* %low
-  %2ptr = getelementptr inbounds i32* %A, i32 %2ptrlow
-  %pivot = load i32* %2ptr
+  %1 = load i32* %low
+  %2 = getelementptr inbounds i32* %A, i32 %1
+  %pivot = load i32* %2
   
   %leftwall = alloca i32                  ; leftwall := low
   store i32 %low, i32* %leftwall
   
   %i = alloca i32                         ; i = low+1
-  %4a=add i32 1, %low
-  store i32 %4a, i32* %i
+  %3 = add i32 1, %low
+  store i32 %3, i32* %i
   
   
 for:
-  %4b = icmp ule i32 %i, %high            ; for i [low+1 -> high]
-  br i1 %4b, label %for_body label %for_end
+  %4 = icmp ule i32 %i, %high            ; for i [low+1 -> high]
+  br i1 %4, label %for_body label %for_end
 
 
 for_body:
-  %5ptri = load i32* %i                   ; if A[i]<pivot
-  %5ptr = getelementptr inbounds i32* %A, i32 %5ptri
-  %5Ai = load i32* %5ptr
-  %5 = icmp ult i32 %5Ai , %pivot
-  br i1 %5, label %if_body, label %if_end
+  %5 = load i32* %i                   ; if A[i]<pivot
+  %6 = getelementptr inbounds i32* %A, i32 %5
+  %7 = load i32* %6
+  %8 = icmp ult i32 %7 , %pivot
+  br i1 %8, label %if_body, label %if_end
 
 
 if_body:
-  %6 = add i32 1, %leftwall               ; leftwall++
-  store i32 %6, i32* %leftwall
+  %9 = add i32 1, %leftwall               ; leftwall++
+  store i32 %9, i32* %leftwall
+
   
   %temp = alloca i32                      ; temp:=A[i]
   %7ptri = load i32* %i             
