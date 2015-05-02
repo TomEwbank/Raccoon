@@ -1,8 +1,8 @@
 define fastcc i32 *@Quicksort(i32* %A,i32 %low, i32 %high){
 
 entry:
-  %1 = icmp ugt i32 %high, %low           ; if(high>low)
-  br i1 %1, label %body, label %end
+  %0 = icmp ugt i32 %high, %low           ; if(high>low)
+  br i1 %0, label %body, label %end
   
   
 body:

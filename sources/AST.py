@@ -160,11 +160,15 @@ class Node:
 		Node.count+=1
 		self.lineNb = n
 		self.parent = None
+		self.childNum = 0
 		if not children: self.children = []
 		elif hasattr(children,'__len__'):
 			self.children = children
+			i = 0
 			for child in children:
 				child.parent = self
+				child.childNum = i
+				i += 1
 		else:
 			self.children = [children]
 			children.parent = self
