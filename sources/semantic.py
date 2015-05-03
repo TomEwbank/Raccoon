@@ -262,9 +262,13 @@ def semAnalysis(self):
 if __name__ == "__main__":
 	from parsing import parse
 	import sys, os
+	import lexical
+
 	prog = file(sys.argv[1]).read()
 	ast = parse(prog)
-	if AST.Node.nbSynErrors > 0:
+
+	if AST.Node.nbSynErrors > 0 or lexical.nbLexErrors > 0:
+		print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
 		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
 	else:
 		entry = thread(ast)

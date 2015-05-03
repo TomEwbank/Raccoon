@@ -7,8 +7,7 @@ entry:
   
 body:
   %pivot = alloca i32                     ; pivot := A[low]
-  %1 = load i32* %low
-  %2 = getelementptr inbounds i32* %A, i32 %1
+  %2 = getelementptr inbounds i32* %A, i32 %low
   %pivot = load i32* %2
   
   %leftwall = alloca i32                  ; leftwall := low

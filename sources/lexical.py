@@ -11,6 +11,8 @@ import re
 import sys
 import copy
 
+nbLexErrors = 0
+
 #### FIRST LEXING STAGE ####
 
 tokens = [
@@ -92,12 +94,14 @@ t_RSBRACKET=r'\]'
 
 def t_indent_error(t):
 	r'[\n\t ]*\n[\t]*[ ]+'
-	print("Warning l.%d: use of spaces after tab(s) leads to erronous indent" %(t.lexer.lineno+1))
+	l = t.value.count('\n')
+	t.lexer.lineno += l
+	print("Warning l.%d: use of spaces after tab(s) leads to erronous indent" %(t.lexer.lineno))
 
 def t_END_STATEMENT(t):
 	r'[\n\t ]*\n[\t]*'
-	l = t.value.count('\n')*'\n'
-	t.lexer.lineno += len(l)
+	l = t.value.count('\n')
+	t.lexer.lineno += l
 	return t
 	
 def t_STRING(t):
@@ -133,7 +137,9 @@ def t_INTEGER(t):
 
 	
 def t_error(t) :
-	print("Illegal character '%s'" %t.value[0])
+	print("Lexical error l.%d: Illegal character '%s'" %(t.lexer.lineno, t.value[0]))
+	global nbLexErrors
+	nbLexErrors += 1
 	t.lexer.skip(1)
 
 t_ignore = ' '
@@ -145,8 +151,8 @@ lexer = lex.lex()
 #### SECOND LEXING STAGE ####
 
 class IndentLexer(object):
-	'''A second lexing stage that interprets TABS
-	   Manages Off-Side Rule for indentation'''
+	'''A second lexing stage that generates the appropriate
+	   tokens representing the indentation'''
 	
 	def __init__(self, lexer):
 		self.indents = [0]  # indentation stack
@@ -230,7 +236,9 @@ class IndentLexer(object):
 		while nbTabs < indents[-1]:
 			indents.pop()
 			if nbTabs > indents[-1]:
-				print("Syntax error l.%d: wrong indentation level" %(token.lineno))
+				print("Lexical error l.%d: wrong indentation level" %(token.lineno))
+				global nbLexErrors
+				nbLexErrors += 1
 			i -= 1
 		return i
 

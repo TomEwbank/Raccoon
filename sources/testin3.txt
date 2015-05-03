@@ -28,13 +28,13 @@ function bbbb(a):
 	return true		//egsrth
 
 function gne():
-	prout
+	prout =1
 
 function gne(a) :
 	return
 	
 if nbr2 < nbr1:
-	gne()
+		gne()
 	return "bitch please"
 
 for i in range (nbr1,nbr2):
@@ -42,7 +42,7 @@ for i in range (nbr1,nbr2):
 	if prime =? true:
 		return true
 	else if prime =? False:
-		return False
+			return False
 	else:
 		impossible
 break

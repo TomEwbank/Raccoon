@@ -284,8 +284,11 @@ if __name__ == "__main__":
 	prog = remove_comments(open(sys.argv[1]).read())
 	prog = prog + "\n"
 	result = yacc.yacc().parse(prog, lexer)
+	
 	import os
-	if AST.Node.nbSynErrors < 0:
+	import lexical
+	
+	if AST.Node.nbSynErrors == 0 and lexical.nbLexErrors == 0 :
 		try:
 			graph = result.makegraphicaltree()
 			name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"
@@ -294,4 +297,5 @@ if __name__ == "__main__":
 		except (AttributeError, TypeError) as e:
 			print("Unable to print the AST")
 	else:
+		print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
 		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
