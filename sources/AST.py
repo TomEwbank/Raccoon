@@ -59,8 +59,8 @@ class Scope:
 		type1 = self.typeStack.pop()
 		type2 = self.typeStack.pop()
 		
-		if type1 == 'String' or type1 == 'List' or \
-		   type2 == 'String' or type2 == 'List':
+		if type1 == 'String' or type1[0:4] == 'List' or \
+		   type2 == 'String' or type2[0:4] == 'List':
 			# Raccoon can't deal with arithmetic/combinatory operation on lists and strings
 			self.typeStack.append('Forbidden')
 			return False

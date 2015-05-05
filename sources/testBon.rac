@@ -11,7 +11,7 @@ function prime(nbr):
 	for i in range (2,n):
 		if nbr mod i =? 0:
 			return False
-	i[2] becomes 1
+	i becomes i + i
 			
 	return True
 
