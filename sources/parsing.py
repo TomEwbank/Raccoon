@@ -144,8 +144,8 @@ def p_false(p):
 	
 def p_op(p):
 	'''expr : expr ADD_OP expr
-            | expr SUB_OP expr
-	        | expr MUL_OP expr
+			| expr SUB_OP expr
+			| expr MUL_OP expr
 			| expr DIV_OP expr
 			| expr MOD_OP expr
 			| expr comb_op expr

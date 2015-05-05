@@ -28,7 +28,8 @@ function bbbb(a):
 	return true		//egsrth
 
 function gne():
-	prout =1
+	prout
+	ha becomes bi bo
 
 function gne(a) :
 	return

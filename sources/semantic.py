@@ -141,7 +141,7 @@ def semAnalysis(self):
 	# but has the type 'unknown', it means it was passed as arguments
 	# and now we now that it is a list so we can update the type to 
 	# 'List unknown' for further semantic checking
-	if stack.hasVariable(token) and stack.getVarType(token):
+	if stack.hasVariable(token) and stack.getVarType(token) == 'unknown':
 		stack.addVariable(token, 'List unknown')
 	
 	self.next[0].semAnalysis()
@@ -197,17 +197,26 @@ def semAnalysis(self):
 	
 @addToClass(AST.NumIteratorNode)
 def semAnalysis(self):
+	if AST.Node.scopeStack.hasVariable(self.tok):
+		self.prev_type = AST.Node.scopeStack.getVarType(self.tok)
 	AST.Node.scopeStack.addVariable(self.tok,'Integer')
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.ListIteratorNode)
 def semAnalysis(self):
+	if AST.Node.scopeStack.hasVariable(self.tok):
+		self.prev_type = AST.Node.scopeStack.getVarType(self.tok)
 	AST.Node.scopeStack.addVariable(self.tok,'unknown')
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.ForNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.removeVariable(self.children[0].children[0].tok)
+	type = self.children[0].children[0].prev_type
+	token = self.children[0].children[0].tok
+	if type == 'None':
+		AST.Node.scopeStack.removeVariable(token)
+	else:
+		AST.Node.scopeStack.addVariable(token,type)
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.InRangeNode)

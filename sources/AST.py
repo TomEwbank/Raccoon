@@ -351,9 +351,17 @@ class FuncDefArgNode(TokenNode):
 		
 class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
+	def __init__(self, n, tok):
+		Node.__init__(self, n)
+		self.tok = tok
+		self.prev_type = 'None'
 		
 class ListIteratorNode(TokenNode):
 	type = 'List iterator'
+	def __init__(self, n, tok):
+		Node.__init__(self, n)
+		self.tok = tok
+		self.prev_type = 'None'
 
 class IntNode(TokenNode):
 	type = 'Integer'
