@@ -251,7 +251,8 @@ def remove_comments(text):
 	def replacer(match):
 		s = match.group(0)
 		if s.startswith('/'):
-			return ""
+			nlines = s.count('\n')
+			return "" + nlines*"\n"
 		else:
 			return s
 	pattern = re.compile(

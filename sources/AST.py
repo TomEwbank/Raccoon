@@ -23,6 +23,7 @@ class Scope:
 	def __init__(self):
 		self.typeStack = []
 		self.varHash = {}
+		self.constHash = {}
 		self.funcHash = {}
 	
 	def addVariable(self, varName, type):
@@ -30,6 +31,12 @@ class Scope:
 	
 	def hasVariable(self, varName):
 		return self.varHash.has_key(varName)
+	
+	def addConst(self, varName, type):
+		self.constHash[varName] = type
+	
+	def hasConst(self, varName):
+		return self.constHash.has_key(varName)
 	
 	def addFunction(self, funcName, nbArgs):
 		self.funcHash[funcName] = nbArgs
@@ -115,6 +122,12 @@ class ScopeStack:
 	def hasVariable(self, varName):
 		return self.stack[self.currentScope].hasVariable(varName)
 	
+	def addConst(self, varName, type):
+		self.stack[self.currentScope].addConst(varName, type)
+		
+	def hasConst(self, varName):
+		return self.stack[self.currentScope].hasConst(varName)
+		
 	def addFunction(self, funcName, nbArgs):
 		self.stack[self.currentScope].addFunction(funcName, nbArgs)
 	

@@ -82,7 +82,7 @@ def p_assign(p):
 	
 def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr'''
-	p[0] = AST.ConstNode(p.lineno(2), [AST.IdNode(p.lineno(1), p[1]), p[3]])
+	p[0] = AST.ConstNode(p.lineno(2), [AST.AssignVarNode(p.lineno(1), p[1]), p[3]])
 
 	
 def p_func_call(p):

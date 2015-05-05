@@ -39,6 +39,7 @@ def semAnalysis(self):
 	print("Semantic analysis terminated with %d errors" %(self.nbSemErrors))
 		
 @addToClass(AST.AssignNode)
+@addToClass(AST.ConstNode)
 def semAnalysis(self):
 	stack = AST.Node.scopeStack
 	type = stack.getMergedType()
@@ -54,9 +55,20 @@ def semAnalysis(self):
 		elif type != trueType[5:] and type != 'unknown':
 			print("error l.%d: Trying to assign type %s to a list element of type %s" %(self.lineNb,type, trueType[5:]))
 			AST.Node.nbSemErrors += 1
+		
+		if stack.hasConst(token):
+			print("error l.%d: Trying to assign a new value to the constant '%s'" %(self.lineNb,token))
+			AST.Node.nbSemErrors += 1
 			
 	else:
-		stack.addVariable(self.children[0].tok, type)
+		token = self.children[0].tok
+		if stack.hasConst(token):
+			print("error l.%d: Trying to assign a new value to the constant '%s'" %(self.lineNb,token))
+			AST.Node.nbSemErrors += 1
+		else:
+			stack.addVariable(token, type)
+			if isinstance(self, ConstNode):
+				stack.addConst(token, type)
 	
 	self.next[0].semAnalysis()
 	
