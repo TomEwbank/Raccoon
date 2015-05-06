@@ -1,3 +1,5 @@
+/* Test file for semantic errors */
+
 a becomes b
 a becomes c[d]
 
