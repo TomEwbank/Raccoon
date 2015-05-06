@@ -11,17 +11,13 @@ function prime(nbr):
 	for i in range (2,n):
 		if nbr mod i =? 0:
 			return False
-	i is 5
-	i is 6
-	i becomes prout
 			
 	return True
 
-// /* /* where do my comments end? here? */ or here? */
 	
 	
 isPrime becomes prime(7)
-/*
+
 //return True if one of the number between nbr1 and nbr2 is prime. Return False otherwise
 function primeRange(nbr1,nbr2):
 
@@ -36,4 +32,3 @@ function primeRange(nbr1,nbr2):
 
 
 a becomes primeRange(345,542)
-   */

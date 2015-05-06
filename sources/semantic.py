@@ -46,13 +46,8 @@ def semAnalysis(self):
 	if isinstance(self.children[0], ListElementNode):
 		token = self.children[0].children[0].tok
 		trueType = stack.getVarType(token)
-		if not stack.hasVariable(token):
-			print("error l.%d: uninitialized variable '%s'" %(self.lineNb,token))
-			AST.Node.nbSemErrors += 1
-		elif trueType[0:4] != 'List':
-			print("error l.%d: '%s' is not a list" %(self.lineNb,token))
-			AST.Node.nbSemErrors += 1
-		elif type != trueType[5:] and type != 'unknown':
+		
+		if stack.hasVariable(token) and trueType[0:4] == 'List' and type != trueType[5:] and type != 'unknown':
 			print("error l.%d: Trying to assign type %s to a list element of type %s" %(self.lineNb,type, trueType[5:]))
 			AST.Node.nbSemErrors += 1
 		
@@ -155,6 +150,9 @@ def semAnalysis(self):
 	# 'List unknown' for further semantic checking
 	if stack.hasVariable(token) and stack.getVarType(token) == 'unknown':
 		stack.addVariable(token, 'List unknown')
+	elif stack.hasVariable(token) and stack.getVarType(token)[0:4] != 'List':
+		print("error l.%d: '%s' is not a list" %(self.lineNb,token))
+		AST.Node.nbSemErrors += 1
 	
 	self.next[0].semAnalysis()
 
@@ -247,7 +245,7 @@ def semAnalysis(self):
 def semAnalysis(self):
 	type = AST.Node.scopeStack.getMergedType()
 	if type[0:4] != 'List' and type != 'unknown':
-		print("error l.%d: %s is not a list" %(self.lineNb,self.children[1].tok))
+		print("error l.%d: '%s' is not a list" %(self.lineNb,self.children[1].tok))
 		AST.Node.nbSemErrors += 1
 	self.next[0].semAnalysis()
 

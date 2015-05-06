@@ -1,0 +1,45 @@
+a becomes b
+a becomes c[d]
+
+a becomes 5
+a[2] becomes 2
+b becomes a[3]
+
+c becomes ["hello", 4, 5]
+c becomes [1, 2.5, 3]
+
+pi is 3.14
+pi becomes 3.145
+pi is 3
+suite is [1,2,3]
+suite becomes [3,4,5]
+suite[1] becomes 0
+
+a becomes 5 + "hello"
+a becomes "hello" + "world!" //no error, but incorrect
+a =? suite
+if a and "Hello" :
+	a becomes suite - c
+	
+function hello(name):
+	display("hello")
+	display(name)
+
+function hello():
+	display("hello")
+
+hello()
+helloWorld()
+return a
+break
+continue
+
+for i in range("hello",suite):
+	break
+
+for element in a:
+	display(element)
+	
+while suite:
+	continue
+

@@ -5,5 +5,5 @@ stack.append('bitches')
 stack.pop()
 print(stack)
 stack = 3*'a'
-for i in range(1,2):
-	print(stack)
+for i in range(1,5):
+	print(i)

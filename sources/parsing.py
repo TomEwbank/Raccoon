@@ -81,8 +81,12 @@ def p_assign(p):
 		p[0] = AST.AssignNode(p.lineno(5), [AST.ListElementNode(p.lineno(1), [AST.AssignVarNode(p.lineno(1), p[1]), p[3]]), p[6]])
 	
 def p_const(p):
-	'''const_decl : IDENTIFIER CONST expr'''
-	p[0] = AST.ConstNode(p.lineno(2), [AST.AssignVarNode(p.lineno(1), p[1]), p[3]])
+	'''const_decl : IDENTIFIER CONST expr
+				  | IDENTIFIER CONST LSBRACKET list_args RSBRACKET'''
+	if len(p) == 4:
+		p[0] = AST.ConstNode(p.lineno(2), [AST.AssignVarNode(p.lineno(1), p[1]), p[3]])
+	if len(p) == 6:
+		p[0] = AST.ConstNode(p.lineno(2), [AST.AssignVarNode(p.lineno(1), p[1]), AST.ListNode(p.lineno(1), p[4].children)])
 
 	
 def p_func_call(p):
@@ -148,27 +152,19 @@ def p_op(p):
 			| expr MUL_OP expr
 			| expr DIV_OP expr
 			| expr MOD_OP expr
-			| expr comb_op expr
-			| expr comp_op expr'''
+			| expr OR expr
+			| expr AND expr
+			| expr CEQ expr
+			| expr CNE expr
+			| expr CLT expr
+			| expr CLE expr
+			| expr CGT expr
+			| expr CGE expr'''
 	p[0] = AST.OpNode(p.lineno(2), p[2], [p[1], p[3]])
 	
 def p_expr_signed(p):
 	'''expr : SUB_OP expr %prec MINUS'''
 	p[0] =  AST.MinusNode(p.lineno(1), [p[2]])
-	
-def p_comb_op(p):
-	'''comb_op : OR 
-	           | AND'''
-	p[0] = p[1]
-
-def p_comp_op(p):
-	'''comp_op : CEQ 
-			   | CNE 
-			   | CLT 
-			   | CLE 
-			   | CGT 
-			   | CGE'''
-	p[0] = p[1]	
 
 def p_compound_stmt(p):
 	'''compound_stmt : func_def 
