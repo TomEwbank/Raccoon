@@ -20,4 +20,6 @@
 \BOOKMARK [3][-]{subsubsection.2.2.3}{Semantic analysis}{subsection.2.2}% 20
 \BOOKMARK [3][-]{subsubsection.2.2.4}{Code generation}{subsection.2.2}% 21
 \BOOKMARK [2][-]{subsection.2.3}{How to use}{section.2}% 22
-\BOOKMARK [1][-]{section*.53}{References}{}% 23
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Tools installation}{subsection.2.3}% 23
+\BOOKMARK [3][-]{subsubsection.2.3.2}{Running the compiler}{subsection.2.3}% 24
+\BOOKMARK [1][-]{section*.57}{References}{}% 25
