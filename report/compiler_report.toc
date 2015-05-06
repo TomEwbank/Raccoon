@@ -1,0 +1,73 @@
+\select@language {english}
+\contentsline {section}{Contents}{1}{section*.1}
+\contentsline {section}{\numberline {1}Our language: Raccoon}{2}{section.1}
+\contentsline {paragraph}{}{2}{section*.2}
+\contentsline {paragraph}{}{2}{section*.3}
+\contentsline {paragraph}{}{2}{section*.4}
+\contentsline {subsection}{\numberline {1.1}Types}{2}{subsection.1.1}
+\contentsline {paragraph}{}{2}{section*.5}
+\contentsline {paragraph}{Numeric types:}{2}{section*.6}
+\contentsline {paragraph}{Lists:}{2}{section*.7}
+\contentsline {paragraph}{Strings:}{2}{section*.8}
+\contentsline {subsection}{\numberline {1.2}Assignments}{2}{subsection.1.2}
+\contentsline {paragraph}{}{2}{section*.9}
+\contentsline {subsection}{\numberline {1.3}Constants}{3}{subsection.1.3}
+\contentsline {paragraph}{}{3}{section*.10}
+\contentsline {paragraph}{}{3}{section*.11}
+\contentsline {subsection}{\numberline {1.4}Operations}{3}{subsection.1.4}
+\contentsline {paragraph}{}{3}{section*.12}
+\contentsline {paragraph}{Arithmetic operators:}{3}{section*.13}
+\contentsline {paragraph}{Combinatorial operators:}{3}{section*.14}
+\contentsline {paragraph}{Comparison operators:}{3}{section*.15}
+\contentsline {subsection}{\numberline {1.5}Indentation}{3}{subsection.1.5}
+\contentsline {paragraph}{}{3}{section*.16}
+\contentsline {subsection}{\numberline {1.6}Function definition}{3}{subsection.1.6}
+\contentsline {paragraph}{}{3}{section*.17}
+\contentsline {paragraph}{}{3}{section*.18}
+\contentsline {paragraph}{}{3}{section*.19}
+\contentsline {paragraph}{}{3}{section*.20}
+\contentsline {paragraph}{}{4}{section*.21}
+\contentsline {subsection}{\numberline {1.7}Conditionnals}{4}{subsection.1.7}
+\contentsline {paragraph}{}{4}{section*.22}
+\contentsline {paragraph}{}{4}{section*.23}
+\contentsline {subsection}{\numberline {1.8}Loops}{4}{subsection.1.8}
+\contentsline {subsubsection}{\numberline {1.8.1}"while" loop}{4}{subsubsection.1.8.1}
+\contentsline {paragraph}{}{4}{section*.24}
+\contentsline {subsubsection}{\numberline {1.8.2}"for" loop}{5}{subsubsection.1.8.2}
+\contentsline {paragraph}{}{5}{section*.25}
+\contentsline {paragraph}{}{5}{section*.26}
+\contentsline {paragraph}{}{5}{section*.27}
+\contentsline {subsection}{\numberline {1.9}Scope of variables}{5}{subsection.1.9}
+\contentsline {paragraph}{}{5}{section*.28}
+\contentsline {paragraph}{}{5}{section*.29}
+\contentsline {subsection}{\numberline {1.10}Comments}{5}{subsection.1.10}
+\contentsline {paragraph}{}{5}{section*.30}
+\contentsline {section}{\numberline {2}The compiler}{6}{section.2}
+\contentsline {subsection}{\numberline {2.1}Implementation language and tools used}{6}{subsection.2.1}
+\contentsline {paragraph}{}{6}{section*.31}
+\contentsline {paragraph}{}{6}{section*.32}
+\contentsline {subsection}{\numberline {2.2}Development}{6}{subsection.2.2}
+\contentsline {paragraph}{}{6}{section*.33}
+\contentsline {subsubsection}{\numberline {2.2.1}Lexical analysis}{6}{subsubsection.2.2.1}
+\contentsline {paragraph}{}{6}{section*.34}
+\contentsline {paragraph}{}{6}{section*.35}
+\contentsline {paragraph}{The first lexing stage:}{6}{section*.36}
+\contentsline {paragraph}{The second lexing stage:}{6}{section*.37}
+\contentsline {paragraph}{}{7}{section*.38}
+\contentsline {paragraph}{}{7}{section*.39}
+\contentsline {paragraph}{}{7}{section*.40}
+\contentsline {subsubsection}{\numberline {2.2.2}Parsing}{7}{subsubsection.2.2.2}
+\contentsline {paragraph}{}{7}{section*.41}
+\contentsline {paragraph}{}{7}{section*.42}
+\contentsline {paragraph}{}{8}{section*.43}
+\contentsline {paragraph}{}{8}{section*.44}
+\contentsline {paragraph}{}{8}{section*.46}
+\contentsline {subsubsection}{\numberline {2.2.3}Semantic analysis}{9}{subsubsection.2.2.3}
+\contentsline {paragraph}{}{9}{section*.47}
+\contentsline {paragraph}{}{9}{section*.48}
+\contentsline {paragraph}{}{9}{section*.50}
+\contentsline {paragraph}{}{9}{section*.51}
+\contentsline {paragraph}{}{10}{section*.52}
+\contentsline {subsubsection}{\numberline {2.2.4}Code generation}{10}{subsubsection.2.2.4}
+\contentsline {subsection}{\numberline {2.3}How to use}{10}{subsection.2.3}
+\contentsline {section}{References}{13}{section*.53}
