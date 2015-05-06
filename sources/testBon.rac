@@ -14,6 +14,7 @@ function prime(nbr):
 			
 	return True
 
+str becomes "cette fonction s'appelle \\"f\""
 	
 	
 isPrime becomes prime(7)

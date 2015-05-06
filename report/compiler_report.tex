@@ -107,7 +107,10 @@ There are five types in Raccoon: Double, Integer, Boolean, List and String.
 
 \paragraph{Lists:} All the elements of a list must have the same type category (Integer, Double and Boolean are part of the same category, numeric types). The expression to define a list has the form "[\textit{element1, element2,...,elementN}]". The only authorized operations on a list are the access and the modification of its elements. The expression to access or modify an element has the form "\textit{listName}\textbf{[}\textit{index}\textbf{]}" where \textit{index} is an Integer (or an expression leading to one. The index of a list starts at 1. A list is also not allowed to contain other lists.
 
-\paragraph{Strings:} No operations are allowed on Strings. They can only be instantiated and displayed. The expression of a string consist in text surrounded by quotes.
+\paragraph{Strings:} No operations are allowed on Strings. They can only be instantiated and displayed. The expression of a string consist in text surrounded by double quotes. If you want a string to contain the double quotes character, you need to put a backslash right before it. Here is an example:
+\begin{verbatim}
+str becomes "Our language is called \"Raccoon\""
+\end{verbatim}
 
 \subsection{Assignments}
 

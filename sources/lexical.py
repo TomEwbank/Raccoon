@@ -11,7 +11,35 @@ import re
 import sys
 import copy
 
-nbLexErrors = 0
+nbLexErrors = 0 #global counter for the number of lexical errors
+
+#### Utility functions ####
+
+def remove_comments(text):
+	def replacer(match):
+		s = match.group(0)
+		if s.startswith('/'):
+			nlines = s.count('\n')
+			return "" + nlines*"\n"
+		else:
+			return s
+	pattern = re.compile(
+		r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+		re.DOTALL | re.MULTILINE
+	)
+	return re.sub(pattern, replacer, text)
+
+def string_processing(s):
+	result = s[1:len(s)-1]
+	i = 0
+	while i < len(result)-1:
+		if ord(result[i]) == 92 and ord(result[i+1]) == 34:
+			print("oh")
+			result = result[0:i] + result[i+1:]
+		else:
+			i += 1
+	return result
+
 
 #### FIRST LEXING STAGE ####
 
@@ -105,7 +133,8 @@ def t_END_STATEMENT(t):
 	return t
 	
 def t_STRING(t):
-	r'".*"'
+	r'".*[^\\]"'
+	t.value = string_processing(t.value)
 	return t
 
 def t_ELSEIF(t):
@@ -245,23 +274,7 @@ class IndentLexer(object):
 # create the second stage
 lexer = IndentLexer(lexer)
 
-#### comments remover function ####
 
-def remove_comments(text):
-	def replacer(match):
-		s = match.group(0)
-		if s.startswith('/'):
-			nlines = s.count('\n')
-			return "" + nlines*"\n"
-		else:
-			return s
-	pattern = re.compile(
-		r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
-		re.DOTALL | re.MULTILINE
-	)
-	return re.sub(pattern, replacer, text)
-
-	
 #########################################################
 
 if __name__ == "__main__":
