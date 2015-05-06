@@ -292,11 +292,12 @@ if __name__ == "__main__":
 	else:
 		entry = thread(ast)
 		
-		graph = ast.makegraphicaltree()
-		entry.threadTree(graph)
+		if len(sys.argv) == 3 and sys.argv[2] == "-ast" :
+			graph = ast.makegraphicaltree()
+			entry.threadTree(graph)
+			name = os.path.splitext(sys.argv[1])[0]+"-ast-threaded.pdf"
+			graph.write_pdf(name)
+			print("wrote threaded ast to '%s'" %name)
 		
-		name = os.path.splitext(sys.argv[1])[0]+"-ast-threaded.pdf"
-		graph.write_pdf(name)
-		print("wrote threaded ast to", name)
 		entry.semAnalysis()
 	

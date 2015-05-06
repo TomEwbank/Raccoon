@@ -284,14 +284,15 @@ if __name__ == "__main__":
 	import os
 	import lexical
 	
-	if AST.Node.nbSynErrors == 0 and lexical.nbLexErrors == 0 :
+	if AST.Node.nbSynErrors == 0 and lexical.nbLexErrors == 0 and \
+	   len(sys.argv) == 3 and sys.argv[2] == "-ast":
 		try:
 			graph = result.makegraphicaltree()
 			name = os.path.splitext(sys.argv[1])[0]+"-ast.pdf"
 			graph.write_pdf(name)
-			print("wrote ast to" , name)
+			print("wrote ast to '%s'" %name)
 		except (AttributeError, TypeError) as e:
 			print("Unable to print the AST")
-	else:
-		print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
-		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
+	
+	print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
+	print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
