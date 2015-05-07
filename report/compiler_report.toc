@@ -76,4 +76,5 @@
 \contentsline {subsubsection}{\numberline {2.3.2}Running the compiler}{10}{subsubsection.2.3.2}
 \contentsline {paragraph}{}{10}{section*.55}
 \contentsline {paragraph}{}{11}{section*.56}
-\contentsline {section}{References}{14}{section*.57}
+\contentsline {paragraph}{}{11}{section*.57}
+\contentsline {section}{References}{14}{section*.58}
