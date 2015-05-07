@@ -262,7 +262,14 @@ However, there is also a particular scope for the variables used as iterator in 
 \subsection{Comments}
 
 \paragraph{}
-Line comments starts with "//" and block comments are delimited by "/*" and "*/".
+Line comments starts with "//" and block comments are delimited by "/*" and "*/". As it was suggested, nested comments are allowed, but have to be correctly used. In other words, all nested block comments that are opened has to closed. Having something like this is correct:
+\begin{verbatim}
+/* /* where do my comments end? here? */ or here? */
+\end{verbatim}
+but something like this will generate an error:
+\begin{verbatim}
+/* /* where do my comments end? here? or here? */
+\end{verbatim}
 
 
 \section{The compiler}

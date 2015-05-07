@@ -9,13 +9,14 @@ function prime(nbr):
 	n becomes nbr-1
 	i becomes [1]
 	for i in range (2,n):
-		if nbr mod i =? 0:
+		if nbr mod i =? 0: // testcom
 			return False
 			
 	return True
 
 str becomes "cette fonction s'appelle \\"f\""
-	
+
+/* /* where do my comments end? here?   or here? */	
 	
 isPrime becomes prime(7)
 
@@ -33,3 +34,4 @@ function primeRange(nbr1,nbr2):
 
 
 a becomes primeRange(345,542)
+/* bou */

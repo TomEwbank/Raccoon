@@ -279,25 +279,28 @@ def semAnalysis(self):
 ###############################################################
 		
 if __name__ == "__main__":
-	from parsing import parse
-	import sys, os
-	import lexical
+	try:
+		from parsing import parse
+		import sys, os
+		import lexical
 
-	prog = file(sys.argv[1]).read()
-	ast = parse(prog)
+		prog = file(sys.argv[1]).read()
+		ast = parse(prog)
 
-	if AST.Node.nbSynErrors > 0 or lexical.nbLexErrors > 0:
-		print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
-		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
-	else:
-		entry = thread(ast)
-		
-		if len(sys.argv) == 3 and sys.argv[2] == "-ast" :
-			graph = ast.makegraphicaltree()
-			entry.threadTree(graph)
-			name = os.path.splitext(sys.argv[1])[0]+"-ast-threaded.pdf"
-			graph.write_pdf(name)
-			print("wrote threaded ast to '%s'" %name)
-		
-		entry.semAnalysis()
-	
+		if AST.Node.nbSynErrors > 0 or lexical.nbLexErrors > 0:
+			print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
+			print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
+		else:
+			entry = thread(ast)
+			
+			if len(sys.argv) == 3 and sys.argv[2] == "-ast" :
+				graph = ast.makegraphicaltree()
+				entry.threadTree(graph)
+				name = os.path.splitext(sys.argv[1])[0]+"-ast-threaded.pdf"
+				graph.write_pdf(name)
+				print("wrote threaded ast to '%s'" %name)
+			
+			entry.semAnalysis()
+	except NameError as e:
+		print("error:")
+		print(e)
