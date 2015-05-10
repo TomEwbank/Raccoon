@@ -79,9 +79,9 @@ def semAnalysis(self):
 	AST.Node.scopeStack.pushType('Integer')
 	self.next[0].semAnalysis()
 	
-@addToClass(AST.DoubleNode)
+@addToClass(AST.FloatNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.pushType('Double')
+	AST.Node.scopeStack.pushType('Float')
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.TrueNode)
@@ -162,7 +162,7 @@ def semAnalysis(self):
 @addToClass(AST.ElseifNode)
 def semAnalysis(self):
 	type = AST.Node.scopeStack.getMergedType()
-	if type != 'Double' and \
+	if type != 'Float' and \
 	   type != 'Integer' and \
 	   type != 'Boolean' and \
 	   type != 'unknown' :

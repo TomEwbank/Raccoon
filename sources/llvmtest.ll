@@ -1,5 +1,7 @@
 define i1 @Bprime(i32 %Inbr_arg)  {
 entry:
+  %test = alloca double
+  store double 0x3463212346, double* %test
   %Inbr = alloca i32 
   store i32 %Inbr_arg, i32* %Inbr
   %Ii = alloca i32 

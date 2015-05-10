@@ -103,7 +103,7 @@ tokens = [
 	'CGE',
 	
 	'IDENTIFIER',
-	'DOUBLE',
+	'FLOAT',
 	'INTEGER',
 	
 	'COMMA',
@@ -196,7 +196,7 @@ def t_IDENTIFIER(t):
 	t.type = reserved.get(t.value,'IDENTIFIER')    
 	return t
 
-def t_DOUBLE(t):
+def t_FLOAT(t):
 	r'\d+\.\d*'
 	t.value = float(t.value)
 	return t

@@ -49,8 +49,8 @@ def add_alloc(s):
 			if allocNeeded:
 				if varName[1] == 'I':
 					alloca = " = alloca i32 "
-				elif varName[1] == 'D': 
-					alloca = " = alloca double "
+				elif varName[1] == 'F': 
+					alloca = " = alloca float "
 				elif varName[1] == 'B':
 					alloca = " = alloca i1 "
 				elif varName[1] == 'L':

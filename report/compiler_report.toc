@@ -25,7 +25,7 @@
 \contentsline {paragraph}{}{3}{section*.17}
 \contentsline {paragraph}{}{3}{section*.18}
 \contentsline {paragraph}{}{3}{section*.19}
-\contentsline {paragraph}{}{3}{section*.20}
+\contentsline {paragraph}{}{4}{section*.20}
 \contentsline {paragraph}{}{4}{section*.21}
 \contentsline {subsection}{\numberline {1.7}Conditionnals}{4}{subsection.1.7}
 \contentsline {paragraph}{}{4}{section*.22}

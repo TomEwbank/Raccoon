@@ -130,9 +130,9 @@ def p_expr_int(p):
 	'''expr : INTEGER'''
 	p[0] = AST.IntNode(p.lineno(1), p[1])
 
-def p_expr_double(p):
-	'''expr : DOUBLE'''
-	p[0] = AST.DoubleNode(p.lineno(1), p[1])
+def p_expr_float(p):
+	'''expr : FLOAT'''
+	p[0] = AST.FloatNode(p.lineno(1), p[1])
 	
 def p_expr_bool(p):
 	'''expr : boolean'''

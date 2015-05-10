@@ -78,9 +78,9 @@ class Scope:
 			self.typeStack.append(type1)
 			return True
 		else: 
-			# The merging of 2 different numeric types leads to the type Double
+			# The merging of 2 different numeric types leads to the type Float
 			# (Booleans are considered as numeric types: True = 1, False = 0)
-			self.typeStack.append('Double')
+			self.typeStack.append('Float')
 			return True
 	
 	def getMergedType(self):
@@ -379,8 +379,8 @@ class ListIteratorNode(TokenNode):
 class IntNode(TokenNode):
 	type = 'Integer'
 
-class DoubleNode(TokenNode):
-	type = 'Double'
+class FloatNode(TokenNode):
+	type = 'Float'
 	
 class FuncCallNameNode(TokenNode):
 	type = 'Function call name'
