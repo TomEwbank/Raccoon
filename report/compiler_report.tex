@@ -154,7 +154,7 @@ The indentation has to be made of tabulations only, not spaces, but spaces are a
 The definition of a function has the form:
 
 \begin{center}
-\textbf{function} \textit{name}\textbf{(}\textit{argument1, argument2,...,argumentN}\textbf{):}
+\textbf{function} \textit{name}\textbf{(}\textit{argument1, argument2,..., argumentN}\textbf{):}
 \end{center}
 \begin{tabbing}
 \hspace{3.5cm} \= \hspace{2cm} \= \kill
@@ -393,7 +393,7 @@ In order to make all these checkings possible, we obviously needed to implement 
 The principle here consisted in, once again, adding functions to the different types of node, each nodes being then able to generate parts of the LLVM code which they are related to.  
 
 \paragraph{}
-Unfortunately, we didn't manage to have a fully working code generation. One of the problems was that we didn't understand how to implement dynamic typing in LLVM, and it was too late to change our language specifications and to adapt our lexical, parsing, and semantic analysis. However, to show you how far we went with the LLVM code generation, we can use a little trick. 
+Unfortunately, we didn't manage to have a fully working code generation. One of the problems was that we didn't understand how to implement dynamic typing in LLVM, and it was too late to change our language specifications and to adapt our lexical, parsing, and semantic analysis. However, to show you how far we went with the LLVM code generation, we were able to use a little trick. 
 
 \paragraph{}
 This trick consist in adding one constraint to our language: all variable names needs to start with a capital letter representing their type, and all function names needs to start with a capital letter representing the type of their return value. These capital letters are:
