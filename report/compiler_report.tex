@@ -101,11 +101,11 @@ The features of the Raccoon language are detailed in the following sections.
 
 \subsection{Types}
 \paragraph{}
-There are five types in Raccoon: Float, Integer, Boolean, List and String.
+There are five types in Raccoon: Double, Integer, Boolean, List and String.
 
-\paragraph{Numeric types:} All the arithmetic operations, the combinatorial operations and the comparison operations are allowed with those types. When an operation involves different numeric types, the resulting type is considered as Float. Boolean are considered as numeric types, with a value of 1 for "True" and 0 for "False".
+\paragraph{Numeric types:} All the arithmetic operations, the combinatorial operations and the comparison operations are allowed with those types. When an operation involves different numeric types, the resulting type is considered as Double. Boolean are considered as numeric types, with a value of 1 for "True" and 0 for "False".
 
-\paragraph{Lists:} All the elements of a list must have the same type category (Integer, Float and Boolean are part of the same category, the numeric types). The expression to define a list has the form "\textbf{[}\textit{element1\textbf{,} element2\textbf{,}...\textbf{,} elementN}\textbf{]}". The only authorized operations on a list are the access and the modification of its elements. The expression to access or modify an element has the form "\textit{listName}\textbf{[}\textit{index}\textbf{]}" where \textit{index} is an Integer or an expression leading to one. The index of a list starts at 1. A list is also not allowed to contain other lists.
+\paragraph{Lists:} All the elements of a list must have the same type category (Integer, Double and Boolean are part of the same category, the numeric types). The expression to define a list has the form "\textbf{[}\textit{element1\textbf{,} element2\textbf{,}...\textbf{,} elementN}\textbf{]}". The only authorized operations on a list are the access and the modification of its elements. The expression to access or modify an element has the form "\textit{listName}\textbf{[}\textit{index}\textbf{]}" where \textit{index} is an Integer or an expression leading to one. The index of a list starts at 1. A list is also not allowed to contain other lists.
 
 \paragraph{Strings:} No operations are allowed on Strings. They can only be instantiated and displayed. The expression of a string consist in text surrounded by double quotes. If you want a string to contain the double quotes character, you need to put a backslash right before it. Here is an example:
 \begin{verbatim}
@@ -399,7 +399,7 @@ Unfortunately, we didn't manage to have a fully working code generation. One of 
 This trick consist in adding one constraint to our language: all variable names needs to start with a capital letter representing their type, and all function names needs to start with a capital letter representing the type of their return value. These capital letters are:
 \begin{itemize}
 \item "I" for an integer
-\item "F" for a float
+\item "D" for a double
 \item "B" for a boolean
 \item "L" for a list
 \end{itemize}
