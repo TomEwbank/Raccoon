@@ -387,7 +387,34 @@ Since we were planning on using dynamic typing, we didn't push the thinking too 
 \paragraph{}
 In order to make all these checkings possible, we obviously needed to implement some data structures aimed at containing the type-stack, the hash-tables but also aimed at keeping track of the different scopes of the program. We thus created two new classes in the AST module. The first one represents a scope of the program and contains the hash-tables and the type-stack associated to this scope. The second one maintains a stack whose elements are instances of the previous class. The scope on the top of the stack is the one being manipulated during the analysis. So, each time the semantic analysis enters a new scope, a new "Scope" object is pushed on the stack. Whenever it leaves a scope, it simply pops the last object that was pushed on stack, getting back to the previous scope. This class which handle the stack of scopes is named "ScopeStack" and we instantiates one as a class variable of the "Node" class so that it will be shared by each nodes of the tree. 
 
-\subsubsection{Code generation}
+\subsubsection{Code generation} \label{cg}
+
+\paragraph{}
+The principle here consisted in, once again, adding functions to the different types of node, each nodes being then able to generate parts of the LLVM code which they are related to.  
+
+\paragraph{}
+Unfortunately, we didn't manage to have a fully working code generation. One of the problems was that we didn't understand how to implement dynamic typing in LLVM, and it was too late to change our language specifications and to adapt our lexical, parsing, and semantic analysis. However, to show you how far we went with the LLVM code generation, we can use a little trick. 
+
+\paragraph{}
+This trick consist in adding one constraint to our language: all variable names needs to start with a capital letter representing their type, and all function names needs to start with a capital letter representing the type of their return value. These capital letters are:
+\begin{itemize}
+\item "I" for an integer
+\item "D" for a double
+\item "B" for a boolean
+\item "L" for a list
+\end{itemize}
+That way, our code generator is able to find the type he has to use, but as we said before, we didn't modify our lexical and parsing analysis, so it won't report any error if this constraint is not respected, and the generator won't be able to generate valid LLVM code.
+
+\paragraph{}
+The other features of Raccoon that we didn't manage to deal with are the following:
+\begin{itemize}
+\item strings
+\item constants
+\item "else if" statements
+\item "for" statements
+\item "break"/"continue" statements
+\end{itemize}
+
 
 \subsection{How to use}
 
@@ -401,19 +428,29 @@ C:\...\Raccoon\ply-3.4> python setup.py install
 \paragraph{}
 Now, to be able to generated graphical representations of abstract syntax trees, you need to install the Graphviz software and the PyDot module. You can get those respectively at \url{http://www.graphviz.org/} and \url{http://code.google.com/p/pydot/}.
 
+\paragraph{}
+Finally, installing the LLVM facilities is needed to be able to generate native code and to execute it.
+
 \subsubsection{Running the compiler}
 \paragraph{}
 To launch the compiler, simply run this command, where \textit{file} is the path to the file you want to compile: 
 \begin{verbatim}
-C:\...\Raccoon\ply-3.4> python llvm.py file
+C:\...\Raccoon\sources> python llvm.py file
 \end{verbatim}
-It will generate a file with the LLVM translation of the program. This LLVM code can then be transformed into native code with the LLVM assembler.
+It will generate a file with the LLVM translation of the program. This LLVM code can then be transformed into native code with the LLVM assembler:
+\begin{verbatim}
+C:\...\Raccoon\sources> llvm-as llvmFile
+\end{verbatim}
+and this native code can be executed doing:
+\begin{verbatim}
+C:\...\Raccoon\sources> lli bcFile
+\end{verbatim}
 
 \paragraph{}
 It is also possible to launch the different parts of the compiler separately. Instead of running the "llvm.py" file, you could run "lexical.py", "parsing.py" or "semantic.py". You can also add the option "-ast" after the file path, to generate a pdf representation of the abstract syntax tree.
 
 \paragraph{}
-As required, a series of test files triggering various kinds of errors are provided in the folder "testFiles", along with the correct program files "QuickSort.rac" and "Prime.rac".
+As required, a series of test files triggering various kinds of errors are provided in the folder "testFiles", along with the correct program files "QuickSort.rac" and "Prime.rac" (these two files respect the constraint discussed in section \ref{cg}).
 
 \clearpage
 \begin{thebibliography}{9}

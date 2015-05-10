@@ -69,12 +69,17 @@
 \contentsline {paragraph}{}{9}{section*.51}
 \contentsline {paragraph}{}{10}{section*.52}
 \contentsline {subsubsection}{\numberline {2.2.4}Code generation}{10}{subsubsection.2.2.4}
-\contentsline {subsection}{\numberline {2.3}How to use}{10}{subsection.2.3}
-\contentsline {subsubsection}{\numberline {2.3.1}Tools installation}{10}{subsubsection.2.3.1}
 \contentsline {paragraph}{}{10}{section*.53}
 \contentsline {paragraph}{}{10}{section*.54}
-\contentsline {subsubsection}{\numberline {2.3.2}Running the compiler}{11}{subsubsection.2.3.2}
-\contentsline {paragraph}{}{11}{section*.55}
+\contentsline {paragraph}{}{10}{section*.55}
 \contentsline {paragraph}{}{11}{section*.56}
+\contentsline {subsection}{\numberline {2.3}How to use}{11}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Tools installation}{11}{subsubsection.2.3.1}
 \contentsline {paragraph}{}{11}{section*.57}
-\contentsline {section}{References}{14}{section*.58}
+\contentsline {paragraph}{}{11}{section*.58}
+\contentsline {paragraph}{}{11}{section*.59}
+\contentsline {subsubsection}{\numberline {2.3.2}Running the compiler}{11}{subsubsection.2.3.2}
+\contentsline {paragraph}{}{11}{section*.60}
+\contentsline {paragraph}{}{12}{section*.61}
+\contentsline {paragraph}{}{12}{section*.62}
+\contentsline {section}{References}{15}{section*.63}
