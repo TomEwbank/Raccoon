@@ -1,0 +1,24 @@
+function LQuicksort(LA,Ilow,Ihigh):
+	if Ilow < Ihigh:
+		Ipivot becomes LA[Ilow]
+		Ileftwall becomes Ilow
+
+		for Ii in range (Ilow + 1, Ihigh):
+			if (LA[Ii] < Ipivot):
+				Ileftwall becomes Ileftwall + 1
+				Itemp becomes LA[Ii]
+				LA[Ii] becomes LA[Ileftwall]
+				LA[Ileftwall] becomes Itemp
+
+		Itemp becomes LA[Ilow]
+		LA[Ilow] becomes LA[Ileftwall]
+		LA[Ileftwall] becomes Itemp
+		Ipivot becomes Ileftwall
+		LA becomes LQuicksort(LA, Ilow, Ipivot - 1)
+		LA becomes LQuicksort(LA, Ipivot + 1, Ihigh)
+
+	return LA
+	
+function main():
+	La becomes [1,2,3]
+	Lnewa becomes LQuicksort(La, 1, 3)

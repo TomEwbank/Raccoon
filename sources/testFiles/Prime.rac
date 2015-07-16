@@ -1,0 +1,13 @@
+function Bprime(Inbr):
+	for Ii in range(2,Inbr-1):
+		if Inbr mod Ii =? 0:
+			return False
+	return True
+
+function main():
+	Ba becomes Bprime(7)
+	display(Ba)
+
+
+
+

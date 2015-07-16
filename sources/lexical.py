@@ -16,15 +16,16 @@ nbLexErrors = 0 #global counter for the number of lexical errors
 #### Utility functions ####
 
 def remove_comments(text):
-	result = ""
+	from cStringIO import StringIO
+	result = StringIO()
 	rest = text
-	while len(rest) > 0:
+	while len(rest) > 1:
 		try:
 			i = rest.index(chr(47)) # get the index of a "/" character
 		except:
-			result += rest
+			result.write(rest)
 			break
-			
+		
 		if ord(rest[i+1]) == 42: # if the character that follows is "*" -> block comment
 			
 			inBlockComment = True
@@ -35,7 +36,7 @@ def remove_comments(text):
 			# Store the new lines encountered in a block comment 
 			# to be able to replace a block comments with 
 			# the right amount of empty lines
-			newLines = "" 
+			newLines = StringIO() 
 			
 			while inBlockComment:
 				if i+j+1 >= l: break
@@ -52,35 +53,41 @@ def remove_comments(text):
 					j +=2
 				elif ord(rest[i+j]) == 10:
 					# newline encountered 
-					newLines += rest[i+j]
+					newLines.write(rest[i+j])
 					j += 1
 				else: j += 1
 				
 			if inBlockComment:
 				raise NameError('Block comment reached EOF without closing, \n check for unclosed nested comment')
 			
-			result = result + rest[0:i] + newLines
+			result.write(rest[0:i])
+			result.write(newLines.getvalue())
 			rest = rest[i+j:]
 		
 		elif ord(rest[i+1]) == 47: # if the character that follows is "/" -> line comment
+			print("STOP")
+			print(rest)
 			j = 2
 			while ord(rest[i+j]) != 10:
 				j += 1
-			result = result + rest[0:i]
+				print(j)
+			result.write(rest[0:i])
 			rest = rest[i+j:]
 			
 		else :
-			result = result + rest[0:i+1]
+			result.write(rest[0:i+1])
 			rest = rest[i+1:]
 	
-	return result
+	result.write(rest)		
+	print(result.getvalue())
+	
+	return result.getvalue()
 
 def string_processing(s):
 	result = s[1:len(s)-1]
 	i = 0
 	while i < len(result)-1:
 		if ord(result[i]) == 92 and ord(result[i+1]) == 34:
-			print("oh")
 			result = result[0:i] + result[i+1:]
 		else:
 			i += 1
@@ -325,9 +332,8 @@ lexer = IndentLexer(lexer)
 
 if __name__ == "__main__":
 	try:
-		prog = remove_comments(open(sys.argv[1]).read())
-		prog = prog + "\n"
-		lexer.input(prog)
+		prog = open(sys.argv[1]).read() + "\n" 
+		lexer.input(remove_comments(prog))
 		while 1 :
 			tok = lexer.token()
 			if not tok: 

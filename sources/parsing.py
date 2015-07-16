@@ -268,8 +268,7 @@ def p_error(p):
 
 
 def parse(program):
-	prog = remove_comments(program)
-	prog = prog + "\n"
+	prog = remove_comments(program+"/n")
 	return yacc.yacc().parse(prog, lexer)
 
 #####################################################
@@ -277,8 +276,8 @@ def parse(program):
 if __name__ == "__main__":
 	try:
 		import sys
-		prog = remove_comments(open(sys.argv[1]).read())
-		prog = prog + "\n"
+		prog = open(sys.argv[1]).read() + "\n"
+		prog = remove_comments(prog)
 		result = yacc.yacc().parse(prog, lexer)
 		
 		import os

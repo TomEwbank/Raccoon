@@ -1,0 +1,57 @@
+/* Test file for semantic errors */
+
+a becomes b
+a becomes c[d]
+
+a becomes 5
+a[2] becomes 2
+b becomes a[3]
+
+c becomes ["hello", 4, 5]
+d becomes [False,2,"coucou"]+[3,2,"damned"] //no error, but incorrect
+c becomes [1, 2.5, 3]
+
+pi is 3.14
+pi becomes 3.145
+pi is 3
+suite is [1,2,3]
+suite becomes [3,4,5]
+suite[1] becomes 0
+
+a becomes 5 + "hello"
+a becomes "hello" + "world!" //no error, but incorrect
+a =? suite
+if a and "Hello": 
+	a becomes suite - c
+else if 1:
+	a becomes 3
+else:
+	a becomes 2
+	
+function hello(name):
+	display("hello")
+	display(name)
+
+jean becomes "jean"
+value becomes hello(jean) //no error, but incorrect (hello doesn't return anything)
+
+function hello():
+	if 1:
+		2
+	display("hello")
+
+hello()
+helloWorld()
+return a
+break
+continue
+
+for i in range("hello",suite):
+	break
+
+for element in a:
+	display(element)
+	
+while suite:
+	continue
+
