@@ -13,6 +13,10 @@ import copy
 
 nbLexErrors = 0 #global counter for the number of lexical errors
 
+class NestComError(Exception):
+   def __init__(self, txt):
+      self.msg = txt
+
 #### Utility functions ####
 
 def remove_comments(text):
@@ -58,19 +62,16 @@ def remove_comments(text):
 				else: j += 1
 				
 			if inBlockComment:
-				raise NameError('Block comment reached EOF without closing, \n check for unclosed nested comment')
+				raise NestComError("Block comment reached EOF without closing, \n check for unclosed nested comment")
 			
 			result.write(rest[0:i])
 			result.write(newLines.getvalue())
 			rest = rest[i+j:]
 		
 		elif ord(rest[i+1]) == 47: # if the character that follows is "/" -> line comment
-			print("STOP")
-			print(rest)
 			j = 2
 			while ord(rest[i+j]) != 10:
 				j += 1
-				print(j)
 			result.write(rest[0:i])
 			rest = rest[i+j:]
 			
@@ -79,20 +80,19 @@ def remove_comments(text):
 			rest = rest[i+1:]
 	
 	result.write(rest)		
-	print(result.getvalue())
 	
 	return result.getvalue()
 
-def string_processing(s):
-	result = s[1:len(s)-1]
-	i = 0
-	while i < len(result)-1:
-		if ord(result[i]) == 92 and ord(result[i+1]) == 34:
-			result = result[0:i] + result[i+1:]
-		else:
-			i += 1
-	return result
-
+#def string_processing(s):
+	# result = s[1:len(s)-1]
+	# i = 0
+	# while i < len(result)-1:
+		# if ord(result[i]) == 92 and ord(result[i+1]) == 34:
+			# result = result[0:i] + result[i+1:]
+		# else:
+			# i += 1
+	# return result
+	
 
 #### FIRST LEXING STAGE ####
 
@@ -186,8 +186,8 @@ def t_END_STATEMENT(t):
 	return t
 	
 def t_STRING(t):
-	r'".*[^\\]"'
-	t.value = string_processing(t.value)
+	r'".*"'
+	t.value = t.value[1:len(t.value)-1]
 	return t
 
 def t_ELSEIF(t):
@@ -340,7 +340,7 @@ if __name__ == "__main__":
 				break
 			else:
 				print("line %d: %s(%s)" %(tok.lineno, tok.type, tok.value))
-	except NameError as e:
+	except NestComError as e:
 		print("error:")
 		print(e)
 			

@@ -10,6 +10,7 @@ import ply.yacc as yacc
 from lexical import remove_comments
 from lexical import tokens
 from lexical import lexer
+from lexical import NestComError
 import AST
 
 precedence = (
@@ -268,7 +269,7 @@ def p_error(p):
 
 
 def parse(program):
-	prog = remove_comments(program+"/n")
+	prog = remove_comments(program+"\n")
 	return yacc.yacc().parse(prog, lexer)
 
 #####################################################
@@ -295,6 +296,6 @@ if __name__ == "__main__":
 		
 		print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
 		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
-	except NameError as e:
+	except NestComError, e:
 		print("error:")
-		print(e)
+		print(e.msg)

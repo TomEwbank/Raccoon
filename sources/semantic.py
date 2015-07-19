@@ -13,6 +13,7 @@
 
 import AST
 from AST import * 
+from lexical import NestComError
 
 #### Functions for the "couture" of the AST ####
 
@@ -301,6 +302,6 @@ if __name__ == "__main__":
 				print("wrote threaded ast to '%s'" %name)
 			
 			entry.semAnalysis()
-	except NameError as e:
+	except NestComError, e:
 		print("error:")
-		print(e)
+		print(e.msg)

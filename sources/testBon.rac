@@ -14,7 +14,7 @@ function prime(nbr):
 			
 	return True
 
-str becomes "cette fonction s'appelle \\"f\""
+str becomes "cette fonction s'appelle "f"""\/"
 
 /* /* where do my comments end? here?*/   or here? */	
 	
@@ -36,3 +36,4 @@ function primeRange(nbr1,nbr2):
 a becomes primeRange(345,542)
 /* bou */ 
 // badaboum /
+str becomes ""
