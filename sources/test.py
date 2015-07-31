@@ -1,3 +1,19 @@
+
+	
+a = ["prout", 8, 2, 6, 14]
+b = ["prout", 8, 2, 6, 14]
+
+if a == b:
+	print("yeah")
+else:
+	print("damn")
+	
+c = {"coucou" : "bitch", "haha":"hihi"}
+
+print(c.get("coucou"))
+
+
+
 # tok = 'List Integer'
 # stack = [tok]
 # stack.append('yo')
@@ -22,72 +38,72 @@
 # print("\"youyou\"")	
 # print(string_processing("\"he says \\\"youyou\\\"\""))
 
-i = ord("\"")
-j = ord("\\")
-print(i)
-print(j)
+# i = ord("\"")
+# j = ord("\\")
+# print(i)
+# print(j)
 
-import re
+# import re
 
-def remcom(s):
-	result = ""
-	rest = s
-	while len(rest) > 0:
-		try:
-			i = rest.index(chr(47)) # get the index of a "/" character
-		except:
-			result += rest
-			break
+# def remcom(s):
+	# result = ""
+	# rest = s
+	# while len(rest) > 0:
+		# try:
+			# i = rest.index(chr(47)) # get the index of a "/" character
+		# except:
+			# result += rest
+			# break
 			
-		if ord(rest[i+1]) == 42: # if the character that follows is "*" -> block comment
+		# if ord(rest[i+1]) == 42: # if the character that follows is "*" -> block comment
 			
-			inBlockComment = True
-			j = 2
-			level = 1
-			l = len(rest)
+			# inBlockComment = True
+			# j = 2
+			# level = 1
+			# l = len(rest)
 			
-			# Store the new lines encountered in a block comment 
-			# to be able to replace a block comments with 
-			# the right amount of empty lines
-			newLines = "" 
+			# # Store the new lines encountered in a block comment 
+			# # to be able to replace a block comments with 
+			# # the right amount of empty lines
+			# newLines = "" 
 			
-			while inBlockComment:
-				if i+j+1 >= l: break
-				elif ord(rest[i+j]) == 47 and \
-				   ord(rest[i+j+1]) == 42: 
-					# "/*" encountered
-					level += 1
-					j += 2
-				elif ord(rest[i+j]) == 42 and \
-				     ord(rest[i+j+1]) == 47: 
-					# "*/" encountered
-					level -= 1
-					if level == 0: inBlockComment = False
-					j +=2
-				elif ord(rest[i+j]) == 10:
-					# newline encountered 
-					newLines += rest[i+j]
-					j += 1
-				else: j += 1
+			# while inBlockComment:
+				# if i+j+1 >= l: break
+				# elif ord(rest[i+j]) == 47 and \
+				   # ord(rest[i+j+1]) == 42: 
+					# # "/*" encountered
+					# level += 1
+					# j += 2
+				# elif ord(rest[i+j]) == 42 and \
+				     # ord(rest[i+j+1]) == 47: 
+					# # "*/" encountered
+					# level -= 1
+					# if level == 0: inBlockComment = False
+					# j +=2
+				# elif ord(rest[i+j]) == 10:
+					# # newline encountered 
+					# newLines += rest[i+j]
+					# j += 1
+				# else: j += 1
 				
-			if inBlockComment:
-				raise NameError('Block comment reaching EOF without closing, \n check for unclosed nested comment')
+			# if inBlockComment:
+				# raise NameError('Block comment reaching EOF without closing, \n check for unclosed nested comment')
 			
-			result = result + rest[0:i] + newLines
-			rest = rest[i+j:]
+			# result = result + rest[0:i] + newLines
+			# rest = rest[i+j:]
 		
-		elif ord(rest[i+1]) == 47: # if the character that follows is "/" -> line comment
-			j = 2
-			while ord(rest[i+j]) != 10:
-				j += 1
-			result = result + rest[0:i]
-			rest = rest[i+j:]
+		# elif ord(rest[i+1]) == 47: # if the character that follows is "/" -> line comment
+			# j = 2
+			# while ord(rest[i+j]) != 10:
+				# j += 1
+			# result = result + rest[0:i]
+			# rest = rest[i+j:]
 			
-		else :
-			result = result + rest[0:i+1]
-			rest = rest[i+1:]
+		# else :
+			# result = result + rest[0:i+1]
+			# rest = rest[i+1:]
 	
-	return result
+	# return result
 
-file = open("uncom.rac", "w")	
-file.write(remcom(open("testBon.rac").read()))
+# file = open("uncom.rac", "w")	
+# file.write(remcom(open("testBon.rac").read()))

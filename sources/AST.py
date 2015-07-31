@@ -14,6 +14,23 @@
 
 import pydot
 
+class FuncArguments:
+	'''Data structure holding the types of the arguments of a function'''
+	
+	def __init__(self, typeList):
+		self.argList = typeList
+		self.argNumber = len(typeList)
+	
+	def getArgNumber(self):
+		return self.argNumber
+		
+	def compare(self, types):
+		if self.typeList == types:
+			return True
+		else: 
+			return False
+			
+
 class Scope:
 	'''Class which goal is to keep track of variables 
 	   initialization, function definitions, and types of 
@@ -38,8 +55,8 @@ class Scope:
 	def hasConst(self, varName):
 		return self.constHash.has_key(varName)
 	
-	def addFunction(self, funcName, nbArgs):
-		self.funcHash[funcName] = nbArgs
+	def addFunction(self, funcName, args):
+		self.funcHash[funcName] = args
 	
 	def hasFunction(self, funcName):
 		return self.funcHash.has_key(funcName)
@@ -47,11 +64,11 @@ class Scope:
 	def removeVariable(self, varName):
 		self.varHash.pop(varName, 0)
 		
-	def getArgNumber(self, funcName):
-		return self.funcHash[funcName]
+	def getArguments(self, funcName):
+		return self.funcHash.get(funcName)
 		
 	def getVarType(self, varName):
-		return self.varHash[varName]
+		return self.varHash.get(varName)
 	
 	def pushType(self, type):
 		self.typeStack.append(type)
@@ -67,22 +84,16 @@ class Scope:
 		type2 = self.typeStack.pop()
 		
 		if type1 == 'String' or type1[0:4] == 'List' or \
-		   type2 == 'String' or type2[0:4] == 'List':
-			# Raccoon can't deal with arithmetic/combinatory operation on lists and strings
+		   type2 == 'String' or type2[0:4] == 'List' or \
+		   type1 != type2:
+			# Raccoon can't deal with arithmetic/combinatory operation on lists and strings,
+			# and it also doesn't support casting
 			self.typeStack.append('Forbidden')
 			return False
-		elif type1 == type2 or type1 == 'unknown':
-			self.typeStack.append(type2)
-			return True
-		elif type2 == 'unknown':
+		else:
 			self.typeStack.append(type1)
 			return True
-		else: 
-			# The merging of 2 different numeric types leads to the type Double
-			# (Booleans are considered as numeric types: True = 1, False = 0)
-			self.typeStack.append('Double')
-			return True
-	
+
 	def getMergedType(self):
 		'''Return the type at the top of the stack,
 		   which is supposed to be the type of the last
@@ -128,8 +139,8 @@ class ScopeStack:
 	def hasConst(self, varName):
 		return self.stack[self.currentScope].hasConst(varName)
 		
-	def addFunction(self, funcName, nbArgs):
-		self.stack[self.currentScope].addFunction(funcName, nbArgs)
+	def addFunction(self, funcName, args):
+		self.stack[self.currentScope].addFunction(funcName, args)
 	
 	def hasFunction(self, funcName):
 		for scope in self.stack:
@@ -138,12 +149,13 @@ class ScopeStack:
 							
 		return False
 		
-	def getArgNumber(self, funcName):
+	def getArguments(self, funcName):
 		for scope in self.stack:
-			if scope.hasFunction(funcName):
-				return scope.getArgNumber(funcName)
+			args = scope.getArguments(funcName)
+			if not (args is None) 
+				return args
 							
-		return -1
+		return None
 	
 	def getVarType(self, varName):
 		return self.stack[self.currentScope].getVarType(varName)
@@ -157,6 +169,203 @@ class ScopeStack:
 	def getMergedType(self):
 		return self.stack[self.currentScope].getMergedType()
 
+class CondScopeStack(ScopeStack):
+	def __init__(self):
+		self.stack = []
+		self.currentScope = -1
+		self.scopeNumber = 0
+		
+	def hasCondScope(self)
+		if scopeNumber == 0:
+			return False
+		else:
+			return True
+	
+	def hasVariable(self, varName):
+		for scope in self.stack:
+			if scope.hasVariable(varName):
+				return True
+							
+		return False
+		
+	def hasConst(self, varName):
+		for scope in self.stack:
+			if scope.hasConst(varName):
+				return True
+							
+		return False
+	
+	def hasFunction(self, funcName):
+		for scope in self.stack:
+			if scope.hasFunction(funcName):
+				return True
+							
+		return False
+	
+	def getVarType(self, varName):
+		for scope in self.stack:
+			type = scope.getVarType(varName)
+			if not (type is None)
+				return type
+		
+		return None
+
+class CondScopeStackStack:
+	
+	def __init__(self):
+		self.stack = [CondScopeStack()]
+		self.currentStack = 0
+		self.stackNumber = 1
+	
+	def newCondScopeStack(self):
+		self.stack.append(CondScopeStack())
+		self.currentStack += 1
+		self.stackNumber += 1
+	
+	def popCondScopeStack(self):
+		self.stack.pop()
+		self.currentScope -= 1
+		self.scopeNumber -= 1
+		
+	def newCondScope(self):
+		self.stack[currentStack].newScope()
+		
+	def popCondScope(self):
+		self.stack[currentStack].pop()
+		
+	def hasCondScope(self)
+		return self.stack[currentStack].hasCondScope()
+		
+	def addVariable(self, varName, type):
+		self.stack[self.currentStack].addVariable(varName, type)
+		
+	def removeVariable(self, varName):
+		self.stack[self.currentStack].removeVariable(varName)
+	
+	def hasVariable(self, varName):
+		return self.stack[self.currentStack].hasVariable(varName)
+	
+	def addConst(self, varName, type):
+		self.stack[self.currentStack].addConst(varName, type)
+		
+	def hasConst(self, varName):
+		return self.stack[self.currentStack].hasConst(varName)
+		
+	def addFunction(self, funcName, args):
+		self.stack[self.currentStack].addFunction(funcName, args)
+	
+	def hasFunction(self, funcName):
+		return self.stack[self.currentStack].hasFunction(funcName)
+
+	def getArguments(self, funcName):
+		return self.stack[self.currentStack].getArguments(funcName)
+	
+	def getVarType(self, varName):
+		return self.stack[self.currentStack].getVarType(varName)
+	
+	def pushType(self, type):
+		self.stack[self.currentStack].pushType(type)
+		
+	def mergeTypes(self):
+		return self.stack[self.currentStack].mergeTypes()
+	
+	def getMergedType(self):
+		return self.stack[self.currentStack].getMergedType()
+
+
+class CheckStack:
+	
+	def __init__(self):
+		self.scopeStack = ScopeStack()
+		self.condScopeStackStack = CondScopeStackStack()
+	
+	def newFunScope(self):
+		self.scopeStack.newScope()
+		self.condScopeStackStack.newCondScopeStack()
+	
+	def closeFunScope(self):
+		self.scopeStack.pop()
+		self.condScopeStackStack.popCondScopeStack()
+		
+	def newCondScope(self):
+		self.condScopeStackStack.newCondScope()
+	
+	def closeCondScope(self):
+		self.condScopeStackStack.popCondScope()
+	
+	def addVariable(self, varName, type):
+		if self.condScopeStackStack.hasCondScope():
+			self.condScopeStackStack.addVariable(varName, type)
+		else:
+			self.scopeStack.addVariable(varName, type)
+		
+	def removeVariable(self, varName):
+		if self.condScopeStackStack.hasCondScope():
+			self.condScopeStackStack.removeVariable(varName)
+		else:
+			self.scopeStack.removeVariable(varName)
+	
+	def hasVariable(self, varName):
+		if scopeStack.hasVariable(varName) or condScopeStackStack.hasVariable(varName):
+			return True
+		else:
+			return False
+	
+	def addConst(self, varName, type):
+		if self.condScopeStackStack.hasCondScope():
+			self.condScopeStackStack.addConst(varName, type)
+		else:
+			self.scopeStack.addConst(varName, type)
+		
+	def hasConst(self, varName):
+		if scopeStack.hasConst(varName) or condScopeStackStack.hasConst(varName):
+			return True
+		else:
+			return False
+		
+	def addFunction(self, funcName, args):
+		if self.condScopeStackStack.hasCondScope():
+			self.condScopeStackStack.addFunction(funcName, args)
+		else:
+			self.scopeStack.addFunction(funcName, args)
+	
+	def hasFunction(self, funcName):
+		if scopeStack.hasFunction(funcName) or condScopeStackStack.hasFunction(funcName):
+			return True
+		else:
+			return False
+		
+	def getArguments(self, funcName):
+		args = condScopeStackStack.getArguments(funcName)
+		if args is None:
+			args = scopeStack.getArguments(funcName)
+		return args
+	
+	def getVarType(self, varName):
+		type = condScopeStackStack.getVarType(varName)
+		if type is None:
+			type = scopeStack.getVarType(varName)
+		return type
+	
+	def pushType(self, type):
+		if self.condScopeStackStack.hasCondScope():
+			self.condScopeStackStack.pushType(type)
+		else:
+			self.scopeStack.pushType(type)
+		
+	def mergeTypes(self):
+		if self.condScopeStackStack.hasCondScope():
+			self.condScopeStackStack.mergeTypes()
+		else:
+			self.scopeStack.mergeTypes()
+	
+	def getMergedType(self):
+		if self.condScopeStackStack.hasCondScope():
+			return self.condScopeStackStack.getMergedType()
+		else:
+			return self.scopeStack.getMergedType()
+
+
 #### Basic node class ####
 		
 class Node:
@@ -166,7 +375,8 @@ class Node:
 
 	nbSynErrors = 0
 	nbSemErrors = 0
-	scopeStack = ScopeStack()
+	checkStack = CheckStack()
+
 	
 	def __init__(self,n,children=None):
 		self.ID = str(Node.count)
@@ -361,7 +571,14 @@ class FuncDefNameNode(TokenNode):
 
 class FuncDefArgNode(TokenNode):
 	type = 'Function argument'
+	def __init__(self, n, tok, t):
+		Node.__init__(self, n)
+		self.tok = tok
+		self.var_type = t
 		
+	def __repr__(self):
+		return repr(self.var_type + self.tok)
+	
 class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
 	def __init__(self, n, tok):

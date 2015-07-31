@@ -49,7 +49,7 @@ def p_small_stmt(p):
 				  | display
 			  	  | loop_stmt'''
 	p[0] = p[1]
-				  
+
 def p_return(p):
 	'''return_stmt : RETURN
                    | RETURN expr'''			   
@@ -80,7 +80,7 @@ def p_assign(p):
 		p[0] = AST.AssignNode(p.lineno(2), [AST.AssignVarNode(p.lineno(1), p[1]), AST.ListNode(p.lineno(1), p[4].children)])
 	if len(p) == 7:
 		p[0] = AST.AssignNode(p.lineno(5), [AST.ListElementNode(p.lineno(1), [AST.AssignVarNode(p.lineno(1), p[1]), p[3]]), p[6]])
-	
+
 def p_const(p):
 	'''const_decl : IDENTIFIER CONST expr
 				  | IDENTIFIER CONST LSBRACKET list_args RSBRACKET'''
@@ -187,12 +187,44 @@ def p_head(p):
 		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1])])
 
 def p_func_def_args(p):
-	'''func_def_args : IDENTIFIER 
-                     | IDENTIFIER COMMA func_def_args'''
+	'''func_def_args : argument 
+                     | argument COMMA func_def_args'''
 	if len(p) == 2:
-		p[0] = AST.Node(p.lineno(1), [AST.FuncDefArgNode(p.lineno(1), p[1])])
+		p[0] = AST.Node(p.lineno(1), [p[1]])
 	if len(p) == 4:
-		p[0] = AST.Node(p.lineno(1), [AST.FuncDefArgNode(p.lineno(1), p[1])] + p[3].children)
+		p[0] = AST.Node(p.lineno(1), [p[1]] + p[3].children)
+
+def p_func_def_arg_int(p):
+	'''argument : T_INT IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'Integer')
+	
+def p_func_def_arg_double(p):
+	'''argument : T_DOUBLE IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'Double')
+	
+def p_func_def_arg_bool(p):
+	'''argument : T_BOOL IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'Boolean')
+	
+def p_func_def_arg_list_int(p):
+	'''argument : T_LIST_INT IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List Integer')
+
+def p_func_def_arg_list_double(p):
+	'''argument : T_LIST_DOUBLE IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List Double')
+
+def p_func_def_arg_list_bool(p):
+	'''argument : T_LIST_BOOL IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List Boolean')
+	
+def p_func_def_arg_list_string(p):
+	'''argument : T_LIST_STRING IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List String')
+
+def p_func_def_arg_string(p):
+	'''argument : T_STRING IDENTIFIER'''
+	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'String')
 
 def p_body(p):
 	'''body : stmt

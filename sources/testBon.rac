@@ -2,12 +2,13 @@
    Test program for Raccoon
    Group 2 
    */
+alpha becomes beta
 
 //return True if the number nbr is prime. Return False otherwise
 function prime(nbr):
 
 	n becomes nbr-1
-	i becomes [1]
+/*	i becomes [1]
 	for i in range (2,n):
 		if nbr mod i =? 0: // testcom
 			return False
@@ -36,4 +37,4 @@ function primeRange(nbr1,nbr2):
 a becomes primeRange(345,542)
 /* bou */ 
 // badaboum /
-str becomes ""
+str becomes ""*/

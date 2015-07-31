@@ -19,7 +19,7 @@ from lexical import NestComError
 
 @addToClass(AST.Node)
 def thread(self, lastNode):
-	for  c  in self.children:
+	for c in self.children:
 		lastNode = c.thread(lastNode)
 	lastNode.addNext(self)
 	return self

@@ -1,6 +1,12 @@
+function yawai(String str, Integer i, Boolean b, List_Integer d, List_String e):
+	if b:
+		return i+1
+	else:
+		return i
+		
+yawai("ya", 2, True)
 
-
-
+/*
 a becomes False
 a becomes (True or check and a =? b) and d <= e
 a becomes c + d+1 mod 9*(5-3/8)
@@ -41,3 +47,4 @@ paint(monalisa, a+5, leo and jack < bill)
 a + 2-3*4/5
 True
 a or e =? 8 <= (pomme[newton+58*9/racine] and poire)
+*/
