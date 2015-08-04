@@ -5,7 +5,15 @@ function yawai(String str, Integer i, Boolean b, List_Integer d, List_String e):
 		return i
 		
 yawai("ya", 2, True)
+l becomes [1,2,5]
+for j in a:
+	hello()
+	you
+	1 + 3 * list
+	"loulou"
+	//[1,2]
 
+yeah
 /*
 a becomes False
 a becomes (True or check and a =? b) and d <= e

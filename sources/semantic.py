@@ -42,20 +42,22 @@ def semAnalysis(self):
 @addToClass(AST.AssignNode)
 @addToClass(AST.ConstNode)
 def semAnalysis(self):
-	stack = AST.Node.scopeStack
+	stack = AST.Node.checkStack
 	type = stack.getMergedType()
-	if isinstance(self.children[0], ListElementNode):
+	if type == 'Forbidden':
+		print("error l.%d: unable to make the assignment because of type error(s)" %(self.lineNb))
+		AST.Node.nbSemErrors += 1
+	elif isinstance(self.children[0], ListElementNode):
 		token = self.children[0].children[0].tok
 		trueType = stack.getVarType(token)
 		
-		if stack.hasVariable(token) and trueType[0:4] == 'List' and type != trueType[5:] and type != 'unknown':
+		if not(trueType is None) and trueType[0:4] == 'List' and type != trueType[5:]:
 			print("error l.%d: Trying to assign type %s to a list element of type %s" %(self.lineNb,type, trueType[5:]))
 			AST.Node.nbSemErrors += 1
 		
 		if stack.hasConst(token):
 			print("error l.%d: Trying to assign a new value to the constant '%s'" %(self.lineNb,token))
-			AST.Node.nbSemErrors += 1
-			
+			AST.Node.nbSemErrors += 1		
 	else:
 		token = self.children[0].tok
 		if stack.hasConst(token):
@@ -70,90 +72,133 @@ def semAnalysis(self):
 	
 @addToClass(AST.OpNode)
 def semAnalysis(self):
-	if not AST.Node.scopeStack.mergeTypes():
+	if not AST.Node.checkStack.mergeTypes(self.op):
 		print("error l.%d: operation members have incompatible types" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
+		
+	if isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode):
+		# It means the statement is a simple operation that doesn't have any effect or purpose,
+		# so we need to pop out of the stack the resulting merged type to make the rest of the analysis work
+		AST.Node.checkStack.getMergedType()
+	
+	if isinstance(self.parent, IfNode) or \
+	   isinstance(self.parent, ElseifNode) or \
+	   isinstance(self.parent, WhileNode):
+		AST.Node.checkStack.newCondScope()
+	
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.IntNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.pushType('Integer')
+	if not(isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode)):
+		AST.Node.checkStack.pushType('Integer')
+	
+	if isinstance(self.parent, IfNode) or \
+	   isinstance(self.parent, ElseifNode) or \
+	   isinstance(self.parent, WhileNode):
+		AST.Node.checkStack.newCondScope()
+	
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.DoubleNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.pushType('Double')
+	if not(isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode)):
+		AST.Node.checkStack.pushType('Double')
+		
+	if isinstance(self.parent, IfNode) or \
+	   isinstance(self.parent, ElseifNode) or \
+	   isinstance(self.parent, WhileNode):
+		AST.Node.checkStack.newCondScope()
+		
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.TrueNode)
 @addToClass(AST.FalseNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.pushType('Boolean')
+	if not(isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode)):
+		AST.Node.checkStack.pushType('Boolean')
+		
+	if isinstance(self.parent, IfNode) or \
+	   isinstance(self.parent, ElseifNode) or \
+	   isinstance(self.parent, WhileNode):
+		AST.Node.checkStack.newCondScope()
+		
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.StringNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.pushType('String')
+	if not(isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode)):
+		AST.Node.checkStack.pushType('String')
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.ListNode)
 def semAnalysis(self):
 	for i in range(1, len(self.children)): 
-		AST.Node.scopeStack.mergeTypes()
+		AST.Node.checkStack.mergeTypes()
 
-	listType = AST.Node.scopeStack.getMergedType()
+	listType = AST.Node.checkStack.getMergedType()
 	
 	if listType == 'Forbidden':
 		print("error l.%d: all list elements must be the same type" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
-		
-	AST.Node.scopeStack.pushType('List '+listType)
+		AST.Node.checkStack.pushType(listType)
+	else:
+		AST.Node.checkStack.pushType('List '+listType)
+	
 	self.next[0].semAnalysis()
 
 @addToClass(AST.IdNode)
 def semAnalysis(self):
-	if not AST.Node.scopeStack.hasVariable(self.tok):
-		print("error l.%d: uninitialized variable '%s'" %(self.lineNb,self.tok))
-		AST.Node.nbSemErrors += 1
-		AST.Node.scopeStack.pushType('unknown') # permits to still continue the analysis 
-	else:
-		type = AST.Node.scopeStack.getVarType(self.tok)
-		if isinstance(self.parent, ListElementNode) and \
-		   self is self.parent.children[0]:
-				# means the type will be 'List some_type' or 
-				# 'unknown' (because list passed as an argument) 
-				# and we just want to push the 'some_type' on the typeStack
-				if type == 'unknown':
-					AST.Node.scopeStack.pushType(type)
-				else:
-					AST.Node.scopeStack.pushType(type[5:]) 
-			
+	if not(isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode)):
+		type = AST.Node.checkStack.getVarType(self.tok)
+		if type is None:
+			print("error l.%d: uninitialized variable '%s'" %(self.lineNb,self.tok))
+			AST.Node.nbSemErrors += 1
+			AST.Node.checkStack.pushType('Forbidden') # permits to still continue the analysis 
 		else:
-			AST.Node.scopeStack.pushType(type)
+			if isinstance(self.parent, ListElementNode) and \
+			   self is self.parent.children[0]:
+					# means the type will be 'List some_type' or 'Forbidden' 
+					# and we just want to push the 'some_type' on the typeStack
+					if type == 'Forbidden':
+						AST.Node.checkStack.pushType(type)
+					else:
+						AST.Node.checkStack.pushType(type[5:])
+						self.var_type = type[5:]
+				
+			else:
+				AST.Node.checkStack.pushType(type)
+				self.var_type = type
+	
+	if isinstance(self.parent, IfNode) or \
+	   isinstance(self.parent, ElseifNode) or \
+	   isinstance(self.parent, WhileNode):
+		AST.Node.checkStack.newCondScope()
 	
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.ListElementNode)
 def semAnalysis(self):
-	stack = AST.Node.scopeStack
+	stack = AST.Node.checkStack
 	token = self.children[0].tok
 	
 	#check if the index is an integer
 	type = stack.getMergedType()
-	if type != 'Integer' and \
-	   type != 'unknown' :
-		print("error l.%d: wrong type for index" %(self.lineNb))
+	if type != 'Integer':
+		print("error l.%d: wrong type for index, an integer is needed" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
 	
-	# If we realize that the id of the list exists in the scope,
-	# but has the type 'unknown', it means it was passed as arguments
-	# and now we now that it is a list so we can update the type to 
-	# 'List unknown' for further semantic checking
-	if stack.hasVariable(token) and stack.getVarType(token) == 'unknown':
-		stack.addVariable(token, 'List unknown')
-	elif stack.hasVariable(token) and stack.getVarType(token)[0:4] != 'List':
+	type = stack.getVarType(token)
+	if stack.hasVariable(token) and type[0:4] != 'List':
 		print("error l.%d: '%s' is not a list" %(self.lineNb,token))
 		AST.Node.nbSemErrors += 1
+	else:
+		self.var_type = type
+		
+	if isinstance(self.parent, IfNode) or \
+	   isinstance(self.parent, ElseifNode) or \
+	   isinstance(self.parent, WhileNode):
+		AST.Node.checkStack.newCondScope()
 	
 	self.next[0].semAnalysis()
 
@@ -162,92 +207,135 @@ def semAnalysis(self):
 @addToClass(AST.IfNode)
 @addToClass(AST.ElseifNode)
 def semAnalysis(self):
-	type = AST.Node.scopeStack.getMergedType()
-	if type != 'Double' and \
-	   type != 'Integer' and \
-	   type != 'Boolean' and \
-	   type != 'unknown' :
+	type = AST.Node.checkStack.getMergedType()
+	if type != 'Boolean' or type != 'Integer' or type != 'Double':
 		print("error l.%d: wrong type for condition" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
 	
-	self.next[0].semAnalysis()
+	AST.Node.checkStack.closeCondScope()
 	
+	if isinstance(self, ElseifNode):
+		i = 0
+		for node in self.parent.children:
+			if node is self:
+				break
+			i += 1
+		if i < len(self.parent.children) and isinstance(self.parent.children[i+1], ElseNode):
+			AST.Node.checkStack.newCondScope()
+	
+	self.next[0].semAnalysis()
+
+@addToClass(AST.ElseNode)
+@addToClass(AST.ForNode)
+def semAnalysis(self):
+	AST.Node.checkStack.closeCondScope()
 
 @addToClass(AST.HeadNode)
 def semAnalysis(self):
-	if AST.Node.scopeStack.hasFunction(self.children[0].tok):
+	if AST.Node.checkStack.hasFunction(self.children[0].tok):
 		#polymorphism not allowed
 		print("error l.%d: function '%s' already defined" %(self.lineNb,self.children[0].tok))
 		AST.Node.nbSemErrors += 1
 	else:
-		AST.Node.scopeStack.addFunction(self.children[0].tok, len(self.children)-1)
+		typeList = []
+		for argument in self.children[1:]:
+			typeList.append(argument.var_type)
+		AST.Node.checkStack.addFunction(self.children[0].tok, FuncArguments(typeList))
 	
-	# analyse scope of the function even if it was already defined
-	AST.Node.scopeStack.newScope()
+	AST.Node.checkStack.newFunScope() # analyse scope of the function even if it was already defined
 	for argument in self.children[1:]:
-		AST.Node.scopeStack.addVariable(argument.tok,'unknown')
+		AST.Node.checkStack.addVariable(argument.tok,argument.var_type)
 	
 	self.next[0].semAnalysis()
 	
 @addToClass(FuncCallNode)
 def semAnalysis(self):
-	if not AST.Node.scopeStack.hasFunction(self.children[0].tok):
+	args = AST.Node.checkStack.getArguments(self.children[0].tok)
+	if args is None:
 		print("error l.%d: undefined function '%s'" %(self.lineNb,self.children[0].tok))
 		AST.Node.nbSemErrors += 1
 	else:
-		if len(self.children)-1 != AST.Node.scopeStack.getArgNumber(self.children[0].tok): 
+		if len(self.children)-1 != args.getArgNumber(): 
 			print("error l.%d: wrong number of arguments for function '%s'" %(self.lineNb,self.children[0].tok))
 			AST.Node.nbSemErrors += 1
+		else:
+			# Check if the type of the arguments is correct
+			typeList = []
+			for argument in reversed(self.children[1:]):
+				if isinstance(argument, IdNode) or isinstance(argument, ListElementNode):
+					typeList.append(argument.var_type)
+				elif isinstance(argument, IntNode):
+					typeList.append('Integer')
+				elif isinstance(argument, DoubleNode):
+					typeList.append('Double')
+				elif isinstance(argument, StringNode):
+					typeList.append('String')
+				elif isinstance(argument, TrueNode) or isinstance(argument, FalseNode):
+					typeList.append('Boolean')
+				else:
+					typeList.append(AST.Node.checkStack.getMergedType)
+			
+			typeList.reverse()
+			if not(args.compare(typeList)):
+				print("error l.%d: wrong types of arguments for function '%s'" %(self.lineNb,self.children[0].tok))
+				AST.Node.nbSemErrors += 1
 			
 	self.next[0].semAnalysis()
 
 @addToClass(AST.FuncDefNode)
 def semAnalysis(self):
-	AST.Node.scopeStack.pop()
+	AST.Node.checkStack.closeFunScope()
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.NumIteratorNode)
 def semAnalysis(self):
-	if AST.Node.scopeStack.hasVariable(self.tok):
-		self.prev_type = AST.Node.scopeStack.getVarType(self.tok)
-	AST.Node.scopeStack.addVariable(self.tok,'Integer')
-	self.next[0].semAnalysis()
-	
-@addToClass(AST.ListIteratorNode)
-def semAnalysis(self):
-	if AST.Node.scopeStack.hasVariable(self.tok):
-		self.prev_type = AST.Node.scopeStack.getVarType(self.tok)
-	AST.Node.scopeStack.addVariable(self.tok,'unknown')
-	self.next[0].semAnalysis()
-	
-@addToClass(AST.ForNode)
-def semAnalysis(self):
-	type = self.children[0].children[0].prev_type
-	token = self.children[0].children[0].tok
-	if type == 'None':
-		AST.Node.scopeStack.removeVariable(token)
+	type = AST.Node.checkStack.getVarType(self.tok)
+	if type is None:
+		AST.Node.checkStack.addVariable(self.tok,'Integer')
+	elif type != 'Integer':
+		print("error l.%d: variable '%s' is already defined and not of a valid numeric iterator type (Int)" %(self.lineNb,self.tok))
+		AST.Node.nbSemErrors += 1
 	else:
-		AST.Node.scopeStack.addVariable(token,type)
+		self.var_type = 'Integer'
+	
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.InRangeNode)
 def semAnalysis(self):
-	type1 = AST.Node.scopeStack.getMergedType()
-	type2 = AST.Node.scopeStack.getMergedType()
-	if type1 != 'Integer' and type1 != 'unknown':
+	type1 = AST.Node.checkStack.getMergedType()
+	type2 = AST.Node.checkStack.getMergedType()
+	if type1 != 'Integer' and type1 != 'Forbidden':
 		print("error l.%d: range first type should be integer" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
-	if type2 != 'Integer' and type2 != 'unknown':
+	if type2 != 'Integer' and type2 != 'Forbidden':
 		print("error l.%d: range second type should be integer" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
+	
+	AST.Node.checkStack.newCondScope()
+	
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.InNode)
 def semAnalysis(self):
-	type = AST.Node.scopeStack.getMergedType()
-	if type[0:4] != 'List' and type != 'unknown':
-		print("error l.%d: '%s' is not a list" %(self.lineNb,self.children[1].tok))
+	iterTok = self.children[0].tok
+	listTok = self.children[1].tok
+	iterType = AST.Node.checkStack.getVarType(iterTok)
+	listType = AST.Node.checkStack.getMergedType()
+	if listType is None:
+		print("error l.%d: variable '%s' is undefined" %(self.lineNb,listTok))
 		AST.Node.nbSemErrors += 1
+	elif listType[0:4] != 'List':
+		print("error l.%d: '%s' is not a list" %(self.lineNb,listTok))
+		AST.Node.nbSemErrors += 1
+	elif iterType is None:
+		AST.Node.checkStack.addVariable(iterTok,listType[5:])
+		self.children[0].var_type = listType[5:]
+	elif iterType != listType[5:]:
+		print("error l.%d: variable '%s' is already defined and not of the valid list iterator type (%s)" %(self.lineNb,iterTok,listTok))
+		AST.Node.nbSemErrors += 1
+	
+	AST.Node.checkStack.newCondScope()
+	
 	self.next[0].semAnalysis()
 
 @addToClass(AST.ReturnNode)

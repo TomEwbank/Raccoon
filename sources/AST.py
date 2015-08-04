@@ -73,7 +73,7 @@ class Scope:
 	def pushType(self, type):
 		self.typeStack.append(type)
 		
-	def mergeTypes(self):
+	def mergeTypes(self, op=None):
 		'''Compare the last 2 types that has been pushed on
 		   the stack, and merge them into one if they are compatible'''
 		  
@@ -85,13 +85,17 @@ class Scope:
 		
 		if type1 == 'String' or type1[0:4] == 'List' or \
 		   type2 == 'String' or type2[0:4] == 'List' or \
-		   type1 != type2:
+		   type1 != type2 or type1 == 'Forbidden' :
 			# Raccoon can't deal with arithmetic/combinatory operation on lists and strings,
 			# and it also doesn't support casting
 			self.typeStack.append('Forbidden')
 			return False
 		else:
-			self.typeStack.append(type1)
+			if op is None or \
+			   op == '+' or op == '-' or op == '*' or op == '/' or op == '%':
+				self.typeStack.append(type1)
+			else:
+				self.typeStack.append('Boolean')
 			return True
 
 	def getMergedType(self):
@@ -152,7 +156,7 @@ class ScopeStack:
 	def getArguments(self, funcName):
 		for scope in self.stack:
 			args = scope.getArguments(funcName)
-			if not (args is None) 
+			if not (args is None): 
 				return args
 							
 		return None
@@ -163,8 +167,8 @@ class ScopeStack:
 	def pushType(self, type):
 		self.stack[self.currentScope].pushType(type)
 		
-	def mergeTypes(self):
-		return self.stack[self.currentScope].mergeTypes()
+	def mergeTypes(self, op=None):
+		return self.stack[self.currentScope].mergeTypes(op)
 	
 	def getMergedType(self):
 		return self.stack[self.currentScope].getMergedType()
@@ -175,8 +179,8 @@ class CondScopeStack(ScopeStack):
 		self.currentScope = -1
 		self.scopeNumber = 0
 		
-	def hasCondScope(self)
-		if scopeNumber == 0:
+	def hasCondScope(self):
+		if self.scopeNumber == 0:
 			return False
 		else:
 			return True
@@ -205,7 +209,7 @@ class CondScopeStack(ScopeStack):
 	def getVarType(self, varName):
 		for scope in self.stack:
 			type = scope.getVarType(varName)
-			if not (type is None)
+			if not (type is None):
 				return type
 		
 		return None
@@ -228,13 +232,13 @@ class CondScopeStackStack:
 		self.scopeNumber -= 1
 		
 	def newCondScope(self):
-		self.stack[currentStack].newScope()
+		self.stack[self.currentStack].newScope()
 		
 	def popCondScope(self):
-		self.stack[currentStack].pop()
+		self.stack[self.currentStack].pop()
 		
-	def hasCondScope(self)
-		return self.stack[currentStack].hasCondScope()
+	def hasCondScope(self):
+		return self.stack[self.currentStack].hasCondScope()
 		
 	def addVariable(self, varName, type):
 		self.stack[self.currentStack].addVariable(varName, type)
@@ -266,8 +270,8 @@ class CondScopeStackStack:
 	def pushType(self, type):
 		self.stack[self.currentStack].pushType(type)
 		
-	def mergeTypes(self):
-		return self.stack[self.currentStack].mergeTypes()
+	def mergeTypes(self, op=None):
+		return self.stack[self.currentStack].mergeTypes(op)
 	
 	def getMergedType(self):
 		return self.stack[self.currentStack].getMergedType()
@@ -306,7 +310,7 @@ class CheckStack:
 			self.scopeStack.removeVariable(varName)
 	
 	def hasVariable(self, varName):
-		if scopeStack.hasVariable(varName) or condScopeStackStack.hasVariable(varName):
+		if self.scopeStack.hasVariable(varName) or self.condScopeStackStack.hasVariable(varName):
 			return True
 		else:
 			return False
@@ -318,7 +322,7 @@ class CheckStack:
 			self.scopeStack.addConst(varName, type)
 		
 	def hasConst(self, varName):
-		if scopeStack.hasConst(varName) or condScopeStackStack.hasConst(varName):
+		if self.scopeStack.hasConst(varName) or self.condScopeStackStack.hasConst(varName):
 			return True
 		else:
 			return False
@@ -330,21 +334,21 @@ class CheckStack:
 			self.scopeStack.addFunction(funcName, args)
 	
 	def hasFunction(self, funcName):
-		if scopeStack.hasFunction(funcName) or condScopeStackStack.hasFunction(funcName):
+		if self.scopeStack.hasFunction(funcName) or self.condScopeStackStack.hasFunction(funcName):
 			return True
 		else:
 			return False
 		
 	def getArguments(self, funcName):
-		args = condScopeStackStack.getArguments(funcName)
+		args = self.condScopeStackStack.getArguments(funcName)
 		if args is None:
-			args = scopeStack.getArguments(funcName)
+			args = self.scopeStack.getArguments(funcName)
 		return args
 	
 	def getVarType(self, varName):
-		type = condScopeStackStack.getVarType(varName)
+		type = self.condScopeStackStack.getVarType(varName)
 		if type is None:
-			type = scopeStack.getVarType(varName)
+			type = self.scopeStack.getVarType(varName)
 		return type
 	
 	def pushType(self, type):
@@ -353,11 +357,11 @@ class CheckStack:
 		else:
 			self.scopeStack.pushType(type)
 		
-	def mergeTypes(self):
+	def mergeTypes(self, op=None):
 		if self.condScopeStackStack.hasCondScope():
-			self.condScopeStackStack.mergeTypes()
+			self.condScopeStackStack.mergeTypes(op)
 		else:
-			self.scopeStack.mergeTypes()
+			self.scopeStack.mergeTypes(op)
 	
 	def getMergedType(self):
 		if self.condScopeStackStack.hasCondScope():
@@ -581,17 +585,9 @@ class FuncDefArgNode(TokenNode):
 	
 class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
-	def __init__(self, n, tok):
-		Node.__init__(self, n)
-		self.tok = tok
-		self.prev_type = 'None'
 		
 class ListIteratorNode(TokenNode):
 	type = 'List iterator'
-	def __init__(self, n, tok):
-		Node.__init__(self, n)
-		self.tok = tok
-		self.prev_type = 'None'
 
 class IntNode(TokenNode):
 	type = 'Integer'

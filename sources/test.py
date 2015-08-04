@@ -3,6 +3,18 @@
 a = ["prout", 8, 2, 6, 14]
 b = ["prout", 8, 2, 6, 14]
 
+for i in a:
+	y = 84
+	if i == 2:
+		break
+
+print(y)
+
+while i == 3:
+	i+=1
+	says = 85
+
+print(says)
 if a == b:
 	print("yeah")
 else:

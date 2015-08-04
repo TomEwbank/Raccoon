@@ -224,26 +224,6 @@ def t_INTEGER(t):
 		print("Integer value too large %d", t.value)
 		t.value = 0
 	return t
-
-# def t_T_LIST_INT(t):
-	# r'List\{Integer\}'
-	# return t
-	
-# def t_T_LIST_DOUBLE(t):
-	# r'List\{Double\}'
-	# return t
-
-# def t_T_LIST_BOOL(t):
-	# r'List\{Boolean\}'
-	# return t
-	
-# def t_T_LIST_STRING(t):
-	# r'List\{String\}'
-	# return t
-	# 'List{Integer}' : 'T_LIST_INT',
-	# 'List{Double}' : 'T_LIST_DOUBLE',
-	# 'List{Boolean}' : 'T_LIST_BOOL',
-	# 'List{String}' : 'T_LIST_STRING',
 	
 def t_error(t) :
 	print("Lexical error l.%d: Illegal character '%s'" %(t.lexer.lineno, t.value[0]))

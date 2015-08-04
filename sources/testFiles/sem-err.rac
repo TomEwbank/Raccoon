@@ -2,6 +2,7 @@
 
 a becomes b
 a becomes c[d]
+b becomes a
 
 a becomes 5
 a[2] becomes 2
@@ -28,7 +29,7 @@ else if 1:
 else:
 	a becomes 2
 	
-function hello(name):
+function hello(String name):
 	display("hello")
 	display(name)
 
@@ -42,6 +43,8 @@ function hello():
 
 hello()
 helloWorld()
+hello(3,4)
+hello("yeah")
 return a
 break
 continue
