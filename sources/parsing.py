@@ -70,6 +70,7 @@ def p_display(p):
 	'''display : DISPLAY LPAREN expr RPAREN'''
 	p[0] = AST.DisplayNode(p.lineno(1), [p[3]])
 				  
+
 def p_assign(p):
 	'''assignment : IDENTIFIER ASSIGN expr
 				  | IDENTIFIER ASSIGN LSBRACKET list_args RSBRACKET
@@ -115,9 +116,9 @@ def p_expr_id(p):
 	if len(p) == 5:
 		p[0] = AST.ListElementNode(p.lineno(1), [AST.IdNode(p.lineno(1), p[1]), p[3]])
 
-def p_expr_string(p):
-	'''expr : STRING'''
-	p[0] = AST.StringNode(p.lineno(1), p[1])
+# def p_expr_string(p):
+	# '''expr : STRING'''
+	# p[0] = AST.StringNode(p.lineno(1), p[1])
 		
 def p_expr(p):
 	'''expr : LPAREN expr RPAREN
@@ -218,13 +219,13 @@ def p_func_def_arg_list_bool(p):
 	'''argument : T_LIST_BOOL IDENTIFIER'''
 	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List Boolean')
 	
-def p_func_def_arg_list_string(p):
-	'''argument : T_LIST_STRING IDENTIFIER'''
-	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List String')
+# def p_func_def_arg_list_string(p):
+	# '''argument : T_LIST_STRING IDENTIFIER'''
+	# p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List String')
 
-def p_func_def_arg_string(p):
-	'''argument : T_STRING IDENTIFIER'''
-	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'String')
+# def p_func_def_arg_string(p):
+	# '''argument : T_STRING IDENTIFIER'''
+	# p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'String')
 
 def p_body(p):
 	'''body : stmt
@@ -248,7 +249,7 @@ def p_for(p):
 		highLim = p[8]
 		p[0] = AST.ForNode(p.lineno(1), [AST.InRangeNode(p.lineno(1), [iter, lowLim, highLim]), p[13]])
 	if len(p) == 10:
-		p[0] = AST.ForNode(p.lineno(1), [AST.InNode(p.lineno(1), [AST.ListIteratorNode(p.lineno, p[2]), AST.IdNode(p.lineno(1), p[4])]), p[8]])
+		p[0] = AST.ForNode(p.lineno(1), [AST.InNode(p.lineno(1), [AST.ListIteratorNode(p.lineno(1), p[2]), AST.IdNode(p.lineno(1), p[4])]), p[8]])
 		
 
 def p_if(p):
@@ -275,19 +276,19 @@ def p_elseif(p):
 
 #### A few rules for errors reporting ####
 
-def p_colon_forgotten(p):
-	'''stmt : IF expr END_STATEMENT INDENT body DEDENT
-			| ELSEIF expr END_STATEMENT INDENT body DEDENT
-			| ELSE expr END_STATEMENT INDENT body DEDENT
-			| FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN END_STATEMENT INDENT body DEDENT
-            | FOR IDENTIFIER IN IDENTIFIER END_STATEMENT INDENT body DEDENT
-			| WHILE expr END_STATEMENT INDENT body DEDENT
-			| FUNCTION IDENTIFIER LPAREN func_def_args RPAREN END_STATEMENT INDENT body DEDENT
-			| FUNCTION IDENTIFIER LPAREN RPAREN END_STATEMENT INDENT body DEDENT'''
+# def p_colon_forgotten(p):
+	# '''stmt : IF expr END_STATEMENT INDENT body DEDENT
+			# | ELSEIF expr END_STATEMENT INDENT body DEDENT
+			# | ELSE expr END_STATEMENT INDENT body DEDENT
+			# | FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN END_STATEMENT INDENT body DEDENT
+            # | FOR IDENTIFIER IN IDENTIFIER END_STATEMENT INDENT body DEDENT
+			# | WHILE expr END_STATEMENT INDENT body DEDENT
+			# | FUNCTION IDENTIFIER LPAREN func_def_args RPAREN END_STATEMENT INDENT body DEDENT
+			# | FUNCTION IDENTIFIER LPAREN RPAREN END_STATEMENT INDENT body DEDENT'''
 	
-	AST.Node.nbSynErrors += 1
-	print("Syntax error l.%d: colon missing at end of line" %(p.lineno(1)))
-	p[0] = AST.ErrorNode()
+	# AST.Node.nbSynErrors += 1
+	# print("Syntax error l.%d: colon missing at end of line" %(p.lineno(1)))
+	# p[0] = AST.ErrorNode()
 
 def p_error(p):
 	# this is a panic mode error handling, not very handy but really easy to implement

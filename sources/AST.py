@@ -25,7 +25,7 @@ class FuncArguments:
 		return self.argNumber
 		
 	def compare(self, types):
-		if self.typeList == types:
+		if self.argList == types:
 			return True
 		else: 
 			return False
@@ -82,11 +82,11 @@ class Scope:
 		
 		type1 = self.typeStack.pop()
 		type2 = self.typeStack.pop()
+		print("merge %s and %s" %(type1,type2))
 		
-		if type1 == 'String' or type1[0:4] == 'List' or \
-		   type2 == 'String' or type2[0:4] == 'List' or \
+		if type1[0:4] == 'List' or type2[0:4] == 'List' or \
 		   type1 != type2 or type1 == 'Forbidden' :
-			# Raccoon can't deal with arithmetic/combinatory operation on lists and strings,
+			# Raccoon can't deal with arithmetic/combinatory operation on lists,
 			# and it also doesn't support casting
 			self.typeStack.append('Forbidden')
 			return False
@@ -102,7 +102,7 @@ class Scope:
 		'''Return the type at the top of the stack,
 		   which is supposed to be the type of the last
 		   encountered expression'''
-		   
+		print("pop type")
 		if len(self.typeStack) > 0:
 			return self.typeStack.pop()
 		else:
@@ -228,8 +228,8 @@ class CondScopeStackStack:
 	
 	def popCondScopeStack(self):
 		self.stack.pop()
-		self.currentScope -= 1
-		self.scopeNumber -= 1
+		self.currentStack -= 1
+		self.stackNumber -= 1
 		
 	def newCondScope(self):
 		self.stack[self.currentStack].newScope()
@@ -359,9 +359,9 @@ class CheckStack:
 		
 	def mergeTypes(self, op=None):
 		if self.condScopeStackStack.hasCondScope():
-			self.condScopeStackStack.mergeTypes(op)
+			return self.condScopeStackStack.mergeTypes(op)
 		else:
-			self.scopeStack.mergeTypes(op)
+			return self.scopeStack.mergeTypes(op)
 	
 	def getMergedType(self):
 		if self.condScopeStackStack.hasCondScope():
@@ -561,11 +561,11 @@ class ListElementNode(Node):
 class ListNode(Node):
 	type = 'List'
 	
-class StringNode(Node):
-	type = 'String'
-	def __init__(self, n, tok):
-		Node.__init__(self, n)
-		self.tok = tok
+# class StringNode(Node):
+	# type = 'String'
+	# def __init__(self, n, tok):
+		# Node.__init__(self, n)
+		# self.tok = tok
 	
 class AssignVarNode(TokenNode):
 	type = 'Assignment variable'

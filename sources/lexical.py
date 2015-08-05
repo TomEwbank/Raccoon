@@ -27,7 +27,6 @@ def remove_comments(text):
 		try:
 			i = rest.index(chr(47)) # get the index of a "/" character
 		except:
-			result.write(rest)
 			break
 		
 		if ord(rest[i+1]) == 42: # if the character that follows is "*" -> block comment
@@ -79,7 +78,7 @@ def remove_comments(text):
 			result.write(rest[0:i+1])
 			rest = rest[i+1:]
 	
-	result.write(rest)		
+	result.write(rest)
 	
 	return result.getvalue()
 
@@ -123,7 +122,7 @@ tokens = [
 	'END_STATEMENT',
 	'DEDENT',
 	'INDENT',
-	'STRING',
+	# 'STRING',
 	
 	'ELSEIF',
 	'MOD_OP'
@@ -155,8 +154,8 @@ reserved = {
 	'List_Integer' : 'T_LIST_INT',
 	'List_Double' : 'T_LIST_DOUBLE',
 	'List_Boolean' : 'T_LIST_BOOL',
-	'List_String' : 'T_LIST_STRING',
-	'String' : 'T_STRING',
+	# 'List_String' : 'T_LIST_STRING',
+	# 'String' : 'T_STRING',
 
 }
 
@@ -193,10 +192,10 @@ def t_END_STATEMENT(t):
 	t.lexer.lineno += l
 	return t
 	
-def t_STRING(t):
-	r'".*"'
-	t.value = t.value[1:len(t.value)-1]
-	return t
+# def t_STRING(t):
+	# r'".*"'
+	# t.value = t.value[1:len(t.value)-1]
+	# return t
 
 def t_ELSEIF(t):
 	r'else\ if'
