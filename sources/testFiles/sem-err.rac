@@ -78,7 +78,9 @@ for element in suite:
 	element becomes 78 
 	element becomes c  
 	element becomes 8.9
-	
+
+g becomes [suite, c]
+
 while suite: 
 	continue
 	
