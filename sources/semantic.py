@@ -148,6 +148,7 @@ def semAnalysis(self):
 		AST.Node.checkStack.mergeTypes()
 
 	listType = AST.Node.checkStack.getMergedType()
+	self.var_type = listType
 	
 	if listType == 'Forbidden':
 		print("error l.%d: all list elements must be the same type and not lists" %(self.lineNb))
