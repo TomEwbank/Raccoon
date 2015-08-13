@@ -165,6 +165,7 @@ t_ADD_OP= r'\+'
 t_SUB_OP= r'-'
 t_MUL_OP= r'\*'
 t_DIV_OP= r'/'
+t_MOD_OP=r'\%'
 t_CEQ=r'=\?'
 t_CNE=r'!='
 t_CLT=r'<'
@@ -199,10 +200,6 @@ def t_END_STATEMENT(t):
 
 def t_ELSEIF(t):
 	r'else\ if'
-	return t
-
-def t_MOD_OP(t):
-	r'[ ]*mod[ ]*'
 	return t
 	
 def t_IDENTIFIER(t):

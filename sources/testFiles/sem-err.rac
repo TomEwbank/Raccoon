@@ -86,3 +86,13 @@ while suite:
 	
 if suite:
 	test
+else if a =? 0:
+	test2
+	
+function prime(Integer nbr):
+	ret becomes True
+	for i in range(2,nbr-1):
+		modu becomes nbr%i
+		if modu =? 0:
+			ret becomes False
+	return ret

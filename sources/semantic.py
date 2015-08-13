@@ -85,6 +85,7 @@ def semAnalysis(self):
 			AST.Node.nbSemErrors += 1
 		else:
 			stack.addVariable(token, type)
+			self.children[0].var_type = type
 			if isinstance(self, ConstNode):
 				stack.addConst(token, type)
 	
