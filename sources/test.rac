@@ -1,10 +1,12 @@
-function yawai(String str, Integer i, Boolean b, List_Integer d, List_String e):
+function yawai(Integer i, Boolean b, List_Integer d) return Integer:
 	if b:
 		return i+1
 	else:
 		return i
 		
-yawai("ya", 2, True)
+yawai(2, True)
+
+/*
 l becomes [1,2,5]
 for j in a:
 	hello()
@@ -19,7 +21,7 @@ if [5,6]:
 d becomes [False,2,"coucou"] + [3,2,"damned"] //no error, but incorrect
 
 yeah
-/*
+
 a becomes False
 a becomes (True or check and a =? b) and d <= e
 a becomes c + d+1 mod 9*(5-3/8)

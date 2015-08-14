@@ -86,6 +86,7 @@ def semAnalysis(self):
 		else:
 			stack.addVariable(token, type)
 			self.children[0].var_type = type
+			print("assignvar node %s" %type)
 			if isinstance(self, ConstNode):
 				stack.addConst(token, type)
 	
@@ -246,7 +247,7 @@ def semAnalysis(self):
 		typeList = []
 		for argument in self.children[1:]:
 			typeList.append(argument.var_type)
-		AST.Node.checkStack.addFunction(self.children[0].tok, FuncArguments(typeList))
+		AST.Node.checkStack.addFunction(self.children[0].tok, FuncInformarion(typeList, self.children[0].var_type))
 	
 	AST.Node.checkStack.newFunScope() # analyse scope of the function even if it was already defined
 	for argument in self.children[1:]:
@@ -256,14 +257,15 @@ def semAnalysis(self):
 	
 @addToClass(FuncCallNode)
 def semAnalysis(self):
-	args = AST.Node.checkStack.getArguments(self.children[0].tok)
-	if args is None:
+	infos = AST.Node.checkStack.getArguments(self.children[0].tok)
+	if infos is None:
 		print("error l.%d: undefined function '%s'" %(self.lineNb,self.children[0].tok))
 		AST.Node.nbSemErrors += 1
 	else:
-		if len(self.children)-1 != args.getArgNumber(): 
+		if len(self.children)-1 != infos.getArgNumber(): 
 			print("error l.%d: wrong number of arguments for function '%s'" %(self.lineNb,self.children[0].tok))
 			AST.Node.nbSemErrors += 1
+			AST.Node.checkStack.pushType('Forbidden')
 		else:
 			# Check if the type of the arguments is correct
 			typeList = []
@@ -282,9 +284,14 @@ def semAnalysis(self):
 					typeList.append(AST.Node.checkStack.getMergedType)
 			
 			typeList.reverse()
-			if not(args.compare(typeList)):
+			if not(infos.compare(typeList)):
 				print("error l.%d: wrong types of arguments for function '%s'" %(self.lineNb,self.children[0].tok))
 				AST.Node.nbSemErrors += 1
+				AST.Node.checkStack.pushType('Forbidden')
+			else:
+				returnType = infos.getReturnType()
+				AST.Node.checkStack.pushType(returnType)
+				self.var_type = returnType
 			
 	self.next[0].semAnalysis()
 

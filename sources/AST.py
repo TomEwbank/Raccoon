@@ -14,15 +14,19 @@
 
 import pydot
 
-class FuncArguments:
+class FuncInformarion:
 	'''Data structure holding the types of the arguments of a function'''
 	
-	def __init__(self, typeList):
+	def __init__(self, typeList, returnType):
 		self.argList = typeList
 		self.argNumber = len(typeList)
+		self.retType = returnType
 	
 	def getArgNumber(self):
 		return self.argNumber
+	
+	def getReturnType(self):
+		return self.retType
 		
 	def compare(self, types):
 		if self.argList == types:
@@ -55,8 +59,8 @@ class Scope:
 	def hasConst(self, varName):
 		return self.constHash.has_key(varName)
 	
-	def addFunction(self, funcName, args):
-		self.funcHash[funcName] = args
+	def addFunction(self, funcName, infos):
+		self.funcHash[funcName] = infos
 	
 	def hasFunction(self, funcName):
 		return self.funcHash.has_key(funcName)
@@ -143,8 +147,8 @@ class ScopeStack:
 	def hasConst(self, varName):
 		return self.stack[self.currentScope].hasConst(varName)
 		
-	def addFunction(self, funcName, args):
-		self.stack[self.currentScope].addFunction(funcName, args)
+	def addFunction(self, funcName, infos):
+		self.stack[self.currentScope].addFunction(funcName, infos)
 	
 	def hasFunction(self, funcName):
 		for scope in self.stack:
@@ -155,9 +159,9 @@ class ScopeStack:
 		
 	def getArguments(self, funcName):
 		for scope in self.stack:
-			args = scope.getArguments(funcName)
-			if not (args is None): 
-				return args
+			infos = scope.getArguments(funcName)
+			if not (infos is None): 
+				return infos
 							
 		return None
 	
@@ -255,8 +259,8 @@ class CondScopeStackStack:
 	def hasConst(self, varName):
 		return self.stack[self.currentStack].hasConst(varName)
 		
-	def addFunction(self, funcName, args):
-		self.stack[self.currentStack].addFunction(funcName, args)
+	def addFunction(self, funcName, infos):
+		self.stack[self.currentStack].addFunction(funcName, infos)
 	
 	def hasFunction(self, funcName):
 		return self.stack[self.currentStack].hasFunction(funcName)
@@ -327,11 +331,11 @@ class CheckStack:
 		else:
 			return False
 		
-	def addFunction(self, funcName, args):
+	def addFunction(self, funcName, infos):
 		if self.condScopeStackStack.hasCondScope():
-			self.condScopeStackStack.addFunction(funcName, args)
+			self.condScopeStackStack.addFunction(funcName, infos)
 		else:
-			self.scopeStack.addFunction(funcName, args)
+			self.scopeStack.addFunction(funcName, infos)
 	
 	def hasFunction(self, funcName):
 		if self.scopeStack.hasFunction(funcName) or self.condScopeStackStack.hasFunction(funcName):
@@ -340,10 +344,10 @@ class CheckStack:
 			return False
 		
 	def getArguments(self, funcName):
-		args = self.condScopeStackStack.getArguments(funcName)
-		if args is None:
-			args = self.scopeStack.getArguments(funcName)
-		return args
+		infos = self.condScopeStackStack.getArguments(funcName)
+		if infos is None:
+			infos = self.scopeStack.getArguments(funcName)
+		return infos
 	
 	def getVarType(self, varName):
 		type = self.condScopeStackStack.getVarType(varName)
@@ -572,6 +576,10 @@ class AssignVarNode(TokenNode):
 		
 class FuncDefNameNode(TokenNode):
 	type = 'Function name'
+	def __init__(self, n, tok, t):
+		Node.__init__(self, n)
+		self.tok = tok
+		self.var_type = t
 
 class FuncDefArgNode(TokenNode):
 	type = 'Function argument'

@@ -179,13 +179,62 @@ def p_func_def(p):
 	'''func_def : FUNCTION head END_STATEMENT INDENT body DEDENT'''
 	p[0] = AST.FuncDefNode(p.lineno(1), [p[2], p[5]])
 
-def p_head(p):
+def p_head_void(p):
 	'''head : IDENTIFIER LPAREN func_def_args RPAREN COLON
 			| IDENTIFIER LPAREN RPAREN COLON'''
 	if len(p) == 6:
-		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1])] + p[3].children)
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Void')] + p[3].children)
 	if  len(p) == 5: 
-		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1])])
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Void')])
+		
+def p_head_int(p):
+	'''head : IDENTIFIER LPAREN func_def_args RPAREN RETURN T_INT COLON
+			| IDENTIFIER LPAREN RPAREN RETURN T_INT COLON'''
+	if len(p) == 8:
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Integer')] + p[3].children)
+	if  len(p) == 7: 
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Integer')])
+		
+def p_head_double(p):
+	'''head : IDENTIFIER LPAREN func_def_args RPAREN RETURN T_DOUBLE COLON
+			| IDENTIFIER LPAREN RPAREN RETURN T_DOUBLE COLON'''
+	if len(p) == 8:
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Double')] + p[3].children)
+	if  len(p) == 7: 
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Double')])
+
+def p_head_bool(p):
+	'''head : IDENTIFIER LPAREN func_def_args RPAREN RETURN T_BOOL COLON
+			| IDENTIFIER LPAREN RPAREN RETURN T_BOOL COLON'''
+	if len(p) == 8:
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Boolean')] + p[3].children)
+	if  len(p) == 7: 
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'Boolean')])
+
+def p_head_list_int(p):
+	'''head : IDENTIFIER LPAREN func_def_args RPAREN RETURN T_LIST_INT COLON
+			| IDENTIFIER LPAREN RPAREN RETURN T_LIST_INT COLON'''
+	if len(p) == 8:
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'List Integer')] + p[3].children)
+	if  len(p) == 7: 
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'List Integer')])
+		
+def p_head_list_double(p):
+	'''head : IDENTIFIER LPAREN func_def_args RPAREN RETURN T_LIST_DOUBLE COLON
+			| IDENTIFIER LPAREN RPAREN RETURN T_LIST_DOUBLE COLON'''
+	if len(p) == 8:
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'List Double')] + p[3].children)
+	if  len(p) == 7: 
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'List Double')])
+		
+def p_head_list_bool(p):
+	'''head : IDENTIFIER LPAREN func_def_args RPAREN RETURN T_LIST_BOOL COLON
+			| IDENTIFIER LPAREN RPAREN RETURN T_LIST_BOOL COLON'''
+	if len(p) == 8:
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'List Boolean')] + p[3].children)
+	if  len(p) == 7: 
+		p[0] = AST.HeadNode(p.lineno(1), [AST.FuncDefNameNode(p.lineno(1), p[1], 'List Boolean')])
+		
 
 def p_func_def_args(p):
 	'''func_def_args : argument 
