@@ -90,11 +90,11 @@ if suite:
 	test2  prob avec ce esle if*/
 	
 function Bprime(Integer nbr) return Boolean:
-	ret becomes True
+	ret becomes 1
 	for i in range(2,nbr-1):
 		modu becomes nbr%i
 		if modu =? 0:
-			ret becomes False
+			ret becomes 5.5
 	return ret
 	
 function main():

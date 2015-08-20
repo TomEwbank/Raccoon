@@ -42,7 +42,7 @@ def add_alloc(s):
 				j = len(matchObj.group())
 				varName = rest[i:i+j+1]
 				
-				# only one "alloc" is need by variable, so check that we didn't encountered it before
+				# only one "alloc" is needed by variable, so check that we didn't encounter it before
 				if not encountered_var.has_key(varName):
 					encountered_var[varName] = 1
 					#print(varName)
@@ -53,7 +53,7 @@ def add_alloc(s):
 					while char != '\n':
 						k -= 1
 						char = result[k]
-						# if "define" encountered in the line, variable is an argument and don't need an "alloc"
+						# if "define" encountered in the line, variable is an argument and doesn't need an "alloc"
 						if k+6 <= len(result) and result[k:k+6] == "define":
 							allocNeeded = False
 							break							

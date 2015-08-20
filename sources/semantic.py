@@ -374,7 +374,14 @@ def semAnalysis(self):
 			break
 		else:
 			node = node.parent
-
+	
+	if node.parent is not None:
+		type = AST.Node.checkStack.getMergedType()
+		node = node.parent.children[0].children[0] # the return type is available in the FuncDefNameNode but not the FuncDefNode
+		if isinstance(node, FuncDefNameNode) and type != node.var_type:
+			print("error l.%d: wrong return type for function %s, trying to return type '%s' when '%s' is expected" %(self.lineNb,node.tok,type,node.var_type))
+			AST.Node.nbSemErrors += 1
+	
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.BreakNode)
