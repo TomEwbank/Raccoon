@@ -1,3 +1,4 @@
+
 #############################################################################################
 #  llvm.py,																				#
 #																							#
@@ -42,7 +43,7 @@ def add_alloc(s):
 				j = len(matchObj.group())
 				varName = rest[i:i+j+1]
 				
-				# only one "alloc" is needed by variable, so check that we didn't encounter it before
+				# only one "alloc" is need by variable, so check that we didn't encountered it before
 				if not encountered_var.has_key(varName):
 					encountered_var[varName] = 1
 					#print(varName)
@@ -50,30 +51,36 @@ def add_alloc(s):
 					k = len(result)-1
 					char = result[k]
 					# going back to the previous line to insert the alloc statement
-					while char != '\n':
+					while (char != '\n') and (k >0):
 						k -= 1
 						char = result[k]
-						# if "define" encountered in the line, variable is an argument and doesn't need an "alloc"
+						# if "define" encountered in the line, variable is an argument and don't need an "alloc"
 						if k+6 <= len(result) and result[k:k+6] == "define":
 							allocNeeded = False
 							break							
 				else: allocNeeded = False
 			
 			if allocNeeded:
+				#print("alloc added")
 				if varName[1] == 'I':
 					alloca = " = alloca i32 "
+					result = result[0:k+1] + "  " + varName + alloca + result[k:]
 				elif varName[1] == 'D': 
 					alloca = " = alloca double "
+					result = result[0:k+1] + "  " + varName + alloca + result[k:]
 				elif varName[1] == 'B':
 					alloca = " = alloca i1 "
+					result = result[0:k+1] + "  " + varName + alloca + result[k:]
 				elif varName[1] == 'L':
-					alloca = " = alloca list "
-				else:
-					print("llvm error: unkown type")
-					alloca = " = alloca undef "
-				result = result[0:k+1] + "  " + varName + alloca + result[k:]
+					alloca = " = alloca i32* "#si list que int
+					result = result[0:k+1] + "  " + varName + alloca + result[k:]
+				#else:
+					#print("llvm error: unknown type "+varName)
+					#alloca = " = alloca undef "
+				#result = result[0:k+1] + "  " + varName + alloca + result[k:]
 				
 		rest = rest[i+1:]
+	
 	return result
 
 	
@@ -88,9 +95,16 @@ def findList(self):
 @addToClass(AST.ListNode)	
 def findList(self):
 	global lists
-	if self.parent.type == 'Assignment':	 
+	if self.parent.type == 'Assignment':	
 		lists.append(str(self.parent.children[0].tok))
 		lists.append(len(self.children))
+	self.next[0].findList()
+	
+@addToClass(AST.DisplayNode)
+def findList(self):
+	global printlists
+	if self.children[0].typeI()=='i32*' :
+		printlists.append(self.children[0].tok)
 	self.next[0].findList()
 	
 @addToClass(AST.Node)	
@@ -101,19 +115,23 @@ def llvm(self):
 @addToClass(AST.ProgramNode)	
 def llvm(self):
 	global s
-		
+	global end
 	#lecture de l'arbre
 	for i in self.children:
 		i.llvm()
-		s+="\n\n"
+	snew =""
+	snew = ''.join(s)
 	#Ajout des alloc
-	s = add_alloc(s)
+	s = add_alloc(snew)
+
 	
 	snew = s.replace("   "," ") 
 	s = snew.replace("  "," ") 
 	#incertion des fonction display pour les floats, les integers et les boolens (identifier compris)
-	s += "\n\n@.strf = private unnamed_addr constant [4 x i8] c\"\\0A%f\\00\"\ndefine void @display_f(float %n)  {\nentry:\n  %n.addr = alloca float\n  store float %n, float* %n.addr\n  %0 = load float* %n.addr\n  %1 = fpext float %0 to double\n  %2 = getelementptr inbounds [4 x i8]* @.strf, i32 0, i32 0\n  %call = call i32 (i8*, ...)* @printf(i8* %2, double %1)\n  ret void\n}\n\n@.str = private unnamed_addr constant [4 x i8] c\"\\0A%d\\00\"	\ndefine void @display_i(i32 %n) {\nentry:\n  %n.addr = alloca i32\n  store i32 %n, i32* %n.addr\n  %0 = load i32* %n.addr\n  %1 = getelementptr inbounds [4 x i8]* @.str, i32 0, i32 0\n  %2 = call i32 (i8*, ...)* @printf(i8* %1, i32 %0)\n  ret void\n}\ndefine void @display_b(i1 %n) {\nentry:\n  %n.addr = alloca i1\n  store i1 %n, i1* %n.addr\n  %0 = load i1* %n.addr\n  %1 = getelementptr inbounds [4 x i8]* @.str, i32 0, i32 0\n  %2 = call i32 (i8*, ...)* @printf(i8* %1, i1 %0)\n  ret void\n}\n\n\ndeclare i32 @printf(i8*, ...)\n\n"
+	end += "\n\n@.strf = private unnamed_addr constant [4 x i8] c\"%f\\0A\\00\"\ndefine void @display_f(float %n)  {\nentry:\n  %n.addr = alloca float\n  store float %n, float* %n.addr\n  %0 = load float* %n.addr\n  %1 = fpext float %0 to double\n  %2 = getelementptr inbounds [4 x i8]* @.strf, i32 0, i32 0\n  %call = call i32 (i8*, ...)* @printf(i8* %2, double %1)\n  ret void\n}\n\n@.str = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\"	\ndefine void @display_i(i32 %n) {\nentry:\n  %n.addr = alloca i32\n  store i32 %n, i32* %n.addr\n  %0 = load i32* %n.addr\n  %1 = getelementptr inbounds [4 x i8]* @.str, i32 0, i32 0\n  %2 = call i32 (i8*, ...)* @printf(i8* %1, i32 %0)\n  ret void\n}\ndefine void @display_b(i1 %n) {\nentry:\n  %n.addr = alloca i1\n  store i1 %n, i1* %n.addr\n  %0 = load i1* %n.addr\n  %1 = getelementptr inbounds [4 x i8]* @.str, i32 0, i32 0\n  %2 = call i32 (i8*, ...)* @printf(i8* %1, i1 %0)\n  ret void\n}\n\n\ndeclare i32 @printf(i8*, ...)\n\n"
+	#insertion d'une fonction d'affichage adapte a la demande
 	
+	s+=end  
 
 @addToClass(AST.FuncDefNode)
 def llvm(self):
@@ -131,15 +149,16 @@ def llvm(self):
 	
 	#remplacement des ?1? et ?2? par %0, %1, %2, etc
 	i=0
+	sstr = ""
+	sstr = ''.join(s)
 	while 1:              
-		snew = s.replace("?1?", "%"+str(i),1)
+		snew = sstr.replace("?1?", "%"+str(i),1)
 		snew = snew.replace("?2?", "%"+str(i),1)
-		if s == snew:
+		if sstr == snew:
 			break
 		i=i+1
-		s = snew
-	
-	
+		sstr = snew
+	s = [sstr]
 		
 @addToClass(AST.HeadNode)
 def llvm(self):
@@ -177,8 +196,7 @@ def llvm(self):
 @addToClass(AST.ListNode)
 def llvm(self):
 	global s
-	#s+= 
-
+	
 @addToClass(AST.TokenNode)	
 def llvm(self):
 	global s
@@ -196,23 +214,48 @@ def llvm(self):
 	global s
 	s += self.typeI()+" %"+str(self.tok)+" "
 
-@addToClass(AST.FuncDefNameNode)
+
+@addToClass(AST.TokenNode)	
+@addToClass(AST.IdNode)	
+@addToClass(AST.FuncCallNode)	
+@addToClass(AST.FuncDefArgNode)	
+
+@addToClass(AST.ListNode)	
+@addToClass(AST.FuncDefNameNode)	
+@addToClass(AST.NumIteratorNode)
 def typeI(self):
-	t = self.tok
-	global e
-	if t[0]=='I':#integer
+
+	if self.var_type == 'Integer':
 		return 'i32'
-	elif t[0]=='D':#double
+	elif self.var_type == 'Double':
 		return 'double'
-	elif t[0]=='B':#boolean
+	elif self.var_type == 'Boolean':
 		return 'i1'
-	elif t[0]=='L':#list
-		return '?undef?'
-	elif t[0]=='S':#string
-		return '?undef'
-	else:
+	elif self.var_type == 'List Integer':
+		return 'i32*'
+	elif self.var_type == 'List Double':
+		return 'double*'
+	elif self.var_type == 'List Boolean':
+		return 'i1*'
+	elif self.var_type == 'Void':
 		return 'void'
-		e+="\nError : begin the identifier name with its type (I, D, B, L or S)"
+	else :
+		print ("\nerror (llvm generation): unknown type: "+self.var_type)
+		
+@addToClass(AST.ListElementNode)
+def typeI(self):
+	if self.var_type == 'List Integer':
+		return 'i32'
+	elif self.var_type == 'List Double':
+		return 'double'
+	elif self.var_type == 'List Boolean':
+		return 'i1'
+	else :
+		print ("\nerror (llvm generation): unknown type: "+self.var_type)
+	
+@addToClass(AST.FuncCallNameNode)
+def typeI(self):
+	return self.parent.typeI()
 	
 @addToClass(AST.IntNode)
 def typeI(self):
@@ -230,54 +273,33 @@ def typeI(self):
 def typeI(self):
 	return"double"
 	
-@addToClass(AST.ListElementNode)
-def typeI(self):
-	return"[ x i32]"
-	
-@addToClass(AST.FuncDefArgNode)	
-@addToClass(AST.IdNode)	
-@addToClass(AST.FuncCallNameNode)	
-@addToClass(AST.TokenNode)	
-def typeI(self):
-	t = self.tok
-	global e
-	if t[0]=='I':#integer
-		return 'i32'
-	elif t[0]=='D':#double
-		return 'double'
-	elif t[0]=='B':#boolean
-		return 'i1'
-	elif t[0]=='L':#list
-		return '?undef?'
-	else:
-		return '?undef'
-		e+="\nError : begin the identifier name with its type (I, D, B or L)"
-
 @addToClass(AST.OpNode)	
 def typeI(self):
-	global e
-	a = self.children[0]
-	b = self.children[0]
-	if a.type=='Identifier' or a.type=='Operation' or a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False':
-		return a.typeI()
-	elif b.type=='Identifier' or b.type=='Operation' or b.type == 'Integer' or b.type == 'Double' or b.type == 'True' or b.type == 'False':
-		return b.typeI()
+	if self.children[0].typeI()==self.children[1].typeI():
+		return self.children[0].typeI()
 	else:
-		e+="\n\n undefine type for node:"+ a.type+ " and "+b.type
+		print ("\nerror: undefine type for node:"+ self.children[0].type+ " and "+self.children[1].type)
 
-
+		
 @addToClass(AST.OpNode)	
 def llvm(self):
 	global s
 	if self.children[0].type == 'Operation':
 		self.children[0].llvm()
-	if self.children[0].type == 'Identifier':
+	elif self.children[0].type == 'Identifier':
 		s+="\n?1? = load "+self.children[0].typeI()+"* %"+str(self.children[0].tok)
+	elif self.children[0].type == 'List element':
+		self.children[0].llvm()
+		s+= "\n?1? = load i32* ?2?"
+	
 	if self.children[1].type == 'Operation':
 		self.children[1].llvm()
-	if self.children[1].type == 'Identifier':
+	elif self.children[1].type == 'Identifier':
 		s+="\n?1? = load "+self.children[1].typeI()+"* %"+str(self.children[1].tok)
-		
+	elif self.children[1].type == 'List element':
+		self.children[1].llvm()
+		s+= "\n?1? = load i32* ?2?"
+	
 	s+="\n?1? = "
 	#Si on a des Double, ajouter "f" juste devant
 	if self.op == '+':
@@ -300,7 +322,7 @@ def llvm(self):
 		s+="icmp sgt"
 	elif self.op == '>=':
 		s+="icmp sge"
-	elif self.op == 'mod ':
+	elif self.op == '%':
 		s+="srem"
 	elif self.op == 'or':
 		s+="icmp or"
@@ -312,18 +334,30 @@ def llvm(self):
 	s+=" "
 		
 	a = self.children[0]
-	if a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False':
+	if a.type == 'Integer' or a.type == 'Double':
+		a.llvm()
+		s += ", "
+	elif  a.type == 'True' or a.type == 'False':
+		s += " i1 "
 		a.llvm()
 		s += ", "
 	elif a.type == 'Identifier' or a.type == 'Operation':
 		s += a.typeI()+" ?2?, "	
+	elif a.type == 'List element':
+		s+="i32 ?2?, "
 	else:
 		#s+=" undef" + self.children[0].type+", "
 		a.llvm()
-		
+
+	
 	a = self.children[1]
-	if a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False':
+
+	if a.type == 'Integer' or a.type == 'Double'  :
+
 		s+= str(a.tok)
+		
+	elif a.type == 'True' or a.type == 'False':
+		s+= a.type
 	elif a.type == 'Identifier' or a.type == 'Operation':
 		s+= " ?2?"	
 	else:
@@ -332,7 +366,7 @@ def llvm(self):
 		
 	s+="\n"
 		
-@addToClass(AST.ForNode)#incomplete
+@addToClass(AST.ForNode)
 def llvm(self):
 	global s
 	rangeNode= self.children[0]
@@ -345,7 +379,7 @@ def llvm(self):
 		s+="\nstore "+rangeNode.children[2].typeI()+" ?2?, i32* %"+str(rangeNode.children[0].tok)
 		s+="\nbr label %for_"+str(self.lineNb)+"\n\nfor_end_"+str(self.lineNb)+":"
 		
-	else: # for iterator in list: not implemented yet
+	else: 
 		s+="\nbr label %for_" +str(self.lineNb)+"\n\nfor_" +str(self.lineNb)+":"
 	
 @addToClass(AST.InRangeNode)
@@ -368,15 +402,20 @@ def llvm(self):
 	#s+= "\n?1? = load i32* %"+str(self.children[0].tok)
 	if self.children[2].type == 'Operation':
 		self.children[2].llvm()
-		s+= "\n?1? = load i32* %"+str(self.children[0].tok)
+		
+	s+= "\n?1? = load i32* %"+str(self.children[0].tok)
+	
+	if self.children[2].type == 'Operation':
 		s+="\n?1? = icmp sge i32 ?2?, ?2?"
 	elif self.children[2].type == 'Integer' or self.children[2].type == 'Double' or self.children[2].type == 'True' or self.children[2].type == 'False':
-		s+= "\n?1? = load i32* %"+str(self.children[0].tok)
 		s+="\n?1? = icmp sle i32 ?2?, "
 		self.children[2].llvm()
 	elif self.children[2].type == 'Identifier':
-		s+= "\n?1? = load i32* %"+str(self.children[0].tok)
-		s+="\n?1? = icmp sle i32 ?2?, %"+str(self.children[2].tok)
+		s+= "\n?1? = load i32* %"+str(self.children[2].tok)
+		s+="\n?1? = icmp sle i32 ?2?, ?2?" #str(self.children[2].tok)
+	else:
+		s+="\n?1? = icmp sle i32 ?2?, ?2?" 
+	
 	s+="\nbr i1 ?2?, label %for_body_"+nbr+", label %for_end_"+nbr
 	
 @addToClass(AST.ReturnNode)
@@ -386,14 +425,18 @@ def llvm(self):
 	a = self.children[0]
 	if a.type == 'Operation':
 		a.llvm()
-		s+="ret "+a.typeI()+" ?2?"
-	elif a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False' or a.type == 'Identifier':
-		s+="ret " 
+		s+="\nret "+a.typeI()+" ?2?"
+	elif a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False' :
+		s+="\nret " 
 		a.llvm()
+	elif  a.type == 'Identifier':
+		s+="?1? = load "+a.typeI()+"* %" +a.tok#%0 = load i32* %b
+		s+="\nret "+a.typeI()+" ?2?" #ret i32 %0
+		
+		
 	else:
-		s+="ret " 
+		s+="\nret " 
 		a.llvm()
-
 
 @addToClass(AST.ConditionnalNode)
 def llvm(self):
@@ -423,9 +466,10 @@ def llvm(self):
 		s+="\nbr i1 %"+str(a.tok)+", label %if_" +str(self.lineNb)+", label %end_if_" +str(self.lineNb)
 	s+="\n\nif_" +str(self.lineNb)+":"
 	self.children[1].llvm()
-	if len(self.parent.children)>self.childNum+1:
-		if self.parent.children[self.childNum+1].type == 'Else':
-			s+="\nbr label %end_else_" +str(self.lineNb)
+	if (len(self.parent.children)>self.childNum+1) and (self.parent.children[self.childNum+1].type == 'Else'):
+		s+="\nbr label %end_else_" +str(self.lineNb)
+	else:
+		s+="\nbr label %end_if_" +str(self.lineNb)
 	s+="\n\nend_if_" +str(self.lineNb)+":"
 
 @addToClass(AST.ElseNode)
@@ -434,28 +478,70 @@ def llvm(self):
 	self.children[0].llvm()
 	s+="\n\nend_else_" +str(self.parent.children[self.childNum-1].lineNb)+":"
 
+@addToClass(AST.ListElementNode)
+def llvm(self):
+	global s
+	s+="\n?1? = load i32* %"+ str(self.children[1].tok)
+	s+="\n?1? = load i32** %"+ str(self.children[0].tok)
+	s+="\n?1? = sext i32 ?2? to i64"
+	s+="\n?1? = getelementptr inbounds i32* ?2?, i64 ?2?"
+	
+	
 @addToClass(AST.AssignNode)
 def llvm(self):
 	global s
+	global end
 	a = self.children[1]
-	if a.type == 'Operation':
-		a.llvm()
-		s+="\nstore "+a.typeI()+" ?2?, " 
-		s += self.children[0].typeI()+"* %"+str(self.children[0].tok)
-	elif a.type == 'Function call':
-		a.llvm()
-		s+="\nstore "+a.children[0].typeI()+" ?2?, "+self.children[0].typeI()+"* %"+str(self.children[0].tok)
-	elif self.children[0].type != 'List element':
-		s+="\nstore " 
-		if a.type == 'Identifier':
-			s += a.typeI()+"* %"+str(a.tok)+" "
+	b = self.children[0] # b becomes a
+		
+	if a.type == 'List':
+		end+="\n@"+b.tok+"= global"
+		nbr = len(a.children)
+		end+="["+str(nbr) + " x i32] ["
+		for i in a.children:
+			end+="i32 "+str(i.tok)
+			if a.children[nbr-1] != i:
+				end+=","
+		end+="]\n"
+		s+="\n?1? = getelementptr inbounds ["+str(nbr) + "x i32]* @"+b.tok+", i32 0, i32 0"
+		s+="\nstore i32* ?2?, i32** %"+b.tok+"\n"
+		return
+			
+	global counter
+#gerer le type de a
+	if b.type == 'List element':
+		if a.type == 'List element':
 			a.llvm()
-		elif a.type == a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False': 
-			a.llvm()		
+			s+= " \n%ait"+str(counter)+" = load i32* ?2?"
+			
+		elif a.type == 'Identifier':
+			s+= "\n%ait"+str(counter)+" = load "+a.typeI()+"* %"+str(a.tok)
 		else:
-			s+= a.type
+			print("check error in assignement")
+	else:
+		if a.type == 'List element':
 			a.llvm()
-		s += ", "+self.children[0].typeI()+"* %"+str(self.children[0].tok)
+			s+= " \n?1? = load i32* ?2?"
+		elif a.type == 'Identifier':
+			s+= "\n?1? = load "+a.typeI()+"* %"+str(a.tok)
+		elif a.type == 'Operation':
+			a.llvm()
+		elif a.type == 'Function call':
+			a.llvm()
+
+#gerer le type de b
+	if b.type == 'List element':
+		b.llvm()
+		s+="\nstore " +a.typeI()	+ " %ait"+str(counter)+", " +b.typeI()+"* ?2?"
+		counter+=1
+	elif b.type == 'Assignment variable' and ( a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False'):
+		s+="\nstore " 
+		a.llvm()
+		s+=", " +b.typeI()+"* %"+str(b.tok)
+	else:
+		s+="\nstore " +a.typeI()	+ " ?2?, " +b.typeI()+"* %"+str(b.tok)
+	
+		
 
 @addToClass(AST.WhileNode)
 def llvm(self):
@@ -476,25 +562,38 @@ def llvm(self):
 @addToClass(AST.FuncCallNode)
 def llvm(self):
 	global s
+	global counter
+	j = 0
+	
 	for i in range(0, len(self.children)):
+		
 		if self.children[i].type == 'Operation':
 			self.children[i].llvm()
-	s+="?1? = call "+self.children[0].typeI()+" @"+str(self.children[0].tok)+"("
+		elif self.children[i].type == 'Identifier':
+			s+="\n%arg"+str(j+counter) +"= load "+self.children[i].typeI()+"* %"+self.children[i].tok
+			j+=1
+	if self.children[0].typeI() == 'void':
+		s+="\ncall void" 
+	else:
+		s+="\n?1? = call " +self.children[0].typeI()
+	s+=" @"+str(self.children[0].tok)+"("
+
 	for i in range(1, len(self.children)):
-		if self.children[i].type == 'Identifier' or self.children[i].type == 'Integer' or self.children[i].type == 'Double' or self.children[i].type == 'True' or self.children[i].type == 'False': 
+		if self.children[i].type == 'Integer' or self.children[i].type == 'Double' or self.children[i].type == 'True' or self.children[i].type == 'False': 
 			self.children[i].llvm()
-		elif self.children[i].type == 'Operation':
-			s+= self.children[i].typeI()+" %2%" 
+		elif self.children[i].type == 'Operation' :
+			s+= self.children[i].typeI()+" ?2?"
+		elif self.children[i].type == 'Identifier':
+			s+= self.children[i].typeI()+" %arg"+str(counter) 
+			counter+=1
 		if (i != len(self.children)-1):
 			s+=", "
-	s+=")"
+	s+=")\n"
 
-@addToClass(AST.DisplayNode)#incomplete
-def llvm(self):
+@addToClass(AST.DisplayNode)
+def llvm(self): 
 	global s
-	global e
 	a = self.children[0]
-	
 	if a.type == 'Identifier':
 		s += "\n?1? = load "+a.typeI()+"* %"+str(a.tok)
 	
@@ -505,11 +604,32 @@ def llvm(self):
 		s+= "f(double " 
 	elif a.type == 'True' or a.type == 'False' or a.typeI() == 'i1':
 		s+= "b(i1 "
-
-	if a.type == 'Identifier':
-		s+="?2?)"
+	elif a.typeI() == 'i32*': 
+		s+="l_"+str(a.tok)+"("
+		
+	
+	if a.typeI() == 'i32*': 
+		s+=")"
+	elif a.type == 'Identifier':
+		s+="?2?)"		
 	else:
 		s+=str(self.children[0].tok)+ ")"
+	
+
+def add_displayList():
+	global end
+	global lists
+	global printlists
+	for i in printlists:
+		end+="\ndefine void @display_l_"+i+"() {\nentry:"
+		nbrelem =  lists[lists.index(i)+1] 
+		for j in range(0,nbrelem):
+			#print "add element "+str(j)
+			end+= "\n%"+str(j*2)+"= getelementptr inbounds ["+str(nbrelem)+" x i32]* @"+str(i)+", i32 0, i64 "+str(j)
+			end+= "\n%"+str(j*2+1)+"= load i32* %"+str(j*2)
+			end+= "\ncall void @display_i(i32 %"+str(j*2+1)+")\n"
+		end+="\nret void\n}\n"
+		
 	
 
 
@@ -524,24 +644,26 @@ if __name__ == "__main__":
 	entry = thread(ast)
 	entry.semAnalysis()
 	
+	global s
+	s = []
+	global end
+	end = ""
 	global lists
 	lists = []
+	global printlists
+	printlists = []
 	entry.findList()
-	print(lists)
+	printlists = list(set(printlists)) 
+	add_displayList()
+	global counter
+	counter = 0
 	
-	global s
-	s = ""
-	global e
-	e = ""
 	ast.llvm()
-	print e
 	
-	outfile = open('generatedLlvm.ll', 'w')
+	name = sys.argv[1].replace('.rac', '.ll')
+	outfile = open(name, 'w')
 	outfile.write(s)
 	outfile.close()
-	print "llvm wrote to generatedLlvm.ll"
+	print "llvm wrote to "+name
 
-
-
-
-
+#Integer, Double, Boolean et List Integer, List Double, List Boolean. 
