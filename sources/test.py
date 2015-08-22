@@ -2,7 +2,7 @@
 	
 a = ["prout", 8, 2, 6, 14]
 b = ["prout", 8, 2, 6, 14]
-
+print(a[1:2])
 for i in a:
 	y = 84
 	if i == 2:

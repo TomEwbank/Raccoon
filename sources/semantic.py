@@ -72,6 +72,8 @@ def semAnalysis(self):
 		elif trueType is not None and trueType[0:4] == 'List' and type != trueType[5:]:
 			print("error l.%d: Trying to assign type %s to a list element of type %s" %(self.lineNb,type, trueType[5:]))
 			AST.Node.nbSemErrors += 1
+		else:
+			self.children[0].children[0].id_type = trueType
  
 	else:
 		token = self.children[0].tok
@@ -86,6 +88,7 @@ def semAnalysis(self):
 		else:
 			stack.addVariable(token, type)
 			self.children[0].var_type = type
+			self.children[0].id_type = type
 			print("assignvar node %s" %type)
 			if isinstance(self, ConstNode):
 				stack.addConst(token, type)
@@ -151,6 +154,7 @@ def semAnalysis(self):
 
 	listType = AST.Node.checkStack.getMergedType()
 	self.var_type = listType
+	self.id_type = listType
 	
 	if listType == 'Forbidden':
 		print("error l.%d: all list elements must be the same type and not lists" %(self.lineNb))
@@ -180,11 +184,13 @@ def semAnalysis(self):
 				# and we just want to push the 'some_type' on the typeStack
 				AST.Node.checkStack.pushType(type[5:])
 				self.var_type = type[5:]
+				self.id_type = type
 				print("pushed %s %s" %(type[5:],self.tok))
 				
 			else:
 				AST.Node.checkStack.pushType(type)
 				self.var_type = type
+				self.id_type = type
 				print("pushed %s %s" %(type,self.tok))
 	
 	condCheck(self)
@@ -208,6 +214,7 @@ def semAnalysis(self):
 		AST.Node.nbSemErrors += 1
 	else:
 		self.var_type = type
+		self.id_type = type
 		
 	condCheck(self)
 	
@@ -270,22 +277,23 @@ def semAnalysis(self):
 			# Check if the type of the arguments is correct
 			typeList = []
 			for argument in reversed(self.children[1:]):
-				if isinstance(argument, IdNode) or isinstance(argument, ListElementNode):
-					typeList.append(argument.var_type)
-				elif isinstance(argument, IntNode):
-					typeList.append('Integer')
-				elif isinstance(argument, DoubleNode):
-					typeList.append('Double')
-				# elif isinstance(argument, StringNode):
-					# typeList.append('String')
-				elif isinstance(argument, TrueNode) or isinstance(argument, FalseNode):
-					typeList.append('Boolean')
-				else:
-					typeList.append(AST.Node.checkStack.getMergedType)
+				# if isinstance(argument, IdNode) or isinstance(argument, ListElementNode):
+					# typeList.append(argument.var_type)
+				# elif isinstance(argument, IntNode):
+					# typeList.append('Integer')
+				# elif isinstance(argument, DoubleNode):
+					# typeList.append('Double')
+				# # elif isinstance(argument, StringNode):
+					# # typeList.append('String')
+				# elif isinstance(argument, TrueNode) or isinstance(argument, FalseNode):
+					# typeList.append('Boolean')
+				# else:
+				typeList.append(AST.Node.checkStack.getMergedType())
 			
 			typeList.reverse()
 			if not(infos.compare(typeList)):
 				print("error l.%d: wrong types of arguments for function '%s'" %(self.lineNb,self.children[0].tok))
+				print("%s expected but get %s" %(infos.argList,typeList))
 				AST.Node.nbSemErrors += 1
 				AST.Node.checkStack.pushType('Forbidden')
 			else:

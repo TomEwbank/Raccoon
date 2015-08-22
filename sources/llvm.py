@@ -71,13 +71,18 @@ def add_alloc(s):
 				elif varName[1] == 'B':
 					alloca = " = alloca i1 "
 					result = result[0:k+1] + "  " + varName + alloca + result[k:]
-				elif varName[1] == 'L':
-					alloca = " = alloca i32* "#si list que int
+				elif varName[1:3] == 'LI':
+					alloca = " = alloca i32* "
+					result = result[0:k+1] + "  " + varName + alloca + result[k:]
+				elif varName[1:3] == 'LD':
+					alloca = " = alloca double* "
+					result = result[0:k+1] + "  " + varName + alloca + result[k:]
+				elif varName[1:3] == 'LB':
+					alloca = " = alloca i1* "
 					result = result[0:k+1] + "  " + varName + alloca + result[k:]
 				#else:
-					#print("llvm error: unknown type "+varName)
-					#alloca = " = alloca undef "
-				#result = result[0:k+1] + "  " + varName + alloca + result[k:]
+					#print("llvm error: unknown type for '%s'" %varName)
+					
 				
 		rest = rest[i+1:]
 	
@@ -96,7 +101,7 @@ def findList(self):
 def findList(self):
 	global lists
 	if self.parent.type == 'Assignment':	
-		lists.append(str(self.parent.children[0].tok))
+		lists.append(str(self.parent.children[0].getLlvmTok()))
 		lists.append(len(self.children))
 	self.next[0].findList()
 	
@@ -104,7 +109,7 @@ def findList(self):
 def findList(self):
 	global printlists
 	if self.children[0].typeI()=='i32*' :
-		printlists.append(self.children[0].tok)
+		printlists.append(self.children[0].getLlvmTok())
 	self.next[0].findList()
 	
 @addToClass(AST.Node)	
@@ -140,7 +145,7 @@ def llvm(self):
 	a.llvm()#head
 	s+="{\n\nentry: "
 	for i in range(1, len(a.children)):
-		s+="\nstore "+str(a.children[i].typeI())+" %"+str(a.children[i].tok).replace(" ","")+"_arg, "+a.children[i].typeI()+"* %"+str(a.children[i].tok)
+		s+="\nstore "+str(a.children[i].typeI())+" %"+str(a.children[i].getLlvmTok()).replace(" ","")+"_arg, "+a.children[i].typeI()+"* %"+str(a.children[i].getLlvmTok())
 	self.children[1].llvm()#body
 	if self.children[0].children[0].typeI()=='void':
 		s+="\nret void\n} "# a return read only if there is no return un the function
@@ -163,12 +168,12 @@ def llvm(self):
 @addToClass(AST.HeadNode)
 def llvm(self):
 	global s
-	s+="\ndefine "+self.children[0].typeI()+" @"+str(self.children[0].tok)+"("
+	s+="\ndefine "+self.children[0].typeI()+" @"+str(self.children[0].getLlvmTok())+"("
 	for i in range(1, len(self.children)):
 		#self.children[i].llvm()
 		#s+="_arg"
 		
-		s+=str(self.children[i].typeI())+" %"+str(self.children[i].tok).replace(" ","")+"_arg"
+		s+=str(self.children[i].typeI())+" %"+str(self.children[i].getLlvmTok()).replace(" ","")+"_arg"
 		if (i != len(self.children)-1):
 			s+=", "
 	s+=")"
@@ -176,7 +181,7 @@ def llvm(self):
 @addToClass(AST.IntNode)
 def llvm(self):
 	global s
-	s+=" i32 " +str(self.tok)+" "
+	s+=" i32 " +str(self.getLlvmTok())+" "
 	
 @addToClass(AST.TrueNode)
 def llvm(self):
@@ -191,7 +196,7 @@ def llvm(self):
 @addToClass(AST.DoubleNode)
 def llvm(self):
 	global s
-	s+="double " +str(self.tok)+" "
+	s+="double " +str(self.getLlvmTok())+" "
 	
 @addToClass(AST.ListNode)
 def llvm(self):
@@ -200,7 +205,7 @@ def llvm(self):
 @addToClass(AST.TokenNode)	
 def llvm(self):
 	global s
-	s += self.typeI()+" %"+str(self.tok)+" "
+	s += self.typeI()+" %"+str(self.getLlvmTok())+" "
 
 @addToClass(AST.BodyNode)
 def llvm(self):
@@ -212,7 +217,7 @@ def llvm(self):
 @addToClass(AST.IdNode)	
 def llvm(self):
 	global s
-	s += self.typeI()+" %"+str(self.tok)+" "
+	s += self.typeI()+" %"+str(self.getLlvmTok())+" "
 
 
 @addToClass(AST.TokenNode)	
@@ -287,7 +292,7 @@ def llvm(self):
 	if self.children[0].type == 'Operation':
 		self.children[0].llvm()
 	elif self.children[0].type == 'Identifier':
-		s+="\n?1? = load "+self.children[0].typeI()+"* %"+str(self.children[0].tok)
+		s+="\n?1? = load "+self.children[0].typeI()+"* %"+str(self.children[0].getLlvmTok())
 	elif self.children[0].type == 'List element':
 		self.children[0].llvm()
 		s+= "\n?1? = load i32* ?2?"
@@ -295,7 +300,7 @@ def llvm(self):
 	if self.children[1].type == 'Operation':
 		self.children[1].llvm()
 	elif self.children[1].type == 'Identifier':
-		s+="\n?1? = load "+self.children[1].typeI()+"* %"+str(self.children[1].tok)
+		s+="\n?1? = load "+self.children[1].typeI()+"* %"+str(self.children[1].getLlvmTok())
 	elif self.children[1].type == 'List element':
 		self.children[1].llvm()
 		s+= "\n?1? = load i32* ?2?"
@@ -354,7 +359,7 @@ def llvm(self):
 
 	if a.type == 'Integer' or a.type == 'Double'  :
 
-		s+= str(a.tok)
+		s+= str(a.getLlvmTok())
 		
 	elif a.type == 'True' or a.type == 'False':
 		s+= a.type
@@ -374,9 +379,9 @@ def llvm(self):
 		rangeNode.llvm()
 		s+="\n\nfor_body_"+str(self.lineNb)+":"
 		self.children[1].llvm()
-		s+="\n?1? = load i32* %"+str(rangeNode.children[0].tok)
+		s+="\n?1? = load i32* %"+str(rangeNode.children[0].getLlvmTok())
 		s+="\n?1? = add i32 ?2?, 1"
-		s+="\nstore "+rangeNode.children[2].typeI()+" ?2?, i32* %"+str(rangeNode.children[0].tok)
+		s+="\nstore "+rangeNode.children[2].typeI()+" ?2?, i32* %"+str(rangeNode.children[0].getLlvmTok())
 		s+="\nbr label %for_"+str(self.lineNb)+"\n\nfor_end_"+str(self.lineNb)+":"
 		
 	else: 
@@ -389,21 +394,21 @@ def llvm(self):
 	
 	if self.children[1].type == 'Operation':
 		self.children[1].llvm()
-		s+="\nstore "+self.children[1].typeI()+" ?2?, i32* %"+str(self.children[0].tok)
+		s+="\nstore "+self.children[1].typeI()+" ?2?, i32* %"+str(self.children[0].getLlvmTok())
 	elif self.children[1].type == 'Integer' or self.children[1].type == 'Double' or self.children[1].type == 'True' or self.children[1].type == 'False':
 		s+="\nstore "
 		self.children[1].llvm()
-		s+=", i32* %"+str(self.children[0].tok)
+		s+=", i32* %"+str(self.children[0].getLlvmTok())
 	elif self.children[1].type == 'Identifier':
-		s+="\nstore "+self.children[1].typeI()+" %"+str(self.children[1].tok)+", i32* %"+str(self.children[0].tok)
+		s+="\nstore "+self.children[1].typeI()+" %"+str(self.children[1].getLlvmTok())+", i32* %"+str(self.children[0].getLlvmTok())
 			
 	s+="\nbr label %for_"+nbr
 	s+="\n\nfor_"+nbr+":"
-	#s+= "\n?1? = load i32* %"+str(self.children[0].tok)
+	#s+= "\n?1? = load i32* %"+str(self.children[0].getLlvmTok())
 	if self.children[2].type == 'Operation':
 		self.children[2].llvm()
 		
-	s+= "\n?1? = load i32* %"+str(self.children[0].tok)
+	s+= "\n?1? = load i32* %"+str(self.children[0].getLlvmTok())
 	
 	if self.children[2].type == 'Operation':
 		s+="\n?1? = icmp sge i32 ?2?, ?2?"
@@ -411,8 +416,8 @@ def llvm(self):
 		s+="\n?1? = icmp sle i32 ?2?, "
 		self.children[2].llvm()
 	elif self.children[2].type == 'Identifier':
-		s+= "\n?1? = load i32* %"+str(self.children[2].tok)
-		s+="\n?1? = icmp sle i32 ?2?, ?2?" #str(self.children[2].tok)
+		s+= "\n?1? = load i32* %"+str(self.children[2].getLlvmTok())
+		s+="\n?1? = icmp sle i32 ?2?, ?2?" #str(self.children[2].getLlvmTok())
 	else:
 		s+="\n?1? = icmp sle i32 ?2?, ?2?" 
 	
@@ -430,7 +435,7 @@ def llvm(self):
 		s+="\nret " 
 		a.llvm()
 	elif  a.type == 'Identifier':
-		s+="?1? = load "+a.typeI()+"* %" +a.tok#%0 = load i32* %b
+		s+="?1? = load "+a.typeI()+"* %" +a.getLlvmTok()#%0 = load i32* %b
 		s+="\nret "+a.typeI()+" ?2?" #ret i32 %0
 		
 		
@@ -463,7 +468,7 @@ def llvm(self):
 		a.llvm()
 		s+=", label %if_" +str(self.lineNb)+", label %end_if_" +str(self.lineNb)
 	elif a.type=='Identifier':
-		s+="\nbr i1 %"+str(a.tok)+", label %if_" +str(self.lineNb)+", label %end_if_" +str(self.lineNb)
+		s+="\nbr i1 %"+str(a.getLlvmTok())+", label %if_" +str(self.lineNb)+", label %end_if_" +str(self.lineNb)
 	s+="\n\nif_" +str(self.lineNb)+":"
 	self.children[1].llvm()
 	if (len(self.parent.children)>self.childNum+1) and (self.parent.children[self.childNum+1].type == 'Else'):
@@ -481,8 +486,8 @@ def llvm(self):
 @addToClass(AST.ListElementNode)
 def llvm(self):
 	global s
-	s+="\n?1? = load i32* %"+ str(self.children[1].tok)
-	s+="\n?1? = load i32** %"+ str(self.children[0].tok)
+	s+="\n?1? = load i32* %"+ str(self.children[1].getLlvmTok())
+	s+="\n?1? = load i32** %"+ str(self.children[0].getLlvmTok())
 	s+="\n?1? = sext i32 ?2? to i64"
 	s+="\n?1? = getelementptr inbounds i32* ?2?, i64 ?2?"
 	
@@ -495,16 +500,16 @@ def llvm(self):
 	b = self.children[0] # b becomes a
 		
 	if a.type == 'List':
-		end+="\n@"+b.tok+"= global"
+		end+="\n@"+b.getLlvmTok()+"= global"
 		nbr = len(a.children)
 		end+="["+str(nbr) + " x i32] ["
 		for i in a.children:
-			end+="i32 "+str(i.tok)
+			end+="i32 "+str(i.getLlvmTok())
 			if a.children[nbr-1] != i:
 				end+=","
 		end+="]\n"
-		s+="\n?1? = getelementptr inbounds ["+str(nbr) + "x i32]* @"+b.tok+", i32 0, i32 0"
-		s+="\nstore i32* ?2?, i32** %"+b.tok+"\n"
+		s+="\n?1? = getelementptr inbounds ["+str(nbr) + "x i32]* @"+b.getLlvmTok()+", i32 0, i32 0"
+		s+="\nstore i32* ?2?, i32** %"+b.getLlvmTok()+"\n"
 		return
 			
 	global counter
@@ -515,7 +520,7 @@ def llvm(self):
 			s+= " \n%ait"+str(counter)+" = load i32* ?2?"
 			
 		elif a.type == 'Identifier':
-			s+= "\n%ait"+str(counter)+" = load "+a.typeI()+"* %"+str(a.tok)
+			s+= "\n%ait"+str(counter)+" = load "+a.typeI()+"* %"+str(a.getLlvmTok())
 		else:
 			print("check error in assignement")
 	else:
@@ -523,7 +528,7 @@ def llvm(self):
 			a.llvm()
 			s+= " \n?1? = load i32* ?2?"
 		elif a.type == 'Identifier':
-			s+= "\n?1? = load "+a.typeI()+"* %"+str(a.tok)
+			s+= "\n?1? = load "+a.typeI()+"* %"+str(a.getLlvmTok())
 		elif a.type == 'Operation':
 			a.llvm()
 		elif a.type == 'Function call':
@@ -537,9 +542,9 @@ def llvm(self):
 	elif b.type == 'Assignment variable' and ( a.type == 'Integer' or a.type == 'Double' or a.type == 'True' or a.type == 'False'):
 		s+="\nstore " 
 		a.llvm()
-		s+=", " +b.typeI()+"* %"+str(b.tok)
+		s+=", " +b.typeI()+"* %"+str(b.getLlvmTok())
 	else:
-		s+="\nstore " +a.typeI()	+ " ?2?, " +b.typeI()+"* %"+str(b.tok)
+		s+="\nstore " +a.typeI()	+ " ?2?, " +b.typeI()+"* %"+str(b.getLlvmTok())
 	
 		
 
@@ -570,13 +575,13 @@ def llvm(self):
 		if self.children[i].type == 'Operation':
 			self.children[i].llvm()
 		elif self.children[i].type == 'Identifier':
-			s+="\n%arg"+str(j+counter) +"= load "+self.children[i].typeI()+"* %"+self.children[i].tok
+			s+="\n%arg"+str(j+counter) +"= load "+self.children[i].typeI()+"* %"+self.children[i].getLlvmTok()
 			j+=1
 	if self.children[0].typeI() == 'void':
 		s+="\ncall void" 
 	else:
 		s+="\n?1? = call " +self.children[0].typeI()
-	s+=" @"+str(self.children[0].tok)+"("
+	s+=" @"+str(self.children[0].getLlvmTok())+"("
 
 	for i in range(1, len(self.children)):
 		if self.children[i].type == 'Integer' or self.children[i].type == 'Double' or self.children[i].type == 'True' or self.children[i].type == 'False': 
@@ -595,7 +600,7 @@ def llvm(self):
 	global s
 	a = self.children[0]
 	if a.type == 'Identifier':
-		s += "\n?1? = load "+a.typeI()+"* %"+str(a.tok)
+		s += "\n?1? = load "+a.typeI()+"* %"+str(a.getLlvmTok())
 	
 	s+="\ncall void @display_"
 	if a.type == 'Integer' or a.typeI() == 'i32':
@@ -605,7 +610,7 @@ def llvm(self):
 	elif a.type == 'True' or a.type == 'False' or a.typeI() == 'i1':
 		s+= "b(i1 "
 	elif a.typeI() == 'i32*': 
-		s+="l_"+str(a.tok)+"("
+		s+="l_"+str(a.getLlvmTok())+"("
 		
 	
 	if a.typeI() == 'i32*': 
@@ -613,7 +618,7 @@ def llvm(self):
 	elif a.type == 'Identifier':
 		s+="?2?)"		
 	else:
-		s+=str(self.children[0].tok)+ ")"
+		s+=str(self.children[0].getLlvmTok())+ ")"
 	
 
 def add_displayList():

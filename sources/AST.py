@@ -484,6 +484,9 @@ class TokenNode(Node):
 		
 	def __repr__(self):
 		return repr(self.tok)
+		
+	def getLlvmTok(self):
+		return self.tok
 	
 class OpNode(Node):
 	type = 'Operation'
@@ -500,6 +503,22 @@ class OpNode(Node):
 
 class IdNode(TokenNode):
 	type = 'Identifier'
+	
+	def getLlvmTok(self):
+		if self.id_type == 'Integer':
+			type = 'I'
+		elif self.id_type == 'Double':
+			type = 'D'
+		elif self.id_type == 'Boolean':
+			type = 'B'
+		elif self.id_type == 'List Integer':
+			type = 'LI'
+		elif self.id_type == 'List Double':
+			type = 'LD'
+		elif self.id_type == 'List Boolean':
+			type = 'LB'
+		
+		return type+self.tok
 	
 class AssignNode(Node):
 	type = 'Assignment'
@@ -573,6 +592,25 @@ class ListNode(Node):
 	
 class AssignVarNode(TokenNode):
 	type = 'Assignment variable'
+	
+	def __repr__(self):
+		return repr('assignVar ' + self.tok)
+	
+	def getLlvmTok(self):
+		if self.id_type == 'Integer':
+			type = 'I'
+		elif self.id_type == 'Double':
+			type = 'D'
+		elif self.id_type == 'Boolean':
+			type = 'B'
+		elif self.id_type == 'List Integer':
+			type = 'LI'
+		elif self.id_type == 'List Double':
+			type = 'LD'
+		elif self.id_type == 'List Boolean':
+			type = 'LB'
+		
+		return type+self.tok
 		
 class FuncDefNameNode(TokenNode):
 	type = 'Function name'
@@ -587,12 +625,32 @@ class FuncDefArgNode(TokenNode):
 		Node.__init__(self, n)
 		self.tok = tok
 		self.var_type = t
+		self.id_type = t
 		
 	def __repr__(self):
 		return repr(self.var_type + self.tok)
+		
+	def getLlvmTok(self):
+		if self.id_type == 'Integer':
+			type = 'I'
+		elif self.id_type == 'Double':
+			type = 'D'
+		elif self.id_type == 'Boolean':
+			type = 'B'
+		elif self.id_type == 'List Integer':
+			type = 'LI'
+		elif self.id_type == 'List Double':
+			type = 'LD'
+		elif self.id_type == 'List Boolean':
+			type = 'LB'
+		
+		return type+self.tok
 	
 class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
+	
+	def getLlvmTok(self):
+		return 'I'+self.tok
 		
 class ListIteratorNode(TokenNode):
 	type = 'List iterator'
