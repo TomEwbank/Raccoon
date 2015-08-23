@@ -82,7 +82,7 @@ class Scope:
 		   the stack, and merge them into one if they are compatible'''
 		  
 		if len(self.typeStack) < 2:
-			return -1
+			return 'error'
 		
 		type1 = self.typeStack.pop()
 		type2 = self.typeStack.pop()
@@ -93,14 +93,15 @@ class Scope:
 			# Raccoon can't deal with arithmetic/combinatory operation on lists,
 			# and it also doesn't support casting
 			self.typeStack.append('Forbidden')
-			return False
+			return 'Forbidden'
 		else:
 			if op is None or \
 			   op == '+' or op == '-' or op == '*' or op == '/' or op == '%':
 				self.typeStack.append(type1)
+				return type1
 			else:
 				self.typeStack.append('Boolean')
-			return True
+				return 'Boolean'
 
 	def getMergedType(self):
 		'''Return the type at the top of the stack,

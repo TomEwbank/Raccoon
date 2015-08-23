@@ -1,0 +1,8 @@
+function main():
+	n becomes 15
+	a becomes 2
+	b becomes 8.45
+	c becomes b/2.02
+	display(b)
+	for i in range(0,n/2):
+		display(i)

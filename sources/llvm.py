@@ -311,10 +311,13 @@ def llvm(self):
 		s+="add"
 	elif self.op == '-':
 		s+="sub"
-	elif self.op == '\*':
+	elif self.op == '*':
 		s+="mul"
 	elif self.op == '/':
-		s+="div"
+		if self.var_type == "Integer" or self.var_type == "Boolean":
+			s+="sdiv"
+		else:
+			s+="fdiv"
 	elif self.op == '=?':
 		s+="icmp eq"
 	elif self.op == '!=':

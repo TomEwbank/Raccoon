@@ -62,6 +62,9 @@ def semAnalysis(self):
 	if type == 'Forbidden':
 		print("error l.%d: unable to make the assignment because of type error(s) or uninitialized variable(s)" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
+	elif type[0:4] == 'List' and not(isinstance(self.children[1], ListNode)):
+		print("error l.%d: copying a list is forbidden" %(self.lineNb))
+		AST.Node.nbSemErrors += 1
 	elif isinstance(self.children[0], ListElementNode):
 		token = self.children[0].children[0].tok
 		trueType = stack.getVarType(token)
@@ -97,7 +100,9 @@ def semAnalysis(self):
 	
 @addToClass(AST.OpNode)
 def semAnalysis(self):
-	if not AST.Node.checkStack.mergeTypes(self.op):
+	type = AST.Node.checkStack.mergeTypes(self.op)
+	self.var_type = type
+	if type == 'Forbidden':
 		print("error l.%d: operation members have incompatible or erroneous types" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
 		
@@ -322,8 +327,8 @@ def semAnalysis(self):
 	elif AST.Node.checkStack.hasConst(self.tok):
 		print("error l.%d: variable '%s' is already defined as a constant and can't be used as a numeric iterator" %(self.lineNb,self.tok))
 		AST.Node.nbSemErrors += 1
-	else:
-		self.var_type = 'Integer'
+	
+	self.var_type = 'Integer'
 	
 	self.next[0].semAnalysis()
 	

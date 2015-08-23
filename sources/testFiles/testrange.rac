@@ -1,0 +1,5 @@
+function main():
+	n becomes 15
+	a becomes n/2
+	for i in range(0,n*2-(a+1)):
+		display(i)
