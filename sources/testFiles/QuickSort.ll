@@ -152,7 +152,7 @@ br label %end_if_2
 end_if_2:
 %66 = load i32** %LIA
 ret i32* %66
-ret i32* %0
+
 } 
 ?1? = getelementptr inbounds [7x i32]* @LIa, i32 0, i32 0
  %LIa = alloca i32* 
