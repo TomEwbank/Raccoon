@@ -1,0 +1,22 @@
+function Bprime(Integer Inbr) return Boolean:
+
+	Bret becomes True
+	for Ii in range(2,Inbr-1):
+		if Inbr % Ii =? 0:
+			Bret becomes False
+	return Bret
+
+function main():
+	Ba becomes Bprime(6)
+	display(Ba)
+	Bb becomes Bprime(7)
+	display(Bb)
+	Bc becomes Bprime(123)
+	display(Bc)
+	
+	
+
+
+
+
+

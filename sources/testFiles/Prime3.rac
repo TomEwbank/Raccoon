@@ -1,0 +1,22 @@
+function prime(Integer nbr) return Boolean:
+
+	ret becomes True
+	for i in range(2,nbr-1):
+		if nbr % i =? 0:
+			ret becomes False
+	return ret
+
+function main():
+	a becomes prime(6)
+	display(a)
+	b becomes prime(7)
+	display(b)
+	c becomes prime(123)
+	display(c)
+	
+	
+
+
+
+
+

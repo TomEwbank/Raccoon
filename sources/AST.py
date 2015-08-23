@@ -618,6 +618,7 @@ class FuncDefNameNode(TokenNode):
 		Node.__init__(self, n)
 		self.tok = tok
 		self.var_type = t
+		self.somethingReturned = False
 
 class FuncDefArgNode(TokenNode):
 	type = 'Function argument'

@@ -305,6 +305,9 @@ def semAnalysis(self):
 
 @addToClass(AST.FuncDefNode)
 def semAnalysis(self):
+	if self.children[0].children[0].var_type != 'Void' and not(self.children[0].children[0].somethingReturned):
+		print("error l.%d: Return of type '%s' is missing in function %s" %(self.lineNb,self.children[0].children[0].var_type,self.children[0].children[0].tok))
+		AST.Node.nbSemErrors += 1
 	AST.Node.checkStack.closeFunScope()
 	self.next[0].semAnalysis()
 	
@@ -389,7 +392,9 @@ def semAnalysis(self):
 		if isinstance(node, FuncDefNameNode) and type != node.var_type:
 			print("error l.%d: wrong return type for function %s, trying to return type '%s' when '%s' is expected" %(self.lineNb,node.tok,type,node.var_type))
 			AST.Node.nbSemErrors += 1
-	
+		else:
+			node.somethingReturned = True
+			
 	self.next[0].semAnalysis()
 	
 @addToClass(AST.BreakNode)
