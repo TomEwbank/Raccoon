@@ -298,31 +298,19 @@ def p_elseif(p):
 	if len(p) == 9:
 		p[0] = AST.Node(p.lineno(1), [AST.ElseifNode(p.lineno(1), [p[2], p[6]])] + p[9].children)
 
-#### A few rules for errors reporting ####
-
-# def p_colon_forgotten(p):
-	# '''stmt : IF expr END_STATEMENT INDENT body DEDENT
-			# | ELSEIF expr END_STATEMENT INDENT body DEDENT
-			# | ELSE expr END_STATEMENT INDENT body DEDENT
-			# | FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN END_STATEMENT INDENT body DEDENT
-            # | FOR IDENTIFIER IN IDENTIFIER END_STATEMENT INDENT body DEDENT
-			# | WHILE expr END_STATEMENT INDENT body DEDENT
-			# | FUNCTION IDENTIFIER LPAREN func_def_args RPAREN END_STATEMENT INDENT body DEDENT
-			# | FUNCTION IDENTIFIER LPAREN RPAREN END_STATEMENT INDENT body DEDENT'''
-	
-	# AST.Node.nbSynErrors += 1
-	# print("Syntax error l.%d: colon missing at end of line" %(p.lineno(1)))
-	# p[0] = AST.ErrorNode()
-
 def p_error(p):
 	# this is a panic mode error handling, not very handy but really easy to implement
     AST.Node.nbSynErrors += 1
 
     if p is not None:
 		print("Syntax error in line %d" % p.lineno)
-		yacc.errok()
+		while True:
+			tok = yacc.token()  # Get the next token
+			if not tok or tok.type == 'END_STATEMENT': 
+				break
+		yacc.restart()
     else:
-        print("Syntax error: NEWLINE missing at last statement")
+        print("Syntax error at end of file")
 
 
 def parse(program):
