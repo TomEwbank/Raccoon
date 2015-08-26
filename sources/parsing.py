@@ -21,16 +21,17 @@ precedence = (
 	('right','MINUS'),
 )
 
-def p_stmts(p):
-	'''program : stmt
-			   | stmt program
-               | END_STATEMENT stmt program'''
+def p_program(p):
+	'''program : func_def
+			   | func_def program'''
 	if len(p) == 2:
 		p[0] = AST.ProgramNode(p.lineno(1), [p[1]])
 	if len(p) == 3:
 		p[0] = AST.ProgramNode(p.lineno(1), [p[1]] + p[2].children)
-	if len(p) == 4:
-		p[0] = AST.ProgramNode(p.lineno(2), [p[2]] + p[3].children)
+		
+def p_program2(p):
+	'''program : END_STATEMENT program'''
+	p[0] = p[2]
 		
 def p_stmt_type(p):
 	'''stmt : simple_stmt
@@ -278,25 +279,11 @@ def p_for(p):
 
 def p_if(p):
 	'''if_stmt : IF expr COLON END_STATEMENT INDENT body DEDENT
-			   | IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list
-			   | IF expr COLON END_STATEMENT INDENT body DEDENT elseif_list ELSE COLON END_STATEMENT INDENT body DEDENT
                | IF expr COLON END_STATEMENT INDENT body DEDENT ELSE COLON END_STATEMENT INDENT body DEDENT'''
 	if len(p) == 8:
 		p[0] = AST.ConditionnalNode(p.lineno(1), [AST.IfNode(p.lineno(1), [p[2], p[6]])])
-	if len(p) == 9:
-		p[0] = AST.ConditionnalNode(p.lineno(1), [AST.IfNode(p.lineno(1), [p[2], p[6]])] + p[8].children)
-	if len(p) == 15:
-		p[0] = AST.ConditionnalNode(p.lineno(1), [AST.IfNode(p.lineno(1), [p[2], p[6]])] + p[8].children + [AST.ElseNode(p.lineno(9), [p[13]])])
 	if len(p) == 14:
 		p[0] = AST.ConditionnalNode(p.lineno(1), [AST.IfNode(p.lineno(1), [p[2], p[6]]), AST.ElseNode(p.lineno(8), [p[12]])])
-
-def p_elseif(p):
-	'''elseif_list : ELSEIF expr COLON END_STATEMENT INDENT body DEDENT
-                   | ELSEIF expr COLON END_STATEMENT INDENT body DEDENT elseif_list'''
-	if len(p) == 8:
-		p[0] = AST.Node(p.lineno(1), [AST.ElseifNode(p.lineno(1), [p[2], p[6]])])
-	if len(p) == 9:
-		p[0] = AST.Node(p.lineno(1), [AST.ElseifNode(p.lineno(1), [p[2], p[6]])] + p[9].children)
 
 def p_error(p):
 	# this is a panic mode error handling, not very handy but really easy to implement

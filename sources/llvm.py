@@ -306,7 +306,6 @@ def llvm(self):
 		s+= "\n?1? = load i32* ?2?"
 	
 	s+="\n?1? = "
-	#Si on a des Double, ajouter "f" juste devant
 	if self.op == '+':
 		s+="add"
 	elif self.op == '-':
@@ -314,28 +313,49 @@ def llvm(self):
 	elif self.op == '*':
 		s+="mul"
 	elif self.op == '/':
-		if self.var_type == "Integer" or self.var_type == "Boolean":
+		if self.var_type == "Integer":
 			s+="sdiv"
 		else:
 			s+="fdiv"
 	elif self.op == '=?':
-		s+="icmp eq"
+		if self.var_type == "Integer":
+			s+="icmp eq"
+		else:
+			s+="fcmp oeq"
 	elif self.op == '!=':
-		s+="icmp ne"
+		if self.var_type == "Integer":
+			s+="icmp ne"
+		else:
+			s+="fcmp one"
 	elif self.op == '<':
-		s+="icmp slt"
+		if self.var_type == "Integer":
+			s+="icmp slt"
+		else:
+			s+="fcmp olt"
 	elif self.op == '<=':
-		s+="icmp sle"
+		if self.var_type == "Integer":
+			s+="icmp sle"
+		else:
+			s+="fcmp ole"
 	elif self.op == '>':
-		s+="icmp sgt"
+		if self.var_type == "Integer":
+			s+="icmp sgt"
+		else:
+			s+="fcmp ogt"
 	elif self.op == '>=':
-		s+="icmp sge"
+		if self.var_type == "Integer":
+			s+="icmp sge"
+		else:
+			s+="fcmp oge"
 	elif self.op == '%':
-		s+="srem"
+		if self.var_type == "Integer":
+			s+="srem"
+		else:
+			s+="frem"
 	elif self.op == 'or':
-		s+="icmp or"
+		s+="or"
 	elif self.op == 'and':
-		s+="icmp and"
+		s+="and"
 	else:
 		#s+="!! " +self.op
 		self.llvm()
@@ -458,7 +478,6 @@ def llvm(self):
 			self.children[i].llvm()#les deux lignes + le corps du else if
 
 @addToClass(AST.IfNode)
-@addToClass(AST.ElseifNode)
 def llvm(self):
 	global s
 	#s+="?2? = icmp +operator+ undef + ??1, ??2" )#fcmp si Double, icmp si i32
@@ -644,34 +663,52 @@ def add_displayList():
 ###############################################################
 
 if __name__ == "__main__":
-	from parsing import parse
-	import sys, os
-	prog = file(sys.argv[1]).read()
-	ast = parse(prog)
-	
-	entry = thread(ast)
-	entry.semAnalysis()
-	
-	global s
-	s = []
-	global end
-	end = ""
-	global lists
-	lists = []
-	global printlists
-	printlists = []
-	entry.findList()
-	printlists = list(set(printlists)) 
-	add_displayList()
-	global counter
-	counter = 0
-	
-	ast.llvm()
-	
-	name = sys.argv[1].replace('.rac', '.ll')
-	outfile = open(name, 'w')
-	outfile.write(s)
-	outfile.close()
-	print "llvm wrote to "+name
+	try:
+		from parsing import parse
+		import sys, os
+		import lexical
 
-#Integer, Double, Boolean et List Integer, List Double, List Boolean. 
+		prog = file(sys.argv[1]).read()
+		ast = parse(prog)
+		
+		print("Lexical analysis terminated with %d errors" %(lexical.nbLexErrors))
+		print("Syntactic analysis terminated with %d errors" %(AST.Node.nbSynErrors))
+			
+		if not(AST.Node.nbSynErrors > 0 or lexical.nbLexErrors > 0):
+			entry = thread(ast)
+			
+			if len(sys.argv) == 3 and sys.argv[2] == "-ast" :
+				graph = ast.makegraphicaltree()
+				entry.threadTree(graph)
+				name = os.path.splitext(sys.argv[1])[0]+"-ast-threaded.pdf"
+				graph.write_pdf(name)
+				print("wrote threaded ast to '%s'" %name)
+			
+			entry.semAnalysis()
+			
+			if AST.Node.nbSemErrors == 0:
+				global s
+				s = []
+				global end
+				end = ""
+				global lists
+				lists = []
+				global printlists
+				printlists = []
+				entry.findList()
+				printlists = list(set(printlists)) 
+				add_displayList()
+				global counter
+				counter = 0
+				
+				ast.llvm()
+				
+				name = sys.argv[1].replace('.rac', '.ll')
+				outfile = open(name, 'w')
+				outfile.write(s)
+				outfile.close()
+				print "llvm wrote to "+name
+				
+			
+	except NestComError, e:
+		print("ERROR:")

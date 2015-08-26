@@ -36,7 +36,6 @@ def condCheck(node):
 	   it detects if we are in a condition and in that case, 
 	   it checks if the type is correct and opens a new scope'''
 	if isinstance(node.parent, IfNode) or \
-	   isinstance(node.parent, ElseifNode) or \
 	   isinstance(node.parent, WhileNode):
 		type = AST.Node.checkStack.getMergedType()
 		print(type)
@@ -44,6 +43,7 @@ def condCheck(node):
 			print("error l.%d: wrong type for condition" %(node.lineNb))
 			AST.Node.nbSemErrors += 1
 		AST.Node.checkStack.newCondScope()
+		print("new condscope")
 
 
 @addToClass(AST.Node)	
@@ -59,6 +59,9 @@ def semAnalysis(self):
 def semAnalysis(self):
 	stack = AST.Node.checkStack
 	type = stack.getMergedType()
+	if type == 'Void':
+		print("error l.%d: unable to assign type 'Void' to a variable" %(self.lineNb))
+		AST.Node.nbSemErrors += 1
 	if type == 'Forbidden':
 		print("error l.%d: unable to make the assignment because of type error(s) or uninitialized variable(s)" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
@@ -92,7 +95,7 @@ def semAnalysis(self):
 			stack.addVariable(token, type)
 			self.children[0].var_type = type
 			self.children[0].id_type = type
-			print("assignvar node %s" %type)
+			print("assignvar node %s %s" %(type,token))
 			if isinstance(self, ConstNode):
 				stack.addConst(token, type)
 	
@@ -146,12 +149,6 @@ def semAnalysis(self):
 		
 	self.next[0].semAnalysis()
 	
-# @addToClass(AST.StringNode)
-# def semAnalysis(self):
-	# if not(isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode)):
-		# AST.Node.checkStack.pushType('String')
-	# self.next[0].semAnalysis()
-	
 @addToClass(AST.ListNode)
 def semAnalysis(self):
 	for i in range(1, len(self.children)): 
@@ -184,13 +181,18 @@ def semAnalysis(self):
 			print("pushed forbid %s" %(self.tok))
 		else:
 			if isinstance(self.parent, ListElementNode) and \
-			   self is self.parent.children[0] and type[0:4] == 'List':
-				# means the type will be 'List some_type'  
-				# and we just want to push the 'some_type' on the typeStack
-				AST.Node.checkStack.pushType(type[5:])
-				self.var_type = type[5:]
-				self.id_type = type
-				print("pushed %s %s" %(type[5:],self.tok))
+			   self is self.parent.children[0]: 
+				if type[0:4] == 'List':
+					# means the type will be 'List some_type'  
+					# and we just want to push the 'some_type' on the typeStack
+					AST.Node.checkStack.pushType(type[5:])
+					self.var_type = type[5:]
+					self.id_type = type
+					print("pushed %s %s" %(type[5:],self.tok))
+					print("yeah")
+				else:
+					AST.Node.checkStack.pushType('Forbidden')
+					print("pushed forbid %s" %(self.tok))
 				
 			else:
 				AST.Node.checkStack.pushType(type)
@@ -228,18 +230,13 @@ def semAnalysis(self):
 
 @addToClass(AST.WhileNode)
 @addToClass(AST.IfNode)
-@addToClass(AST.ElseifNode)
 def semAnalysis(self):
 	AST.Node.checkStack.closeCondScope()
-	
-	if isinstance(self, ElseifNode):
-		i = 0
-		for node in self.parent.children:
-			if node is self:
-				break
-			i += 1
-		if i < len(self.parent.children) and isinstance(self.parent.children[i+1], ElseNode):
-			AST.Node.checkStack.newCondScope()
+	print("close condscope")
+
+	if len(self.parent.children) == 2 and isinstance(self.parent.children[1], ElseNode):
+		AST.Node.checkStack.newCondScope()
+		print("new condscope")
 	
 	self.next[0].semAnalysis()
 
@@ -247,6 +244,7 @@ def semAnalysis(self):
 @addToClass(AST.ForNode)
 def semAnalysis(self):
 	AST.Node.checkStack.closeCondScope()
+	print("close condscope")
 	self.next[0].semAnalysis()
 
 @addToClass(AST.HeadNode)
@@ -278,33 +276,28 @@ def semAnalysis(self):
 			print("error l.%d: wrong number of arguments for function '%s'" %(self.lineNb,self.children[0].tok))
 			AST.Node.nbSemErrors += 1
 			AST.Node.checkStack.pushType('Forbidden')
+			print("pushed forbid")
 		else:
 			# Check if the type of the arguments is correct
 			typeList = []
 			for argument in reversed(self.children[1:]):
-				# if isinstance(argument, IdNode) or isinstance(argument, ListElementNode):
-					# typeList.append(argument.var_type)
-				# elif isinstance(argument, IntNode):
-					# typeList.append('Integer')
-				# elif isinstance(argument, DoubleNode):
-					# typeList.append('Double')
-				# # elif isinstance(argument, StringNode):
-					# # typeList.append('String')
-				# elif isinstance(argument, TrueNode) or isinstance(argument, FalseNode):
-					# typeList.append('Boolean')
-				# else:
 				typeList.append(AST.Node.checkStack.getMergedType())
 			
 			typeList.reverse()
 			if not(infos.compare(typeList)):
 				print("error l.%d: wrong types of arguments for function '%s'" %(self.lineNb,self.children[0].tok))
-				print("%s expected but get %s" %(infos.argList,typeList))
+				print("            %s expected but get %s" %(infos.argList,typeList))
 				AST.Node.nbSemErrors += 1
 				AST.Node.checkStack.pushType('Forbidden')
+				print("pushed forbid")
 			else:
 				returnType = infos.getReturnType()
 				AST.Node.checkStack.pushType(returnType)
 				self.var_type = returnType
+				print("pushed ret %s" %returnType)
+		
+		if isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode):
+			AST.Node.checkStack.getMergedType()
 			
 	self.next[0].semAnalysis()
 
@@ -352,6 +345,7 @@ def semAnalysis(self):
 		AST.Node.nbSemErrors += 1
 	
 	AST.Node.checkStack.newCondScope()
+	print("new condscope")
 	
 	self.next[0].semAnalysis()
 	
@@ -377,6 +371,7 @@ def semAnalysis(self):
 		AST.Node.nbSemErrors += 1
 	
 	AST.Node.checkStack.newCondScope()
+	print("new condscope")
 	
 	self.next[0].semAnalysis()
 
@@ -384,12 +379,7 @@ def semAnalysis(self):
 def semAnalysis(self):
 	node = self
 	while not isinstance(node.parent, FuncDefNode):
-		if node.parent == None: #we reached the root of the tree without finding function node
-			print("error l.%d: return statement not in a function" %(self.lineNb))
-			AST.Node.nbSemErrors += 1
-			break
-		else:
-			node = node.parent
+		node = node.parent
 	
 	if node.parent is not None:
 		type = AST.Node.checkStack.getMergedType()
@@ -414,7 +404,12 @@ def semAnalysis(self):
 		else:
 			node = node.parent
 	self.next[0].semAnalysis()
-		
+
+@addToClass(AST.DisplayNode)
+def semAnalysis(self):
+	AST.Node.checkStack.getMergedType()
+	self.next[0].semAnalysis()
+
 
 ###############################################################
 		

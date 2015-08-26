@@ -1,106 +1,95 @@
 /* Test file for semantic errors */
 
-a becomes b
-a becomes c[d]
-b becomes a
+function main():
+	a becomes b
+	a becomes c[d]
+	b becomes a
 
-a becomes 5
-b becomes 6.00
-b becomes a
-a becomes b
-a[2] becomes 2
-b becomes a[3]
+	a becomes 5
+	b becomes 6.00
+	b becomes a
+	a becomes b
+	a[2] becomes 2
+	b becomes a[3]
 
-c becomes [9, 4, 5]
-d becomes [False,2]
-c becomes [1, 2.5, 3]
-c becomes [9, 2]
-c[a] becomes True
+	c becomes [9, 4, 5]
+	d becomes [False,2]
+	e becomes [False, 3, c, 5.06]
+	c becomes [1, 2.5, 3]
+	c becomes [9, 2]
+	f becomes c
+	f becomes c[a-3]
+	f becomes c[c[1]-c[2]*4]
+	c[a] becomes True
 
-pi is 3.14
-pi becomes 3.145
-pi is 3
-suite is [1,2,3]
-suite becomes [3,4,5]
-suite[1] becomes 0
-suite[a] becomes 5.69
+	pi is 3.14
+	pi becomes 3.145
+	pi is 3
+	suite is [1,2,3]
+	suite becomes [3,4,5]
+	suite[1] becomes 0
+	suite[a] becomes 5.69
 
-a becomes 5.6
-a becomes 5.6 + 3 
-a =? suite
-if a and 5.3: 
-	a becomes suite - c
-else if 1:
-	a becomes 3
-	e becomes 5.5
-else:
-	a becomes e
-	e becomes True
+	a becomes 5.6
+	a becomes 5.6 + 3 
+	a =? suite
+	if a and 5.3: 
+		g becomes suite - c
+	else:
+		a becomes e
+		h becomes True
 
-a becomes e
-	
-function hello(Integer name): 
-	display(name)
-	display(name+name) 
+	a becomes g
+	a becomes h
+		
+	function hello(Integer name): 
+		
+		function coucou():
+			display(1)
+		coucou()
+		display(name)
+		display(name+name) 
 
-jean becomes 5.8
-value becomes hello(jean) 
+	jean becomes 5.8
+	value becomes hello(jean) 
 
-function hello():
-	if 1:
-		2
+	function hello():
+		if 1:
+			2
 
-hello()
-helloWorld()
-hello(3,4)
-return a
-break
-continue
-i is 2
-for i in range(12,suite):
-	i becomes i+1
+	hello()
+	helloWorld()
+	hello(3,4)
+	return a
 	break
-
-alpha is 45
-
-for i in range(12,alpha):
-	beta becomes alpha
-	if i =? 25:
+	continue
+	i is 2
+	for i in range(12,suite):
+		i becomes i+1
 		break
 
-for element in a:
-	display(element)
+	alpha is 45
 
-element becomes 3.5
-element is 3.6
-for element in suite:
-	display(element)
-	element becomes 78 
-	element becomes c  
-	element becomes 8.9
+	for i in range(12,alpha):
+		beta becomes alpha
+		if i =? 25:
+			break
 
-g becomes [suite, c]
+	for element in a:
+		display(element)
 
-while suite: 
-	continue
-	
-if suite:
-	test
-/*else if a =? 0:
-	test2  prob avec ce esle if*/
-	
-function Bprime(Integer nbr) return Boolean:
-	ret becomes 1
-	for i in range(2,nbr-1):
-		modu becomes nbr%i
-		if modu =? 0:
-			ret becomes 5.5
-	return ret
-	
-function main():
-	Ba becomes Bprime(6)
-	display(Ba)
-	Bb becomes Bprime(7)
-	display(Bb)
-	Bc becomes Bprime(123)
-	display(Bc)
+	element becomes 3.5
+	element is 3.6
+	for element in suite:
+		display(element)
+		element becomes 78 
+		element becomes c  
+		element becomes 8.9
+
+	g becomes [suite, c]
+
+	while suite: 
+		continue
+		
+	if suite:
+		test

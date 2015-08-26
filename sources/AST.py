@@ -75,6 +75,7 @@ class Scope:
 		return self.varHash.get(varName)
 	
 	def pushType(self, type):
+		#print("pushed %s" %type)
 		self.typeStack.append(type)
 		
 	def mergeTypes(self, op=None):
@@ -95,13 +96,27 @@ class Scope:
 			self.typeStack.append('Forbidden')
 			return 'Forbidden'
 		else:
-			if op is None or \
-			   op == '+' or op == '-' or op == '*' or op == '/' or op == '%':
+			if op is None:
 				self.typeStack.append(type1)
 				return type1
+			elif op == '+' or op == '-' or op == '*' or op == '/' or op == '%':
+				if type1 == 'Boolean':
+					self.typeStack.append('Forbidden')
+					return 'Forbidden'
+				else:
+					self.typeStack.append(type1)
+					return type1
 			else:
-				self.typeStack.append('Boolean')
-				return 'Boolean'
+				if op == 'or' or op == 'and':
+					self.typeStack.append('Boolean')
+					return 'Boolean'
+				else: #case of a comparison operator
+					if type1 == 'Boolean':
+						self.typeStack.append('Forbidden')
+						return 'Forbidden'
+					else:
+						self.typeStack.append('Boolean')
+						return 'Boolean'
 
 	def getMergedType(self):
 		'''Return the type at the top of the stack,
@@ -560,9 +575,6 @@ class ConditionnalNode(Node):
 class IfNode(Node):
 	type = 'If'
 	
-class ElseifNode(Node):
-	type = 'Elseif'
-	
 class ElseNode(Node):
 	type = 'Else'
 	
@@ -575,8 +587,14 @@ class ContinueNode(Node):
 class TrueNode(Node):
 	type = 'True'
 	
+	def getLlvmTok(self):
+		return "true"
+	
 class FalseNode(Node):
 	type = 'False'
+	
+	def getLlvmTok(self):
+		return "false"
 	
 class ListElementNode(Node):
 	type = 'List element'
@@ -584,12 +602,6 @@ class ListElementNode(Node):
 
 class ListNode(Node):
 	type = 'List'
-	
-# class StringNode(Node):
-	# type = 'String'
-	# def __init__(self, n, tok):
-		# Node.__init__(self, n)
-		# self.tok = tok
 	
 class AssignVarNode(TokenNode):
 	type = 'Assignment variable'
