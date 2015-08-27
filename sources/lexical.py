@@ -3,7 +3,7 @@
 #																							#
 # Lexical analyser for the Raccoon language, using PLY.										#				#
 #																							#
-# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.								#
+# August 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.							#
 #############################################################################################
 
 import ply.lex as lex
@@ -120,17 +120,14 @@ reserved = {
 	'or':'OR',
 	'and':'AND',
 	'return' : 'RETURN',
-	
-	'break' : 'BREAK',
-	'continue' : 'CONTINUE',
 	'False':'FALSE',
 	'True':'TRUE',
 	'if' :  'IF',
 	'else' : 'ELSE',
 	'while' : 'WHILE',
+	'in' : 'IN',
 	'range' : 'RANGE',
 	'for' : 'FOR',
-	'in' : 'IN',
 	'becomes':'ASSIGN',
 	'is':'CONST',
 	'function' :  'FUNCTION',

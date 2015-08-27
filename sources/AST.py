@@ -9,7 +9,7 @@
 # This module is derived from the module of Matthew AMIGUET and has been adapted to be		#
 # used specifically for the development of a compiler for the Raccoon language.				#
 #																							#
-# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.								#
+# August 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.							#
 #############################################################################################
 
 import pydot
@@ -87,7 +87,6 @@ class Scope:
 		return self.varHash.get(varName)
 	
 	def pushType(self, type):
-		#print("pushed %s" %type)
 		self.typeStack.append(type)
 		
 	def mergeTypes(self, op=None):
@@ -99,7 +98,6 @@ class Scope:
 		
 		type1 = self.typeStack.pop()
 		type2 = self.typeStack.pop()
-		print("merge %s and %s" %(type1,type2))
 		
 		if type1[0:4] == 'List' or type2[0:4] == 'List' or \
 		   type1 != type2 or type1 == 'Forbidden' :
@@ -134,7 +132,7 @@ class Scope:
 		'''Return the type at the top of the stack,
 		   which is supposed to be the type of the last
 		   encountered expression'''
-		print("pop type")
+
 		if len(self.typeStack) > 0:
 			return self.typeStack.pop()
 		else:
@@ -322,7 +320,6 @@ class CondScopeStackStack:
 
 
 class CheckStack:
-	
 	def __init__(self):
 		self.scopeStack = ScopeStack()
 		self.condScopeStackStack = CondScopeStackStack()
@@ -586,9 +583,6 @@ class WhileNode(Node):
 		
 class ForNode(Node):
 	type = 'For'
-
-class InNode(Node):
-	type = 'In'
 	
 class InRangeNode(Node):
 	type = 'In range'
@@ -601,12 +595,6 @@ class IfNode(Node):
 	
 class ElseNode(Node):
 	type = 'Else'
-	
-class BreakNode(Node):
-	type = 'Break'
-	
-class ContinueNode(Node):
-	type = 'Continue'
 	
 class TrueNode(Node):
 	type = 'True'
@@ -689,9 +677,6 @@ class NumIteratorNode(TokenNode):
 	
 	def getLlvmTok(self):
 		return 'I'+self.tok+self.scopeNb
-		
-class ListIteratorNode(TokenNode):
-	type = 'List iterator'
 
 class IntNode(TokenNode):
 	type = 'Integer'

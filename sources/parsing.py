@@ -3,7 +3,7 @@
 #																							#
 # Parser for the Raccoon language, using PLY.												#
 #																							#
-# May 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.								#
+# August 2015, CATUSANU Paul, EWBANK Tom and VAN DE GOOR Elodie.							#
 #############################################################################################
 
 import ply.yacc as yacc
@@ -47,8 +47,7 @@ def p_small_stmt(p):
 				  | const_decl 
 				  | expr
 			  	  | return_stmt
-				  | display
-			  	  | loop_stmt'''
+				  | display'''
 	p[0] = p[1]
 
 def p_return(p):
@@ -59,18 +58,9 @@ def p_return(p):
 	if len(p) == 3:
 		p[0] = AST.ReturnNode(p.lineno(1), [p[2]])
 
-def p_break(p):
-	'''loop_stmt : BREAK'''
-	p[0] = AST.BreakNode(p.lineno(1))
-	
-def p_continue(p):
-	'''loop_stmt : CONTINUE'''
-	p[0] = AST.ContinueNode(p.lineno(1))
-	
 def p_display(p):
 	'''display : DISPLAY LPAREN IDENTIFIER RPAREN'''
 	p[0] = AST.DisplayNode(p.lineno(1), [AST.IdNode(p.lineno(1), p[3])])
-				  
 
 def p_assign(p):
 	'''assignment : IDENTIFIER ASSIGN expr
@@ -116,10 +106,6 @@ def p_expr_id(p):
 		p[0] = AST.IdNode(p.lineno(1), p[1])
 	if len(p) == 5:
 		p[0] = AST.ListElementNode(p.lineno(1), [AST.IdNode(p.lineno(1), p[1]), p[3]])
-
-# def p_expr_string(p):
-	# '''expr : STRING'''
-	# p[0] = AST.StringNode(p.lineno(1), p[1])
 		
 def p_expr(p):
 	'''expr : LPAREN expr RPAREN
@@ -243,14 +229,6 @@ def p_func_def_arg_list_double(p):
 def p_func_def_arg_list_bool(p):
 	'''argument : T_LIST_BOOL IDENTIFIER'''
 	p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List Boolean')
-	
-# def p_func_def_arg_list_string(p):
-	# '''argument : T_LIST_STRING IDENTIFIER'''
-	# p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'List String')
-
-# def p_func_def_arg_string(p):
-	# '''argument : T_STRING IDENTIFIER'''
-	# p[0] = AST.FuncDefArgNode(p.lineno(1), p[2], 'String')
 
 def p_body(p):
 	'''body : stmt
@@ -266,16 +244,12 @@ def p_while(p):
 	
 
 def p_for(p):
-	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT
-                | FOR IDENTIFIER IN IDENTIFIER COLON END_STATEMENT INDENT body DEDENT'''
-	if len(p) == 15:
-		iter = AST.NumIteratorNode(p.lineno(1), p[2])
-		lowLim = p[6]
-		highLim = p[8]
-		p[0] = AST.ForNode(p.lineno(1), [AST.InRangeNode(p.lineno(1), [iter, lowLim, highLim]), p[13]])
-	if len(p) == 10:
-		p[0] = AST.ForNode(p.lineno(1), [AST.InNode(p.lineno(1), [AST.ListIteratorNode(p.lineno(1), p[2]), AST.IdNode(p.lineno(1), p[4])]), p[8]])
+	'''for_stmt : FOR IDENTIFIER IN RANGE LPAREN expr COMMA expr RPAREN COLON END_STATEMENT INDENT body DEDENT'''
 		
+	iter = AST.NumIteratorNode(p.lineno(1), p[2])
+	lowLim = p[6]
+	highLim = p[8]
+	p[0] = AST.ForNode(p.lineno(1), [AST.InRangeNode(p.lineno(1), [iter, lowLim, highLim]), p[13]])
 
 def p_if(p):
 	'''if_stmt : IF expr COLON END_STATEMENT INDENT body DEDENT

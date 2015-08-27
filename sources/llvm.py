@@ -80,8 +80,7 @@ def add_alloc(s):
 				elif varName[1:3] == 'LB':
 					alloca = " = alloca i1* "
 					result = result[0:k+1] + "  " + varName + alloca + result[k:]
-				else:
-					print("llvm error: unknown type for '%s'" %varName)
+				
 					
 				
 		rest = rest[i+1:]
