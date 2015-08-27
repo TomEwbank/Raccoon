@@ -1,6 +1,7 @@
 /* Test file for semantic errors */
 
 function main():
+	a[5] becomes 1
 	a becomes b
 	a becomes c[d]
 	b becomes a

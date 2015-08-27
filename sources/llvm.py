@@ -249,11 +249,11 @@ def typeI(self):
 		
 @addToClass(AST.ListElementNode)
 def typeI(self):
-	if self.var_type == 'List Integer':
+	if self.var_type == 'Integer':
 		return 'i32'
-	elif self.var_type == 'List Double':
+	elif self.var_type == 'Double':
 		return 'double'
-	elif self.var_type == 'List Boolean':
+	elif self.var_type == 'Boolean':
 		return 'i1'
 	else :
 		print ("\nerror (llvm generation): unknown type: "+self.var_type)
@@ -305,6 +305,11 @@ def llvm(self):
 		self.children[1].llvm()
 		s+= "\n?1? = load i32* ?2?"
 	
+	node = self
+	while isinstance(node, OpNode):
+		node = node.children[0]
+	operandType = node.var_type
+	
 	s+="\n?1? = "
 	if self.op == '+':
 		s+="add"
@@ -313,42 +318,42 @@ def llvm(self):
 	elif self.op == '*':
 		s+="mul"
 	elif self.op == '/':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="sdiv"
 		else:
 			s+="fdiv"
 	elif self.op == '=?':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="icmp eq"
 		else:
 			s+="fcmp oeq"
 	elif self.op == '!=':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="icmp ne"
 		else:
 			s+="fcmp one"
 	elif self.op == '<':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="icmp slt"
 		else:
 			s+="fcmp olt"
 	elif self.op == '<=':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="icmp sle"
 		else:
 			s+="fcmp ole"
 	elif self.op == '>':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="icmp sgt"
 		else:
 			s+="fcmp ogt"
 	elif self.op == '>=':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="icmp sge"
 		else:
 			s+="fcmp oge"
 	elif self.op == '%':
-		if self.var_type == "Integer":
+		if operandType == "Integer":
 			s+="srem"
 		else:
 			s+="frem"

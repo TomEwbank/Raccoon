@@ -70,31 +70,40 @@ def semAnalysis(self):
 		AST.Node.nbSemErrors += 1
 	elif isinstance(self.children[0], ListElementNode):
 		token = self.children[0].children[0].tok
-		trueType = stack.getVarType(token)
+		varInfo = stack.getVarInfo(token)
 		
 		if stack.hasConst(token):
 			print("error l.%d: Trying to assign a new value to the constant '%s'" %(self.lineNb,token))
 			AST.Node.nbSemErrors += 1
-		elif trueType is not None and trueType[0:4] == 'List' and type != trueType[5:]:
-			print("error l.%d: Trying to assign type %s to a list element of type %s" %(self.lineNb,type, trueType[5:]))
+		
+		if varInfo is None:
+			print("error l.%d: undefined variable '%s'" %(self.lineNb,token))
 			AST.Node.nbSemErrors += 1
 		else:
-			self.children[0].children[0].id_type = trueType
+			trueType = varInfo.getType()
+			if trueType[0:4] == 'List' and type != trueType[5:]:
+				print("error l.%d: Trying to assign type %s to a list element of type %s" %(self.lineNb,type, trueType[5:]))
+				AST.Node.nbSemErrors += 1
+			else:
+				self.children[0].children[0].id_type = trueType
+				self.children[0].children[0].scopeNb = varInfo.getScopeNb()
  
 	else:
 		token = self.children[0].tok
-		trueType = stack.getVarType(token)
+		varInfo = stack.getVarInfo(token)
 		
 		if stack.hasConst(token):
 			print("error l.%d: Trying to assign a new value to the constant '%s'" %(self.lineNb,token))
 			AST.Node.nbSemErrors += 1
-		elif trueType is not None and trueType != type:
-			print("error l.%d: Trying to assign type %s to a variable of type %s" %(self.lineNb,type, trueType))
+		elif varInfo is not None and varInfo.getType() != type:
+			print("error l.%d: Trying to assign type %s to a variable of type %s" %(self.lineNb,type, varInfo.getType()))
 			AST.Node.nbSemErrors += 1
 		else:
 			stack.addVariable(token, type)
 			self.children[0].var_type = type
 			self.children[0].id_type = type
+			varInfo = stack.getVarInfo(token)
+			self.children[0].scopeNb = varInfo.getScopeNb()
 			print("assignvar node %s %s" %(type,token))
 			if isinstance(self, ConstNode):
 				stack.addConst(token, type)
@@ -104,7 +113,7 @@ def semAnalysis(self):
 @addToClass(AST.OpNode)
 def semAnalysis(self):
 	type = AST.Node.checkStack.mergeTypes(self.op)
-	self.var_type = type
+	#self.var_type = type
 	if type == 'Forbidden':
 		print("error l.%d: operation members have incompatible or erroneous types" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
@@ -173,13 +182,14 @@ def semAnalysis(self):
 @addToClass(AST.IdNode)
 def semAnalysis(self):
 	if not(isinstance(self.parent, BodyNode) or isinstance(self.parent, ProgramNode)):
-		type = AST.Node.checkStack.getVarType(self.tok)
-		if type is None:
+		varInfo = AST.Node.checkStack.getVarInfo(self.tok)
+		if varInfo is None:
 			print("error l.%d: uninitialized variable '%s'" %(self.lineNb,self.tok))
 			AST.Node.nbSemErrors += 1
 			AST.Node.checkStack.pushType('Forbidden') # permits to still continue the analysis 
 			print("pushed forbid %s" %(self.tok))
 		else:
+			type = varInfo.getType()
 			if isinstance(self.parent, ListElementNode) and \
 			   self is self.parent.children[0]: 
 				if type[0:4] == 'List':
@@ -188,6 +198,7 @@ def semAnalysis(self):
 					AST.Node.checkStack.pushType(type[5:])
 					self.var_type = type[5:]
 					self.id_type = type
+					self.scopeNb = varInfo.getScopeNb()
 					print("pushed %s %s" %(type[5:],self.tok))
 					print("yeah")
 				else:
@@ -198,6 +209,7 @@ def semAnalysis(self):
 				AST.Node.checkStack.pushType(type)
 				self.var_type = type
 				self.id_type = type
+				self.scopeNb = varInfo.getScopeNb()
 				print("pushed %s %s" %(type,self.tok))
 	
 	condCheck(self)
@@ -215,13 +227,19 @@ def semAnalysis(self):
 		print("error l.%d: wrong type for index, an integer is needed" %(self.lineNb))
 		AST.Node.nbSemErrors += 1
 	
-	type = stack.getVarType(token)
-	if stack.hasVariable(token) and type[0:4] != 'List':
-		print("error l.%d: '%s' is not a list" %(self.lineNb,token))
+	varInfo = stack.getVarInfo(token)
+	if varInfo is None:
+		print("error l.%d: variable '%s' is undefined" %(self.lineNb,token))
 		AST.Node.nbSemErrors += 1
-	else:
-		self.var_type = type
-		self.id_type = type
+	else :
+		type = varInfo.getType()
+		if type[0:4] != 'List':
+			print("error l.%d: '%s' is not a list" %(self.lineNb,token))
+			AST.Node.nbSemErrors += 1
+		else:
+			self.var_type = type[5:]
+			self.id_type = type
+			self.scopeNb = varInfo.getScopeNb()
 		
 	condCheck(self)
 	
@@ -261,6 +279,7 @@ def semAnalysis(self):
 	AST.Node.checkStack.newFunScope() # analyse scope of the function even if it was already defined
 	for argument in self.children[1:]:
 		AST.Node.checkStack.addVariable(argument.tok,argument.var_type)
+		argument.scopeNb = AST.Node.checkStack.getVarInfo(argument.tok).getScopeNb()
 	
 	self.next[0].semAnalysis()
 	
@@ -310,17 +329,21 @@ def semAnalysis(self):
 	
 @addToClass(AST.NumIteratorNode)
 def semAnalysis(self):
-	type = AST.Node.checkStack.getVarType(self.tok)
-	if type is None:
+	varInfo = AST.Node.checkStack.getVarInfo(self.tok)
+	if varInfo is None:
 		AST.Node.checkStack.addVariable(self.tok,'Integer')
-	elif type != 'Integer':
+		self.scopeNb = AST.Node.checkStack.getVarInfo(self.tok).getScopeNb()
+	elif varInfo.getType() != 'Integer':
 		print("error l.%d: variable '%s' is already defined and not of a valid numeric iterator type (Int)" %(self.lineNb,self.tok))
 		AST.Node.nbSemErrors += 1
 	elif AST.Node.checkStack.hasConst(self.tok):
 		print("error l.%d: variable '%s' is already defined as a constant and can't be used as a numeric iterator" %(self.lineNb,self.tok))
 		AST.Node.nbSemErrors += 1
+	else:
+		self.scopeNb = varInfo.getScopeNb()
 	
 	self.var_type = 'Integer'
+	self.id_type = 'Integer'
 	
 	self.next[0].semAnalysis()
 	
@@ -352,7 +375,7 @@ def semAnalysis(self):
 def semAnalysis(self):
 	iterTok = self.children[0].tok
 	listTok = self.children[1].tok
-	iterType = AST.Node.checkStack.getVarType(iterTok)
+	iterInfo = AST.Node.checkStack.getVarInfo(iterTok)
 	listType = AST.Node.checkStack.getMergedType()
 	if listType is None:
 		print("error l.%d: variable '%s' is undefined" %(self.lineNb,listTok))
@@ -360,12 +383,12 @@ def semAnalysis(self):
 	elif listType[0:4] != 'List':
 		print("error l.%d: '%s' is not a list" %(self.lineNb,listTok))
 		AST.Node.nbSemErrors += 1
-	elif iterType is None:
+	elif iterInfo is None:
 		AST.Node.checkStack.addVariable(iterTok,listType[5:])
 		self.children[0].var_type = listType[5:]
 		if AST.Node.checkStack.hasConst(listTok):
-			AST.Node.checkStack.addConst(iterTok,iterType)
-	elif iterType != listType[5:]:
+			AST.Node.checkStack.addConst(iterTok,iterInfo.getType())
+	elif iterInfo.getType() != listType[5:]:
 		print("error l.%d: variable '%s' is already defined and not of the valid list iterator type (%s)" %(self.lineNb,iterTok,listType[5:]))
 		AST.Node.nbSemErrors += 1
 	

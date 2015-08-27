@@ -34,6 +34,18 @@ class FuncInformarion:
 		else: 
 			return False
 			
+class VariableInformation:
+	'''Data structure holding variable information'''
+	
+	def __init__(self, t, Num):
+		self.scopeNb = Num
+		self.type = t
+	
+	def getType(self):
+		return self.type
+	
+	def getScopeNb(self):
+		return self.scopeNb
 
 class Scope:
 	'''Class which goal is to keep track of variables 
@@ -71,7 +83,7 @@ class Scope:
 	def getFunInfo(self, funcName):
 		return self.funcHash.get(funcName)
 		
-	def getVarType(self, varName):
+	def getVarInfo(self, varName):
 		return self.varHash.get(varName)
 	
 	def pushType(self, type):
@@ -149,7 +161,7 @@ class ScopeStack:
 		self.scopeNumber -= 1
 	
 	def addVariable(self, varName, type):
-		self.stack[self.currentScope].addVariable(varName, type)
+		self.stack[self.currentScope].addVariable(varName, VariableInformation(type,self.currentScope))
 		
 	def removeVariable(self, varName):
 		self.stack[self.currentScope].removeVariable(varName)
@@ -181,8 +193,8 @@ class ScopeStack:
 							
 		return None
 	
-	def getVarType(self, varName):
-		return self.stack[self.currentScope].getVarType(varName)
+	def getVarInfo(self, varName):
+		return self.stack[self.currentScope].getVarInfo(varName)
 	
 	def pushType(self, type):
 		self.stack[self.currentScope].pushType(type)
@@ -226,9 +238,9 @@ class CondScopeStack(ScopeStack):
 							
 		return False
 	
-	def getVarType(self, varName):
+	def getVarInfo(self, varName):
 		for scope in self.stack:
-			type = scope.getVarType(varName)
+			type = scope.getVarInfo(varName)
 			if not (type is None):
 				return type
 		
@@ -293,8 +305,8 @@ class CondScopeStackStack:
 				
 		return None
 	
-	def getVarType(self, varName):
-		return self.stack[self.currentStack].getVarType(varName)
+	def getVarInfo(self, varName):
+		return self.stack[self.currentStack].getVarInfo(varName)
 	
 	def pushType(self, type):
 		self.stack[self.currentStack].pushType(type)
@@ -374,10 +386,10 @@ class CheckStack:
 			infos = self.scopeStack.getFunInfo(funcName)
 		return infos
 	
-	def getVarType(self, varName):
-		type = self.condScopeStackStack.getVarType(varName)
+	def getVarInfo(self, varName):
+		type = self.condScopeStackStack.getVarInfo(varName)
 		if type is None:
-			type = self.scopeStack.getVarType(varName)
+			type = self.scopeStack.getVarInfo(varName)
 		return type
 	
 	def pushType(self, type):
@@ -543,7 +555,7 @@ class IdNode(TokenNode):
 		elif self.id_type == 'List Boolean':
 			type = 'LB'
 		
-		return type+self.tok
+		return type+self.tok+str(self.scopeNb)
 	
 class AssignNode(Node):
 	type = 'Assignment'
@@ -632,7 +644,7 @@ class AssignVarNode(TokenNode):
 		elif self.id_type == 'List Boolean':
 			type = 'LB'
 		
-		return type+self.tok
+		return type+self.tok+str(self.scopeNb)
 		
 class FuncDefNameNode(TokenNode):
 	type = 'Function name'
@@ -667,13 +679,13 @@ class FuncDefArgNode(TokenNode):
 		elif self.id_type == 'List Boolean':
 			type = 'LB'
 		
-		return type+self.tok
+		return type+self.tok+str(self.scopeNb)
 	
 class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
 	
 	def getLlvmTok(self):
-		return 'I'+self.tok
+		return 'I'+self.tok+str(self.scopeNb)
 		
 class ListIteratorNode(TokenNode):
 	type = 'List iterator'
