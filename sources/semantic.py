@@ -227,20 +227,19 @@ def semAnalysis(self):
 	
 	self.next[0].semAnalysis()
 
-
-@addToClass(AST.WhileNode)
 @addToClass(AST.IfNode)
 def semAnalysis(self):
 	AST.Node.checkStack.closeCondScope()
 	print("close condscope")
 
-	if len(self.parent.children) == 2 and isinstance(self.parent.children[1], ElseNode):
+	if len(self.parent.children) == 2:
 		AST.Node.checkStack.newCondScope()
 		print("new condscope")
 	
 	self.next[0].semAnalysis()
 
 @addToClass(AST.ElseNode)
+@addToClass(AST.WhileNode)
 @addToClass(AST.ForNode)
 def semAnalysis(self):
 	AST.Node.checkStack.closeCondScope()

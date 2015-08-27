@@ -91,5 +91,5 @@ function main():
 	while suite: 
 		continue
 		
-	if suite:
+	if 45 or 0:
 		test
