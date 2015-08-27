@@ -11,10 +11,11 @@ function coeffBin(Integer n, Integer m) return Integer:
 	
 
 function main():
-	liste becomes [1, 5, 8]
+	//liste becomes [1, 5, 8]
 	//liste becomes [1,2]
 	//a becomes liste[2]
-	display(liste)
+	result becomes coeffBin(10,3)
+	display(result)
 
 	/*if 5.0 =? 5.00:
 		a becomes coeffBin(10,3)

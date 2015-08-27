@@ -160,8 +160,8 @@ class ScopeStack:
 		self.currentScope -= 1
 		self.scopeNumber -= 1
 	
-	def addVariable(self, varName, type):
-		self.stack[self.currentScope].addVariable(varName, VariableInformation(type,self.currentScope))
+	def addVariable(self, varName, type, letter):
+		self.stack[self.currentScope].addVariable(varName, VariableInformation(type,letter+str(self.currentScope)))
 		
 	def removeVariable(self, varName):
 		self.stack[self.currentScope].removeVariable(varName)
@@ -210,6 +210,9 @@ class CondScopeStack(ScopeStack):
 		self.stack = []
 		self.currentScope = -1
 		self.scopeNumber = 0
+		
+	def addVariable(self, varName, type, letter, stackNb):
+		self.stack[self.currentScope].addVariable(varName, VariableInformation(type,letter+str(stackNb)+str(self.currentScope)))
 		
 	def hasCondScope(self):
 		if self.scopeNumber == 0:
@@ -272,8 +275,8 @@ class CondScopeStackStack:
 	def hasCondScope(self):
 		return self.stack[self.currentStack].hasCondScope()
 		
-	def addVariable(self, varName, type):
-		self.stack[self.currentStack].addVariable(varName, type)
+	def addVariable(self, varName, type, letter):
+		self.stack[self.currentStack].addVariable(varName, type, letter, self.currentStack)
 		
 	def removeVariable(self, varName):
 		self.stack[self.currentStack].removeVariable(varName)
@@ -340,9 +343,9 @@ class CheckStack:
 	
 	def addVariable(self, varName, type):
 		if self.condScopeStackStack.hasCondScope():
-			self.condScopeStackStack.addVariable(varName, type)
+			self.condScopeStackStack.addVariable(varName, type, 'C')
 		else:
-			self.scopeStack.addVariable(varName, type)
+			self.scopeStack.addVariable(varName, type, 'F')
 		
 	def removeVariable(self, varName):
 		if self.condScopeStackStack.hasCondScope():
@@ -555,7 +558,7 @@ class IdNode(TokenNode):
 		elif self.id_type == 'List Boolean':
 			type = 'LB'
 		
-		return type+self.tok+str(self.scopeNb)
+		return type+self.tok+self.scopeNb
 	
 class AssignNode(Node):
 	type = 'Assignment'
@@ -644,7 +647,7 @@ class AssignVarNode(TokenNode):
 		elif self.id_type == 'List Boolean':
 			type = 'LB'
 		
-		return type+self.tok+str(self.scopeNb)
+		return type+self.tok+self.scopeNb
 		
 class FuncDefNameNode(TokenNode):
 	type = 'Function name'
@@ -679,13 +682,13 @@ class FuncDefArgNode(TokenNode):
 		elif self.id_type == 'List Boolean':
 			type = 'LB'
 		
-		return type+self.tok+str(self.scopeNb)
+		return type+self.tok+self.scopeNb
 	
 class NumIteratorNode(TokenNode):
 	type = 'Numeric iterator'
 	
 	def getLlvmTok(self):
-		return 'I'+self.tok+str(self.scopeNb)
+		return 'I'+self.tok+self.scopeNb
 		
 class ListIteratorNode(TokenNode):
 	type = 'List iterator'

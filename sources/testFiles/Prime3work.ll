@@ -1,22 +1,22 @@
 
-define i1 @prime(i32 %InbrF1_arg){
+define i1 @prime(i32 %Inbr_arg){
 
 entry: 
- %InbrF1 = alloca i32 
-store i32 %InbrF1_arg, i32* %InbrF1
+ %Inbr = alloca i32 
+store i32 %Inbr_arg, i32* %Inbr
 
- %BretF1 = alloca i1 
-store i1 true, i1* %BretF1
+ %Bret = alloca i1 
+store i1 true, i1* %Bret
 
- %IiF1 = alloca i32 
-store i32 2 , i32* %IiF1
+ %Ii = alloca i32 
+store i32 2 , i32* %Ii
 br label %for_4
 
 for_4:
-%0 = load i32* %InbrF1
+%0 = load i32* %Inbr
 %1 = sub i32 %0, 1
 
-%2 = load i32* %IiF1
+%2 = load i32* %Ii
 %3 = icmp sge i32 %1, %2
 br i1 %3, label %for_body_4, label %for_end_4
 
@@ -25,8 +25,8 @@ for_body_4:
 br label %if_begin_5
 
 if_begin_5:
-%4 = load i32* %InbrF1
-%5 = load i32* %IiF1
+%4 = load i32* %Inbr
+%5 = load i32* %Ii
 %6 = srem i32 %4, %5
 
 %7 = icmp eq i32 %6, 0
@@ -35,17 +35,17 @@ br i1 %7, label %if_5, label %end_if_5
 
 if_5:
 
-store i1 false, i1* %BretF1
+store i1 false, i1* %Bret
 br label %end_if_5
 
 end_if_5:
-%8 = load i32* %IiF1
+%8 = load i32* %Ii
 %9 = add i32 %8, 1
-store i32 %9, i32* %IiF1
+store i32 %9, i32* %Ii
 br label %for_4
 
 for_end_4:
-%10 = load i1* %BretF1
+%10 = load i1* %Bret
 ret i1 %10
 ret i1 0
 } 
@@ -55,26 +55,26 @@ entry:
 
 %0 = call i1 @prime( i32 6 )
 
- %BaF1 = alloca i1 
-store i1 %0, i1* %BaF1
+ %Ba = alloca i1 
+store i1 %0, i1* %Ba
 
-%1 = load i1* %BaF1
+%1 = load i1* %Ba
 call void @display_b(i1 %1)
 
 %2 = call i1 @prime( i32 7 )
 
- %BbF1 = alloca i1 
-store i1 %2, i1* %BbF1
+ %Bb = alloca i1 
+store i1 %2, i1* %Bb
 
-%3 = load i1* %BbF1
+%3 = load i1* %Bb
 call void @display_b(i1 %3)
 
 %4 = call i1 @prime( i32 123 )
 
- %BcF1 = alloca i1 
-store i1 %4, i1* %BcF1
+ %Bc = alloca i1 
+store i1 %4, i1* %Bc
 
-%5 = load i1* %BcF1
+%5 = load i1* %Bc
 call void @display_b(i1 %5)
 ret void
 } 

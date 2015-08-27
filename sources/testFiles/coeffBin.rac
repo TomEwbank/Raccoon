@@ -1,0 +1,15 @@
+function coeffBin(Integer n, Integer m) return Integer:
+	num becomes 1
+	for i in range(m+1,n):
+		num becomes num*i
+	
+	deno becomes 1
+	for i in range(1,n-m):
+		deno becomes deno*i
+		
+	return num/deno
+	
+
+function main():
+	result becomes coeffBin(10,3)
+	display(result)

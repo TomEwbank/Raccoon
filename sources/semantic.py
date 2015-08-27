@@ -95,10 +95,8 @@ def semAnalysis(self):
 		if stack.hasConst(token):
 			print("error l.%d: Trying to assign a new value to the constant '%s'" %(self.lineNb,token))
 			AST.Node.nbSemErrors += 1
-		elif varInfo is not None and varInfo.getType() != type:
-			print("error l.%d: Trying to assign type %s to a variable of type %s" %(self.lineNb,type, varInfo.getType()))
-			AST.Node.nbSemErrors += 1
-		else:
+		
+		if varInfo is None:
 			stack.addVariable(token, type)
 			self.children[0].var_type = type
 			self.children[0].id_type = type
@@ -107,6 +105,14 @@ def semAnalysis(self):
 			print("assignvar node %s %s" %(type,token))
 			if isinstance(self, ConstNode):
 				stack.addConst(token, type)
+		elif varInfo.getType() != type:
+			print("error l.%d: Trying to assign type %s to a variable of type %s" %(self.lineNb,type, varInfo.getType()))
+			AST.Node.nbSemErrors += 1
+		else:
+			self.children[0].var_type = type
+			self.children[0].id_type = type
+			self.children[0].scopeNb = varInfo.getScopeNb()
+			print("assignvar node %s %s" %(type,token))
 	
 	self.next[0].semAnalysis()
 	

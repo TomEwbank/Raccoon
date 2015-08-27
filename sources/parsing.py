@@ -68,8 +68,8 @@ def p_continue(p):
 	p[0] = AST.ContinueNode(p.lineno(1))
 	
 def p_display(p):
-	'''display : DISPLAY LPAREN expr RPAREN'''
-	p[0] = AST.DisplayNode(p.lineno(1), [p[3]])
+	'''display : DISPLAY LPAREN IDENTIFIER RPAREN'''
+	p[0] = AST.DisplayNode(p.lineno(1), [AST.IdNode(p.lineno(1), p[3])])
 				  
 
 def p_assign(p):
