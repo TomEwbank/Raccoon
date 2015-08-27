@@ -68,7 +68,7 @@ class Scope:
 	def removeVariable(self, varName):
 		self.varHash.pop(varName, 0)
 		
-	def getArguments(self, funcName):
+	def getFunInfo(self, funcName):
 		return self.funcHash.get(funcName)
 		
 	def getVarType(self, varName):
@@ -173,9 +173,9 @@ class ScopeStack:
 							
 		return False
 		
-	def getArguments(self, funcName):
+	def getFunInfo(self, funcName):
 		for scope in self.stack:
-			infos = scope.getArguments(funcName)
+			infos = scope.getFunInfo(funcName)
 			if not (infos is None): 
 				return infos
 							
@@ -279,10 +279,19 @@ class CondScopeStackStack:
 		self.stack[self.currentStack].addFunction(funcName, infos)
 	
 	def hasFunction(self, funcName):
-		return self.stack[self.currentStack].hasFunction(funcName)
+		for condStack in self.stack:
+			if condStack.hasFunction(funcName):
+				return True
+				
+		return False
 
-	def getArguments(self, funcName):
-		return self.stack[self.currentStack].getArguments(funcName)
+	def getFunInfo(self, funcName):
+		for condStack in self.stack:
+			info = condStack.getFunInfo(funcName)
+			if not (info is None):
+				return info
+				
+		return None
 	
 	def getVarType(self, varName):
 		return self.stack[self.currentStack].getVarType(varName)
@@ -359,10 +368,10 @@ class CheckStack:
 		else:
 			return False
 		
-	def getArguments(self, funcName):
-		infos = self.condScopeStackStack.getArguments(funcName)
+	def getFunInfo(self, funcName):
+		infos = self.condScopeStackStack.getFunInfo(funcName)
 		if infos is None:
-			infos = self.scopeStack.getArguments(funcName)
+			infos = self.scopeStack.getFunInfo(funcName)
 		return infos
 	
 	def getVarType(self, varName):

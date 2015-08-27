@@ -266,7 +266,7 @@ def semAnalysis(self):
 	
 @addToClass(FuncCallNode)
 def semAnalysis(self):
-	infos = AST.Node.checkStack.getArguments(self.children[0].tok)
+	infos = AST.Node.checkStack.getFunInfo(self.children[0].tok)
 	if infos is None:
 		print("error l.%d: undefined function '%s'" %(self.lineNb,self.children[0].tok))
 		AST.Node.nbSemErrors += 1

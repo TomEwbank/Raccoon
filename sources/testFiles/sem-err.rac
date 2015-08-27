@@ -44,8 +44,15 @@ function main():
 		
 	function hello(Integer name): 
 		
-		function coucou():
-			display(1)
+		if b:
+			function coucou():
+				display(1)
+			
+			function bref():
+				if a:
+					function coucou():
+						display(2)
+				
 		coucou()
 		display(name)
 		display(name+name) 
