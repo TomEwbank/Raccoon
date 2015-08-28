@@ -52,11 +52,10 @@ function main():
 			function bref():
 				if a:
 					function coucou():
-						display(2)
+						display(11)
 				
 		coucou()
 		display(name)
-		display(name+name) 
 
 	jean becomes 5.8
 	value becomes hello(jean) 
@@ -82,17 +81,6 @@ function main():
 		beta becomes alpha
 		if i =? 25:
 			break
-
-	for element in a:
-		display(element)
-
-	element becomes 3.5
-	element is 3.6
-	for element in suite:
-		display(element)
-		element becomes 78 
-		element becomes c  
-		element becomes 8.9
 
 	g becomes [suite, c]
 

@@ -1,26 +1,46 @@
-function Quicksort(A,low,high):
-	if low < high:
+
+
+function Quicksort(List_Integer A,Integer low,Integer high) return List_Integer:
+	if low < high
 				pivot becomes A[low]
 		leftwall becomes low
 
 		for i in range (low + 1, high):
-			if (A[i] < pivot)
+			if (A[i] < pivot):
 				leftwall becomes leftwall + 1
-				temp becomes A[i]
+				temp1 becomes A[i]
 				A[i] becomes A[leftwall]
-			  A[leftwall] becomes temp
+			  A[leftwall] becomes temp1
 
-	temp becomes A[low]
+	temp2 becomes A[low]
 		A[low] becomes A[leftwall]
-		A[leftwall] becomes temp
-		pivot_location becomes leftwall
-		
-		A becomes Quicksort(A,low, pivot_location - 1)
-		A becomes Quicksort(A, pivot_location + 1, high)
-	return A
+		A[leftwall] becomes temp2
+		pivot becomes leftwall
+		Quicksort( A, low,  pivot-1)
+		Quicksort( A, pivot+1, high)
 
+	
+function main():
+	a becomes [4,3,2,1] 
+	b becomes [1,3,5,1, 5] 
+	c becomes [4,3,2,1,7,3,4]
+	display(1111)
+	display([1,1,1])
+	Quicksort(a, 0, 3)
+	display(1111)
+	display(a)
+	
+	display(1111)
+	display(b)
+	Quicksort(b, 0, 4)
+	display(1111)
+	display(b)
+	
+	display(1111)
+	display(c)
+	Quicksort(c, 0, 7)
+	display(1111)
+	display(c)
 
-A becomes [2, 67, 8, 99, 87, 654, 32, 5, 4, 12]
-display(A)
-OrderedA becomes Quicksort(A,1,10)
-display(OrderedA)
+	
+

@@ -170,46 +170,55 @@ store i32* %1, i32** %LIbF1
 store i32* %2, i32** %LIcF1
 
 
-call void @display_i(i32 1111)
+ %IdF1 = alloca i32 
+store i32 111 , i32* %IdF1
 
-%3 = load i32** %LIaF1
+%3 = load i32* %IdF1
+call void @display_i(i32 %3)
+
+%4 = load i32** %LIaF1
 call void @display_l_LIaF1()
 
 %arg8= load i32** %LIaF1
 call void @Quicksort(i32* %arg8, i32 0 , i32 3 )
 
 
-call void @display_i(i32 1111)
+%5 = load i32* %IdF1
+call void @display_i(i32 %4)
 
-%4 = load i32** %LIaF1
+%6 = load i32** %LIaF1
 call void @display_l_LIaF1()
 
-call void @display_i(i32 1111)
+%7 = load i32* %IdF1
+call void @display_i(i32 %5)
 
-%5 = load i32** %LIbF1
+%8 = load i32** %LIbF1
 call void @display_l_LIbF1()
 
 %arg9= load i32** %LIbF1
 call void @Quicksort(i32* %arg9, i32 0 , i32 4 )
 
 
-call void @display_i(i32 1111)
+%9 = load i32* %IdF1
+call void @display_i(i32 %6)
 
-%6 = load i32** %LIbF1
+%10 = load i32** %LIbF1
 call void @display_l_LIbF1()
 
-call void @display_i(i32 1111)
+%11 = load i32* %IdF1
+call void @display_i(i32 %7)
 
-%7 = load i32** %LIcF1
+%12 = load i32** %LIcF1
 call void @display_l_LIcF1()
 
 %arg10= load i32** %LIcF1
 call void @Quicksort(i32* %arg10, i32 0 , i32 7 )
 
 
-call void @display_i(i32 1111)
+%13 = load i32* %IdF1
+call void @display_i(i32 %8)
 
-%8 = load i32** %LIcF1
+%14 = load i32** %LIcF1
 call void @display_l_LIcF1()
 ret void
 } 

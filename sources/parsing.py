@@ -58,9 +58,13 @@ def p_return(p):
 	if len(p) == 3:
 		p[0] = AST.ReturnNode(p.lineno(1), [p[2]])
 
-def p_display(p):
+def p_display_id(p):
 	'''display : DISPLAY LPAREN IDENTIFIER RPAREN'''
 	p[0] = AST.DisplayNode(p.lineno(1), [AST.IdNode(p.lineno(1), p[3])])
+
+def p_display_int(p):
+	'''display : DISPLAY LPAREN INTEGER RPAREN'''
+	p[0] = AST.DisplayNode(p.lineno(1), [AST.IntNode(p.lineno(1), p[3])])
 
 def p_assign(p):
 	'''assignment : IDENTIFIER ASSIGN expr
