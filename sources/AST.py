@@ -619,7 +619,7 @@ class AssignVarNode(TokenNode):
 	type = 'Assignment variable'
 	
 	def __repr__(self):
-		return repr('assignVar ' + self.tok)
+		return repr(self.tok)
 	
 	def getLlvmTok(self):
 		if self.id_type == 'Integer':
@@ -654,7 +654,7 @@ class FuncDefArgNode(TokenNode):
 		self.id_type = t
 		
 	def __repr__(self):
-		return repr(self.var_type + self.tok)
+		return repr(self.tok)
 		
 	def getLlvmTok(self):
 		if self.id_type == 'Integer':
